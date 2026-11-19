@@ -206,3 +206,37 @@ label.a-btn { cursor: pointer; }
 .a-member { display: flex; align-items: center; gap: 12px; }
 .a-ok { background: #DDF6EA; color: #0B6B45; padding: 10px 14px; border-radius: 12px; font-size: 14px; margin: 0 0 12px; }
 .a-list li { align-items: center; }
+
+/* touch screens: finger-sized targets (≥ 40px) without changing the desktop layout */
+@media (pointer: coarse) {
+  .a-toggle { width: 54px; height: 32px; }
+  .a-toggle span { width: 26px; height: 26px; }
+  .a-toggle.is-on span { transform: translateX(22px); }
+  .a-btn-sm { height: 40px; min-width: 40px; padding: 0 12px; }
+  .a-btn-xs { height: 36px; min-width: 36px; }
+  .a-link { display: inline-flex; align-items: center; min-height: 40px; }
+  .a-group-name { min-height: 44px; }
+  .a-check { min-height: 40px; }
+  .a-check input, .a-primary input { width: 20px; height: 20px; }
+  .a-image-bar button { width: 34px; height: 34px; }
+  .a-quote-product a { display: inline-block; padding: 6px 0; }
+  .a-tab { height: 40px; }
+}
+
+/* admin top bar on phones: [logo · user · sign out] then a full-width tab row */
+.a-nav-short { display: none; }
+@media (max-width: 860px) {
+  .a-side { flex-wrap: wrap; overflow: visible; row-gap: 8px; padding: 10px 16px 0; }
+  .a-side nav { order: 3; width: calc(100% + 32px); margin: 0 -16px; padding: 0 16px 8px; overflow-x: auto; scrollbar-width: none; }
+  .a-side nav::-webkit-scrollbar { display: none; }
+  .a-nav-long { display: none; }
+  .a-nav-short { display: inline; }
+  .a-side-foot { margin-left: auto; }
+  .a-head-sticky { top: 112px; }
+}
+
+/* product table: keep price and row actions on one line */
+@media (min-width: 641px) {
+  .a-table td:nth-child(3) { white-space: nowrap; }
+  .a-table .a-actions { flex-wrap: nowrap; }
+}

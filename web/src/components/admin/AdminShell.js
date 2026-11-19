@@ -8,11 +8,11 @@ import { api } from '@convex/_generated/api';
 import Logo from '@/components/Logo';
 
 const NAV = [
-  ['/admin', 'Overview', '◎'],
-  ['/admin/products', 'Products', '▦'],
-  ['/admin/menu', 'Menu & categories', '☰'],
-  ['/admin/quotes', 'Quote requests', '✉'],
-  ['/admin/team', 'Team', '◉'],
+  ['/admin', 'Overview', '◎', 'Overview'],
+  ['/admin/products', 'Products', '▦', 'Products'],
+  ['/admin/menu', 'Menu & categories', '☰', 'Menu'],
+  ['/admin/quotes', 'Quote requests', '✉', 'Quotes'],
+  ['/admin/team', 'Team', '◉', 'Team'],
 ];
 
 export default function AdminShell({ children }) {
@@ -50,11 +50,11 @@ function Guarded({ pathname, children }) {
       <aside className="a-side">
         <Logo />
         <nav>
-          {NAV.map(([href, label, ic]) => {
+          {NAV.map(([href, label, ic, short]) => {
             const active = href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);
             return (
               <Link key={href} href={href} className={`a-nav ${active ? 'is-active' : ''}`}>
-                <span className="a-nav-ic">{ic}</span>{label}
+                <span className="a-nav-ic">{ic}</span><span className="a-nav-long">{label}</span><span className="a-nav-short">{short}</span>
               </Link>
             );
           })}

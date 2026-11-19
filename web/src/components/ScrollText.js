@@ -35,7 +35,12 @@ export default function ScrollText({ text, pills = [] }) {
     const onScroll = () => { if (visible && !raf) raf = requestAnimationFrame(update); };
 
     // only listen while the block is near the viewport
-    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) onScroll(); }, { rootMargin: '20% 0px' });
+    // on enter AND exit run one update, so a fast fling past the block still
+    // leaves it fully lit (scrolled past) or unlit (not reached yet)
+    const io = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (!raf) raf = requestAnimationFrame(update);
+    }, { rootMargin: '20% 0px' });
     io.observe(el);
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
