@@ -22,6 +22,21 @@ Printing-company website with a live product catalogue and an admin dashboard.
 
 **Menu ↔ products are linked.** The header mega-menu, mobile menu, footer, home page and catalogue all read one live Convex query. Adding, editing, hiding or deleting a product in the admin updates every open page within a second, with no redeploy needed.
 
+## Photos vs illustrations
+
+Every product and category has an illustrated placeholder. Upload photos in the admin to replace it:
+- **Products:** Admin → Products → Edit → Photos. The first photo is the main one. "Use illustration instead" switches back.
+- **Categories:** Admin → Menu & categories → Edit → Photo. The photo shows in the mega-menu and on the home page service cards.
+
+Photos are served through Next.js image optimization (resized, AVIF/WebP, lazy-loaded).
+
+## Performance
+
+- **First-visit loader:** pure CSS. It plays once per browser session and is skipped for reduced-motion users and in the admin.
+- **Lite mode:** devices with 4 or fewer CPU cores or 4 GB or less RAM, data-saver, or reduced motion. These get the same site without the decorative floating motion, background blur or heavy shadows. The flag is set before first paint by the boot script in `src/app/layout.js`.
+- **Animations:** only `transform` and `opacity` are animated. Looping animations pause while off-screen, and below-the-fold sections use `content-visibility`.
+- **Monitoring:** Vercel Web Analytics is on. Speed Insights is reporting on the free tier.
+
 ## Admin access
 
 Sign-in is **username + password**. Anyone can create an account at `/admin/signin`, but only usernames listed in the `ADMIN_USERNAMES` Convex environment variable get admin rights. This is enforced on the server for every admin action.
