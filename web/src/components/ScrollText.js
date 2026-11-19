@@ -1,49 +1,64 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 /* Big paragraph whose words "ink in" as you scroll (two26-style).
-   Words wrapped in *asterisks* get the accent colour; pills float in at set progress. */
+   Words wrapped in *asterisks* get the accent colour; pills pop in at set progress.
+   Perf: no React state on scroll — one rAF per frame toggles classes directly,
+   and only on the words whose state actually changed. */
 export default function ScrollText({ text, pills = [] }) {
   const ref = useRef(null);
-  const [p, setP] = useState(0);
   const words = text.split(' ');
 
   useEffect(() => {
-    const onScroll = () => {
-      const el = ref.current;
-      if (!el) return;
+    const el = ref.current;
+    if (!el) return;
+    const spans = el.querySelectorAll('.sw');
+    const pillEls = el.querySelectorAll('.float-pill');
+    let lit = -1;
+    let raf = 0;
+    let visible = false;
+
+    const update = () => {
+      raf = 0;
       const r = el.getBoundingClientRect();
       const vh = window.innerHeight;
-      const prog = (vh * 0.85 - r.top) / (r.height + vh * 0.35);
-      setP(Math.max(0, Math.min(1, prog)));
+      const p = Math.max(0, Math.min(1, (vh * 0.85 - r.top) / (r.height + vh * 0.35)));
+      const next = Math.ceil(p * spans.length * 1.1);
+      if (next !== lit) {
+        const [from, to, on] = next > lit ? [Math.max(lit, 0), next, true] : [next, lit, false];
+        for (let i = from; i < Math.min(to, spans.length); i++) spans[i].classList.toggle('on', on);
+        lit = next;
+      }
+      pills.forEach((pl, i) => pillEls[i]?.classList.toggle('on', p > pl.at));
     };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); };
-  }, []);
+    const onScroll = () => { if (visible && !raf) raf = requestAnimationFrame(update); };
 
-  const lit = p * words.length * 1.1;
+    // only listen while the block is near the viewport
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) onScroll(); }, { rootMargin: '20% 0px' });
+    io.observe(el);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, [pills]);
 
   return (
     <div className="scroll-text" ref={ref}>
       <p>
-        {words.map((w, i) => {
-          const accent = w.startsWith('*');
-          const clean = w.replace(/\*/g, '');
-          const on = i < lit;
-          return (
-            <span key={i} className={`sw ${on ? 'on' : ''} ${accent ? 'accent' : ''}`}>
-              {clean}{' '}
-            </span>
-          );
-        })}
+        {words.map((w, i) => (
+          <span key={i} className={`sw ${w.startsWith('*') ? 'accent' : ''}`}>{w.replace(/\*/g, '')} </span>
+        ))}
       </p>
-      {pills.map((pl, i) => (
+      {pills.map((pl) => (
         <span
           key={pl.label}
-          className={`float-pill ${p > pl.at ? 'on' : ''}`}
+          className="float-pill"
           style={{ top: pl.top, left: pl.left, background: pl.bg, color: pl.color || '#fff', '--r': `${pl.rot || 0}deg` }}
         >
           {pl.label}

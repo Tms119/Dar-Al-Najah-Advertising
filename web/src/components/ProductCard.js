@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import Mock from './Mock';
 
@@ -8,8 +9,7 @@ export default function ProductCard({ p, i = 0 }) {
         {p.badge && <span className="p-badge">{p.badge}</span>}
         <span className="p-time">⏱ {p.turnaround}</span>
         {p.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={p.image} alt={p.name} className="p-photo" loading="lazy" />
+          <Image src={p.image} alt={p.name} fill sizes="(max-width: 760px) 50vw, (max-width: 1180px) 33vw, 25vw" className="p-photo" />
         ) : (
           <Mock shape={p.shape} color={p.color} className="p-mock" title={p.name} />
         )}

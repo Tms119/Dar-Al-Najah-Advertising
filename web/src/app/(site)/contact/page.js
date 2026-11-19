@@ -3,7 +3,7 @@ import { api } from '@convex/_generated/api';
 import ContactForm from './ContactForm';
 import { COMPANY, waLink } from '@/data/site';
 
-export const metadata = { title: 'Contact & quote — Dar Al Najah Advertising' };
+export const metadata = { title: 'Contact & quote', description: 'Request a printing quote from Dar Al Najah Advertising in Dubai — we reply fast on WhatsApp and email.' };
 
 export default async function ContactPage({ searchParams }) {
   const { product, details, estimate } = await searchParams;

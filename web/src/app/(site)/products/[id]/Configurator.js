@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import Mock from '@/components/Mock';
@@ -34,8 +35,7 @@ export default function Configurator({ p }) {
         <div className="pdp-stage" style={{ background: cur.url ? '#fff' : cur.bg }}>
           {p.badge && <span className="p-badge">{p.badge}</span>}
           {cur.url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={cur.url} alt={p.name} className="pdp-photo" key={cur.url} />
+            <Image src={cur.url} alt={p.name} fill priority sizes="(max-width: 980px) 100vw, 50vw" className="pdp-photo" key={cur.url} />
           ) : (
             <>
               <Mock shape={p.shape} color={p.color} className="pdp-mock" title={p.name} key={view} />
@@ -48,8 +48,7 @@ export default function Configurator({ p }) {
             {views.map((v, i) => (
               <button key={i} className={`thumb ${view === i ? 'is-active' : ''}`} style={{ background: v.url ? '#fff' : v.bg }} onClick={() => setView(i)} aria-label={`View ${i + 1}`}>
                 {v.url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={v.url} alt="" className="thumb-photo" />
+                  <Image src={v.url} alt="" fill sizes="160px" className="thumb-photo" />
                 ) : (
                   <Mock shape={p.shape} color={p.color} />
                 )}

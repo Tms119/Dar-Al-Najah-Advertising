@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import Mock from './Mock';
+import { useCatalog } from './CatalogProvider';
 
 const FLOATERS = [
   { shape: 'card', color: '#2B3BFF', cls: 'f1', depth: 30 },
@@ -24,22 +25,28 @@ const QUICK = [
 
 export default function Hero() {
   const ref = useRef(null);
+  const { products } = useCatalog();
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || window.matchMedia('(pointer: coarse)').matches) return;
+    // no parallax on touch screens or low-end devices
+    if (!el || window.matchMedia('(pointer: coarse)').matches || document.documentElement.hasAttribute('data-lite')) return;
     let raf = 0;
+    let visible = true;
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; });
+    io.observe(el);
     const onMove = (e) => {
-      cancelAnimationFrame(raf);
+      if (!visible || raf) return;
       raf = requestAnimationFrame(() => {
+        raf = 0;
         const x = e.clientX / window.innerWidth - 0.5;
         const y = e.clientY / window.innerHeight - 0.5;
         el.style.setProperty('--mx', x.toFixed(3));
         el.style.setProperty('--my', y.toFixed(3));
       });
     };
-    window.addEventListener('mousemove', onMove);
-    return () => { window.removeEventListener('mousemove', onMove); cancelAnimationFrame(raf); };
+    window.addEventListener('mousemove', onMove, { passive: true });
+    return () => { window.removeEventListener('mousemove', onMove); cancelAnimationFrame(raf); io.disconnect(); };
   }, []);
 
   return (
@@ -67,7 +74,7 @@ export default function Hero() {
           </span>
           <span className="ht-line">
             <span className="ht-outline">noticed.</span>
-            <span className="tag tag-pink">90+ products</span>
+            <span className="tag tag-pink">{products.length}+ products</span>
           </span>
         </h1>
 

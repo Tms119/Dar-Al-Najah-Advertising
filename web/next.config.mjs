@@ -4,11 +4,11 @@ const isDev = process.env.NODE_ENV !== 'production';
 // and Vercel's preview toolbar may load resources.
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://vercel.live`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://vercel.live https://va.vercel-scripts.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://*.convex.cloud https://*.convex.site https://vercel.com https://vercel.live",
   "font-src 'self' data: https://vercel.live",
-  "connect-src 'self' https://*.convex.cloud wss://*.convex.cloud https://*.convex.site https://vercel.live wss://ws-us3.pusher.com",
+  "connect-src 'self' https://va.vercel-scripts.com https://*.convex.cloud wss://*.convex.cloud https://*.convex.site https://vercel.live wss://ws-us3.pusher.com",
   "frame-src https://vercel.live",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -29,6 +29,12 @@ const securityHeaders = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
+  images: {
+    // product & category photos uploaded through the admin (Convex file storage)
+    remotePatterns: [{ protocol: 'https', hostname: '*.convex.cloud' }],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
+  },
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },

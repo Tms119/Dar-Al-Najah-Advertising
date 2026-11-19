@@ -6,9 +6,9 @@ import ProductView from './ProductView';
 export async function generateMetadata({ params }) {
   const { id } = await params;
   const r = await fetchQuery(api.catalog.getProduct, { slug: id });
-  if (r?.status !== 'ok') return { title: 'Product not found — Dar Al Najah Advertising' };
+  if (r?.status !== 'ok') return { title: 'Product not found' };
   return {
-    title: `${r.product.name} — Dar Al Najah Advertising`,
+    title: r.product.name,
     description: r.product.desc.slice(0, 155),
     openGraph: r.product.image ? { images: [r.product.image] } : undefined,
   };

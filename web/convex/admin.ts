@@ -17,6 +17,13 @@ function text(s: string, max: number, field: string, required = true) {
   return t;
 }
 
+async function checkImage(ctx: MutationCtx, id: Id<"_storage">) {
+  const meta = await ctx.db.system.get("_storage", id);
+  if (!meta) throw new ConvexError("An uploaded image is missing — please upload it again");
+  if (!meta.contentType?.startsWith("image/")) throw new ConvexError("Only image files can be used as photos");
+  if (meta.size > 8 * 1024 * 1024) throw new ConvexError("Images must be under 8 MB");
+}
+
 function checkSlug(slug: string) {
   if (!SLUG_RE.test(slug) || slug.length > 80)
     throw new ConvexError("Slug may only contain lowercase letters, numbers and single dashes");
@@ -67,7 +74,7 @@ export const structure = query({
           .take(500);
         withCounts.push({ _id: g._id, name: g.name, sortOrder: g.sortOrder, productCount: links.length });
       }
-      out.push({ ...c, groups: withCounts });
+      out.push({ ...c, imageUrl: c.imageId ? await ctx.storage.getUrl(c.imageId) : null, groups: withCounts });
     }
     return out;
   },
@@ -83,6 +90,7 @@ export const saveCategory = mutation({
     color: v.string(),
     tint: v.string(),
     heroShape: v.string(),
+    imageId: v.union(v.id("_storage"), v.null()),
     isActive: v.boolean(),
   },
   returns: v.id("categories"),
@@ -100,9 +108,14 @@ export const saveCategory = mutation({
       color: a.color,
       tint: a.tint,
       heroShape: text(a.heroShape, 30, "Illustration"),
+      imageId: a.imageId,
       isActive: a.isActive,
     };
+    if (a.imageId) await checkImage(ctx, a.imageId);
     if (a.id) {
+      const before = await ctx.db.get(a.id);
+      if (!before) throw new ConvexError("Category not found");
+      if (before.imageId && before.imageId !== a.imageId) await ctx.storage.delete(before.imageId);
       await ctx.db.patch(a.id, fields);
       return a.id;
     }
@@ -122,6 +135,8 @@ export const deleteCategory = mutation({
       .withIndex("by_categoryId_and_sortOrder", (q) => q.eq("categoryId", id))
       .take(1);
     if (groups.length) throw new ConvexError("Delete or move this category's groups first");
+    const cat = await ctx.db.get(id);
+    if (cat?.imageId) await ctx.storage.delete(cat.imageId);
     await ctx.db.delete(id);
     return null;
   },
@@ -315,12 +330,7 @@ export const saveProduct = mutation({
     if (!Number.isFinite(a.basePrice) || a.basePrice < 0 || a.basePrice > 1_000_000)
       throw new ConvexError("Price must be a positive number");
     if (a.imageIds.length > 12) throw new ConvexError("Up to 12 images per product");
-    for (const imgId of a.imageIds) {
-      const meta = await ctx.db.system.get("_storage", imgId);
-      if (!meta) throw new ConvexError("An uploaded image is missing — please upload it again");
-      if (!meta.contentType?.startsWith("image/")) throw new ConvexError("Only image files can be used as product photos");
-      if (meta.size > 8 * 1024 * 1024) throw new ConvexError("Images must be under 8 MB");
-    }
+    for (const imgId of a.imageIds) await checkImage(ctx, imgId);
     if (a.options.length > 8) throw new ConvexError("Up to 8 option groups");
     for (const o of a.options) {
       text(o.name, 40, "Option name");

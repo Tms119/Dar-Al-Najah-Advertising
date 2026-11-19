@@ -192,3 +192,14 @@ textarea.a-input { height: auto; padding: 10px 12px; resize: vertical; line-heig
   .a-table td:nth-child(5)::before { content: 'Featured'; display: block; font-size: 11px; color: var(--muted); margin-bottom: 2px; }
   .a-prod { min-width: 0; }
 }
+
+.a-cat-swatch { overflow: hidden; }
+.a-cat-swatch img { width: 100%; height: 100%; object-fit: cover; }
+.a-cat-photo { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.a-cat-photo-preview { width: 120px; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; display: grid; place-items: center; }
+.a-cat-photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+.a-cat-photo-preview svg { width: 60%; }
+label.a-btn { cursor: pointer; }
+.a-btn.is-busy { opacity: 0.6; pointer-events: none; }
+.a-display-badge { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--bg-2); color: var(--muted); }
+.a-display-badge.is-photo { background: #DDF6EA; color: #0B7A4E; }

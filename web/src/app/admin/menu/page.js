@@ -7,7 +7,7 @@ import { api } from '@convex/_generated/api';
 import Mock, { SHAPES } from '@/components/Mock';
 import Toggle from '@/components/admin/Toggle';
 
-const blankCat = { id: null, slug: '', name: '', shortName: '', tagline: '', color: '#2B3BFF', tint: '#E6E8FF', heroShape: 'card', isActive: true };
+const blankCat = { id: null, slug: '', name: '', shortName: '', tagline: '', color: '#2B3BFF', tint: '#E6E8FF', heroShape: 'card', imageId: null, imageUrl: null, isActive: true };
 const errText = (e) => (e instanceof ConvexError ? String(e.data) : 'Something went wrong.');
 
 export default function AdminMenu() {
@@ -41,23 +41,26 @@ export default function AdminMenu() {
         <CategoryForm
           value={editing}
           onCancel={() => setEditing(null)}
-          onSave={(v) => run(async () => { await saveCategory(v); setEditing(null); })}
+          onSave={({ imageUrl, ...v }) => run(async () => { await saveCategory(v); setEditing(null); })}
         />
       )}
 
       {structure.map((c, ci) => (
         <section key={c._id} className={`a-card a-cat ${c.isActive ? '' : 'is-off'}`}>
           <div className="a-cat-head">
-            <span className="a-cat-swatch" style={{ background: c.tint }}><Mock shape={c.heroShape} color={c.color} /></span>
+            <span className="a-cat-swatch" style={{ background: c.tint }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {c.imageUrl ? <img src={c.imageUrl} alt="" /> : <Mock shape={c.heroShape} color={c.color} />}
+            </span>
             <div className="a-cat-title">
               <h2>{c.name}</h2>
               <span className="a-muted a-small">/{c.slug} · {c.groups.reduce((a, g) => a + g.productCount, 0)} placements</span>
             </div>
             <div className="a-actions">
-              <label className="a-inline a-small"><Toggle checked={c.isActive} onChange={(v) => run(() => saveCategory({ id: c._id, slug: c.slug, name: c.name, shortName: c.shortName, tagline: c.tagline, color: c.color, tint: c.tint, heroShape: c.heroShape, isActive: v }))} label={`Show ${c.name}`} /> Live</label>
+              <label className="a-inline a-small"><Toggle checked={c.isActive} onChange={(v) => run(() => saveCategory({ id: c._id, slug: c.slug, name: c.name, shortName: c.shortName, tagline: c.tagline, color: c.color, tint: c.tint, heroShape: c.heroShape, imageId: c.imageId ?? null, isActive: v }))} label={`Show ${c.name}`} /> Live</label>
               <button className="a-btn a-btn-sm a-btn-ghost" disabled={ci === 0} onClick={() => run(() => moveCategory({ id: c._id, direction: 'up' }))} aria-label="Move up">↑</button>
               <button className="a-btn a-btn-sm a-btn-ghost" disabled={ci === structure.length - 1} onClick={() => run(() => moveCategory({ id: c._id, direction: 'down' }))} aria-label="Move down">↓</button>
-              <button className="a-btn a-btn-sm" onClick={() => setEditing({ id: c._id, slug: c.slug, name: c.name, shortName: c.shortName, tagline: c.tagline, color: c.color, tint: c.tint, heroShape: c.heroShape, isActive: c.isActive })}>Edit</button>
+              <button className="a-btn a-btn-sm" onClick={() => setEditing({ id: c._id, slug: c.slug, name: c.name, shortName: c.shortName, tagline: c.tagline, color: c.color, tint: c.tint, heroShape: c.heroShape, imageId: c.imageId ?? null, imageUrl: c.imageUrl, isActive: c.isActive })}>Edit</button>
               <button className="a-btn a-btn-sm a-btn-danger" onClick={() => window.confirm(`Delete category "${c.name}"?`) && run(() => deleteCategory({ id: c._id }))} aria-label="Delete category">✕</button>
             </div>
           </div>
@@ -109,6 +112,21 @@ function GroupProducts({ groupId, onError }) {
 
 function CategoryForm({ value, onSave, onCancel }) {
   const [v, setV] = useState(value);
+  const genUploadUrl = useMutation(api.admin.generateUploadUrl);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState(null);
+  const upload = async (file) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) return setErr("That file isn't an image");
+    if (file.size > 8 * 1024 * 1024) return setErr('Image must be under 8 MB');
+    setErr(null); setBusy(true);
+    try {
+      const res = await fetch(await genUploadUrl(), { method: 'POST', headers: { 'Content-Type': file.type }, body: file });
+      if (!res.ok) throw new Error();
+      const { storageId } = await res.json();
+      setV((s) => ({ ...s, imageId: storageId, imageUrl: URL.createObjectURL(file) }));
+    } catch { setErr('Upload failed — please try again.'); } finally { setBusy(false); }
+  };
   const set = (k, x) => setV((s) => ({ ...s, [k]: x }));
   const slugify = (s) => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   return (
@@ -127,9 +145,26 @@ function CategoryForm({ value, onSave, onCancel }) {
           <select className="a-input" value={v.heroShape} onChange={(e) => set('heroShape', e.target.value)}>{SHAPES.map((s) => <option key={s}>{s}</option>)}</select>
         </label>
       </div>
+      <div className="a-field">
+        <span>Photo (optional — replaces the illustration in the menu and on the home page)</span>
+        <div className="a-cat-photo">
+          <div className="a-cat-photo-preview" style={{ background: v.tint }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {v.imageUrl ? <img src={v.imageUrl} alt="" /> : <Mock shape={v.heroShape} color={v.color} />}
+          </div>
+          <div className="a-actions" style={{ justifyContent: 'flex-start' }}>
+            <label className={`a-btn a-btn-sm ${busy ? 'is-busy' : ''}`}>
+              <input type="file" accept="image/*" hidden onChange={(e) => { upload(e.target.files?.[0]); e.target.value = ''; }} />
+              {busy ? 'Uploading…' : v.imageUrl ? 'Replace photo' : 'Upload photo'}
+            </label>
+            {v.imageUrl && <button type="button" className="a-btn a-btn-sm a-btn-danger" onClick={() => setV((s) => ({ ...s, imageId: null, imageUrl: null }))}>Use illustration</button>}
+          </div>
+        </div>
+        {err && <p className="a-error">{err}</p>}
+      </div>
       <div className="a-actions">
         <button type="button" className="a-btn" onClick={onCancel}>Cancel</button>
-        <button className="a-btn a-btn-primary">Save category</button>
+        <button className="a-btn a-btn-primary" disabled={busy}>Save category</button>
       </div>
     </form>
   );

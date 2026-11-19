@@ -192,8 +192,11 @@ export default function ProductEditor({ product, structure }) {
 
         <div className="a-col">
           <section className="a-card">
-            <h2>Photos</h2>
-            <p className="a-muted a-small">First photo is the main one. JPG/PNG/WebP, up to {MAX_MB} MB. Without photos, the illustration below is shown.</p>
+            <div className="a-card-head">
+              <h2>Photos</h2>
+              <span className={`a-display-badge ${images.length ? 'is-photo' : ''}`}>{images.length ? 'Website shows: photos' : 'Website shows: illustration'}</span>
+            </div>
+            <p className="a-muted a-small">Upload real photos to replace the illustration everywhere (cards, product page, menu). First photo is the main one. JPG/PNG/WebP, up to {MAX_MB} MB.</p>
             <div className="a-images">
               {images.map((im, i) => (
                 <div key={im.id} className="a-image">
@@ -211,6 +214,11 @@ export default function ProductEditor({ product, structure }) {
                 {uploading ? 'Uploading…' : '+ Add photos'}
               </label>
             </div>
+            {images.length > 0 && (
+              <button type="button" className="a-link" style={{ marginTop: 10 }} onClick={() => window.confirm('Remove all photos and show the illustration instead? (Takes effect when you save.)') && setImages([])}>
+                Use illustration instead
+              </button>
+            )}
           </section>
 
           <section className="a-card">

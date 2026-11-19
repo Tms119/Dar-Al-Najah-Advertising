@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import Mock from './Mock';
 import ProductCard from './ProductCard';
@@ -33,12 +34,18 @@ export function ServicesStack() {
                 Explore {c.short.toLowerCase()} <span className="btn-arrow">→</span>
               </Link>
             </div>
-            <div className="stack-art">
-              <div className="stack-circle" />
-              <Mock shape={c.hero} color={c.color} className="stack-mock" />
-              {shapes[0] && <Mock shape={shapes[0]} color={c.color} className="stack-mock-sm a" />}
-              {shapes[1] && <Mock shape={shapes[1]} color={c.color} className="stack-mock-sm b" />}
-            </div>
+            {c.image ? (
+              <div className="stack-art stack-art-photo">
+                <Image src={c.image} alt={c.name} fill sizes="(max-width: 980px) 100vw, 45vw" />
+              </div>
+            ) : (
+              <div className="stack-art">
+                <div className="stack-circle" />
+                <Mock shape={c.hero} color={c.color} className="stack-mock" />
+                {shapes[0] && <Mock shape={shapes[0]} color={c.color} className="stack-mock-sm a" />}
+                {shapes[1] && <Mock shape={shapes[1]} color={c.color} className="stack-mock-sm b" />}
+              </div>
+            )}
           </article>
         );
       })}

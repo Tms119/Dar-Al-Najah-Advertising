@@ -53,6 +53,8 @@ export default defineSchema({
     color: v.string(),
     tint: v.string(),
     heroShape: v.string(),
+    // optional photo shown instead of the illustration
+    imageId: v.optional(v.union(v.id("_storage"), v.null())),
     sortOrder: v.number(),
     isActive: v.boolean(),
   })

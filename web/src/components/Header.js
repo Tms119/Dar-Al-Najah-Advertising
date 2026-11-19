@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { COMPANY } from '@/data/site';
 import { useCatalog } from './CatalogProvider';
 import Logo from './Logo';
+import Image from 'next/image';
 import Mock from './Mock';
 
 const MEGA_LIMIT = 12;
@@ -72,7 +73,11 @@ export default function Header() {
             <div className="mega-feature" style={{ background: active.tint }}>
               <span className="eyebrow">{active.name}</span>
               <p>{active.tagline}</p>
-              <Mock shape={active.hero} color={active.color} className="mega-mock" />
+              {active.image ? (
+                <div className="mega-photo"><Image src={active.image} alt={active.name} fill sizes="260px" /></div>
+              ) : (
+                <Mock shape={active.hero} color={active.color} className="mega-mock" />
+              )}
               <Link href={`/products?cat=${active.id}`} className="btn btn-ink btn-sm">
                 View all {active.short.toLowerCase()} <span className="btn-arrow">→</span>
               </Link>

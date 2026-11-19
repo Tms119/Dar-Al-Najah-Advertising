@@ -1,59 +1,96 @@
 'use client';
 
 import Link from 'next/link';
-import { COMPANY } from '@/data/site';
+import { COMPANY, waLink } from '@/data/site';
 import { useCatalog } from './CatalogProvider';
-import Logo from './Logo';
+
+const SOCIALS = ['Instagram', 'TikTok', 'LinkedIn', 'Facebook'];
+const tel = COMPANY.phone.replace(/\s/g, '');
 
 export default function Footer() {
   const { categories } = useCatalog();
+
   return (
     <footer className="site-footer">
       <div className="container">
-        <div className="footer-cta" data-reveal>
-          <span className="eyebrow">Ready when you are</span>
-          <Link href="/contact" className="footer-big">
-            <span>Let&apos;s print</span>
-            <span>something <em>great</em></span>
-            <span className="footer-big-arrow">↗</span>
-          </Link>
+        {/* CTA band */}
+        <div className="f-cta">
+          <div className="f-cta-text" data-reveal>
+            <span className="eyebrow">Ready when you are</span>
+            <Link href="/contact" className="footer-big">
+              <span>Let&apos;s print</span>
+              <span>something <em>great</em></span>
+            </Link>
+          </div>
+          <div className="f-quick" data-reveal style={{ '--d': '120ms' }}>
+            <a href={waLink('Hi Dar Al Najah! I need a quote.')} target="_blank" rel="noopener noreferrer" className="f-quick-btn is-wa">
+              <small>WhatsApp</small><b>Chat with us</b><span aria-hidden="true">↗</span>
+            </a>
+            <a href={`tel:${tel}`} className="f-quick-btn">
+              <small>Call</small><b>{COMPANY.phone}</b><span aria-hidden="true">↗</span>
+            </a>
+            <a href={`mailto:${COMPANY.email}`} className="f-quick-btn">
+              <small>Email</small><b>{COMPANY.email}</b><span aria-hidden="true">↗</span>
+            </a>
+            <Link href="/contact" className="f-quick-btn is-accent">
+              <small>Online</small><b>Request a quote</b><span aria-hidden="true">→</span>
+            </Link>
+          </div>
         </div>
 
-        <div className="footer-grid">
-          <div className="footer-brand">
-            <Logo />
-            <p>Full-service printing, embroidery, gifting and photo studio in Dubai. Designed, printed and finished in-house.</p>
+        {/* Link grid */}
+        <div className="f-grid">
+          <div className="f-about">
+            <p className="f-about-text">
+              Full-service printing, embroidery, gifting and photo studio in Dubai — designed, printed and finished in-house.
+            </p>
+            <dl className="f-info">
+              <div><dt>Visit</dt><dd>{COMPANY.address}</dd></div>
+              <div><dt>Hours</dt><dd>{COMPANY.hours}</dd></div>
+            </dl>
             <div className="socials">
-              {['Instagram', 'TikTok', 'LinkedIn', 'Facebook'].map((s) => (
-                <a key={s} href="#" className="pill">{s}</a>
-              ))}
+              {SOCIALS.map((s) => <a key={s} href="#" className="pill">{s}</a>)}
             </div>
           </div>
-          {categories.map((c) => (
-            <div key={c.id} className="footer-col">
-              <h4><i className="dot" style={{ background: c.color }} />{c.short}</h4>
+
+          <nav className="f-cols" aria-label="Footer">
+            {categories.map((c) => (
+              <div key={c.id} className="footer-col">
+                <h4><i className="dot" style={{ background: c.color }} />{c.short}</h4>
+                <ul>
+                  {c.groups.flatMap((g) => g.items).slice(0, 6).map((it) => (
+                    <li key={it.slug}><Link href={`/products/${it.slug}`}>{it.name}</Link></li>
+                  ))}
+                  <li><Link href={`/products?cat=${c.id}`} className="more">All {c.count} →</Link></li>
+                </ul>
+              </div>
+            ))}
+            <div className="footer-col">
+              <h4>Company</h4>
               <ul>
-                {c.groups.flatMap((g) => g.items).slice(0, 6).map((it) => (
-                  <li key={it.slug}><Link href={`/products/${it.slug}`}>{it.name}</Link></li>
-                ))}
-                <li><Link href={`/products?cat=${c.id}`} className="more">See all →</Link></li>
+                <li><Link href="/">Home</Link></li>
+                <li><Link href="/products">All products</Link></li>
+                <li><Link href="/contact">Contact &amp; quote</Link></li>
+                <li><a href={waLink('Hi! I have a question.')} target="_blank" rel="noopener noreferrer">WhatsApp support</a></li>
               </ul>
             </div>
-          ))}
-          <div className="footer-col">
-            <h4>Contact</h4>
-            <ul>
-              <li><a href={`tel:${COMPANY.phone.replace(/\s/g, '')}`}>{COMPANY.phone}</a></li>
-              <li><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></li>
-              <li>{COMPANY.address}</li>
-              <li>{COMPANY.hours}</li>
-            </ul>
-          </div>
+          </nav>
         </div>
+      </div>
 
+      {/* Giant wordmark */}
+      <div className="f-mark" aria-hidden="true">
+        <span>Dar Al Najah</span>
+        <i style={{ background: 'var(--cyan)' }} /><i style={{ background: 'var(--pink)' }} /><i style={{ background: 'var(--yellow)' }} />
+      </div>
+
+      <div className="container">
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} {COMPANY.full}. All rights reserved.</span>
-          <span>Printed with love in Dubai 🇦🇪</span>
+          <span>Printed with care in Dubai</span>
+          <button type="button" className="f-top" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            Back to top ↑
+          </button>
         </div>
       </div>
     </footer>

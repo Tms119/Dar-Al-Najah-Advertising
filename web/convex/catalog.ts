@@ -92,6 +92,7 @@ async function buildCatalog(ctx: QueryCtx) {
         color: cat.color,
         tint: cat.tint,
         hero: cat.heroShape,
+        image: cat.imageId ? await ctx.storage.getUrl(cat.imageId) : null,
         count: navGroups.reduce((a, g) => a + g.items.length, 0),
         groups: navGroups,
       });
