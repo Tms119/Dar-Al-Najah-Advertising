@@ -12,6 +12,7 @@ const NAV = [
   ['/admin/products', 'Products', '▦'],
   ['/admin/menu', 'Menu & categories', '☰'],
   ['/admin/quotes', 'Quote requests', '✉'],
+  ['/admin/team', 'Team', '◉'],
 ];
 
 export default function AdminShell({ children }) {

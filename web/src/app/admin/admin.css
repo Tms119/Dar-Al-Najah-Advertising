@@ -203,3 +203,6 @@ label.a-btn { cursor: pointer; }
 .a-btn.is-busy { opacity: 0.6; pointer-events: none; }
 .a-display-badge { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--bg-2); color: var(--muted); }
 .a-display-badge.is-photo { background: #DDF6EA; color: #0B7A4E; }
+.a-member { display: flex; align-items: center; gap: 12px; }
+.a-ok { background: #DDF6EA; color: #0B6B45; padding: 10px 14px; border-radius: 12px; font-size: 14px; margin: 0 0 12px; }
+.a-list li { align-items: center; }

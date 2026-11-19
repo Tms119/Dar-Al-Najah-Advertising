@@ -15,6 +15,7 @@ import type * as lib_admin from "../lib/admin.js";
 import type * as quotes from "../quotes.js";
 import type * as seed from "../seed.js";
 import type * as seedData from "../seedData.js";
+import type * as team from "../team.js";
 import type * as users from "../users.js";
 
 import type {
@@ -31,6 +32,7 @@ declare const fullApi: ApiFromModules<{
   quotes: typeof quotes;
   seed: typeof seed;
   seedData: typeof seedData;
+  team: typeof team;
   users: typeof users;
 }>;
 

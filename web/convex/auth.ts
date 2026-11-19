@@ -2,13 +2,17 @@ import { components, internal } from "./_generated/api";
 import { setupConvexAuth } from "@convex-dev/auth/server";
 import { setupUsernamePassword } from "@convex-dev/auth/methods/username-password/server";
 
-/* Admin sign-in: username + password. Anyone can create an account, but only
-   usernames listed in the ADMIN_USERNAMES deployment env var get admin rights
-   (see convex/lib/admin.ts) — every admin function checks that server-side. */
+/* Internal admin login: username + password.
+
+   There is NO public sign-up. `signUpWithUsernamePassword` is deliberately
+   not exported, so the function does not exist on the deployment and nobody
+   can create an account from the website or by calling Convex directly.
+   Accounts are created only by an existing admin (Admin → Team, see
+   convex/team.ts) or from the CLI: `npx convex run team:bootstrapAdmin`. */
 const auth = setupConvexAuth({ component: components.auth });
 export const { signOut, refreshSession, isAuthenticated } = auth;
 
-export const { signUpWithUsernamePassword, signInWithUsernamePassword } = setupUsernamePassword(auth, {
+export const { signInWithUsernamePassword, changePassword } = setupUsernamePassword(auth, {
   component: components.authPassword,
   usernameComponent: components.authUsername,
 }).attachUserCallbacks({

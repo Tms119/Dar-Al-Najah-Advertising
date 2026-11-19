@@ -37,19 +37,30 @@ Photos are served through Next.js image optimization (resized, AVIF/WebP, lazy-l
 - **Animations:** only `transform` and `opacity` are animated. Looping animations pause while off-screen, and below-the-fold sections use `content-visibility`.
 - **Monitoring:** Vercel Web Analytics is on. Speed Insights is reporting on the free tier.
 
-## Admin access
+## Admin access (internal only)
 
-Sign-in is **username + password**. Anyone can create an account at `/admin/signin`, but only usernames listed in the `ADMIN_USERNAMES` Convex environment variable get admin rights. This is enforced on the server for every admin action.
+Sign-in is **username + password**, with **no public sign-up**. The sign-up function isn't deployed at all, so nobody can create an account from the website or by calling Convex directly.
 
+Ways to get an account:
+1. **Admin → Team.** A signed-in admin creates staff accounts, removes them and changes their own password. Removing an account cuts off access immediately, including any open sessions.
+2. **CLI**, for the very first owner account on a fresh database:
+   ```bash
+   cd web
+   npx convex run team:bootstrapAdmin '{"username":"owner","password":"<min 10 chars>"}' --prod
+   ```
+
+Admin rights are granted to accounts created through Team or the bootstrap command, and to any username in the `ADMIN_USERNAMES` Convex env var (`npx convex env set ADMIN_USERNAMES "owner" --prod`).
+
+Audit every account:
 ```bash
-cd web
-# give someone admin on the LIVE site (comma-separated list)
-npx convex env set ADMIN_USERNAMES "demoadmin,yourname" --prod
+npx convex run team:auditAccounts --prod
 ```
 
-A demo admin account exists on the live site. Its credentials are in `web/.env.local` (`PROD_DEMO_ADMIN_*`), which is git-ignored and never committed. Before launch:
-1. Create your own account at `/admin/signin`.
-2. Run `npx convex env set ADMIN_USERNAMES "yourname" --prod`. This removes the demo account's access.
+A demo admin `demoadmin` exists on the live site. Its password is in `web/.env.local` (`PROD_DEMO_ADMIN_*`), which is git-ignored. Before launch:
+1. Sign in as `demoadmin`.
+2. Create your own account under **Team**, then sign in as yourself.
+3. Remove `demoadmin` under **Team**.
+4. Run `npx convex env set ADMIN_USERNAMES "" --prod`.
 
 ## Local development
 
@@ -70,7 +81,9 @@ Vercel environment variables (Production + Preview): `NEXT_PUBLIC_CONVEX_URL`, `
 
 ## Security
 
-- Admin functions reject anyone who isn't signed in and allowlisted. Tested: logged out → "Not signed in"; signed-in non-admin → "Not authorized".
+- No public sign-up: the sign-up function isn't deployed. Accounts are created only by admins (Team) or the CLI.
+- Admin functions reject anyone who isn't signed in and an admin. Tested: logged out → "Not signed in"; signed-in non-admin → "Not authorized"; removed account → "Not authorized" even with a live session.
+- Sign-in shows the same message for an unknown username and a wrong password, and the auth component rate-limits attempts.
 - The session refresh token lives in an httpOnly, Secure cookie. `/admin/*` is guarded by `proxy.js`, marked `noindex`, and not cached.
 - Every input is validated server-side (lengths, slugs, prices, colours, tier and option limits).
 - The quote form is rate-limited (site-wide + per email) and has a honeypot field.

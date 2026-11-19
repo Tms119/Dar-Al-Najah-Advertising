@@ -30,7 +30,8 @@ export const quoteStatus = v.union(
 
 export default defineSchema({
   // app-owned user rows; usernames/passwords live in the Convex Auth components
-  users: defineTable({}),
+  // isAdmin: accounts created through Admin → Team or the CLI bootstrap
+  users: defineTable({ isAdmin: v.optional(v.boolean()) }),
 
   quoteRequests: defineTable({
     name: v.string(),
