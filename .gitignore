@@ -1,0 +1,16 @@
+# dependencies & builds
+node_modules/
+.next/
+out/
+build/
+.vercel
+
+# env files — never commit secrets
+.env*
+!.env.example
+
+# misc
+.DS_Store
+*.log
+*.pem
+.claude/
