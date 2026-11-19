@@ -369,6 +369,8 @@ const shapes = {
   ),
 };
 
+export const SHAPES = Object.keys(shapes);
+
 export default function Mock({ shape = 'card', color = '#2B3BFF', className = '', title }) {
   const draw = shapes[shape] || shapes.card;
   return (

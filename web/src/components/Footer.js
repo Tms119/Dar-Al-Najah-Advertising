@@ -1,8 +1,12 @@
+'use client';
+
 import Link from 'next/link';
-import { CATALOG, COMPANY, slugify } from '@/data/catalog';
+import { COMPANY } from '@/data/site';
+import { useCatalog } from './CatalogProvider';
 import Logo from './Logo';
 
 export default function Footer() {
+  const { categories } = useCatalog();
   return (
     <footer className="site-footer">
       <div className="container">
@@ -25,12 +29,12 @@ export default function Footer() {
               ))}
             </div>
           </div>
-          {CATALOG.map((c) => (
+          {categories.map((c) => (
             <div key={c.id} className="footer-col">
               <h4><i className="dot" style={{ background: c.color }} />{c.short}</h4>
               <ul>
-                {c.groups[0].items.slice(0, 6).map(([n]) => (
-                  <li key={n}><Link href={`/products/${slugify(n)}`}>{n}</Link></li>
+                {c.groups.flatMap((g) => g.items).slice(0, 6).map((it) => (
+                  <li key={it.slug}><Link href={`/products/${it.slug}`}>{it.name}</Link></li>
                 ))}
                 <li><Link href={`/products?cat=${c.id}`} className="more">See all →</Link></li>
               </ul>

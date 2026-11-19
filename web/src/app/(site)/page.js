@@ -2,13 +2,12 @@ import Link from 'next/link';
 import Hero from '@/components/Hero';
 import Marquee from '@/components/Marquee';
 import ScrollText from '@/components/ScrollText';
-import ProductCard from '@/components/ProductCard';
 import Faq from '@/components/Faq';
 import Mock from '@/components/Mock';
-import { CATALOG, FEATURED, PRODUCTS, slugify } from '@/data/catalog';
+import { Bestsellers, ProductCount, ServicesStack } from '@/components/HomeLive';
 
 const STEPS = [
-  { n: '01', t: 'Pick a product', d: 'Choose from 90+ print, fabric, gift and photo products — or tell us your idea.', shape: 'card', c: '#2B3BFF' },
+  { n: '01', t: 'Pick a product', d: 'Choose from our print, fabric, gift and photo products — or tell us your idea.', shape: 'card', c: '#2B3BFF' },
   { n: '02', t: 'Send your design', d: 'Upload your artwork, or let our in-house designers create it for you.', shape: 'flyer', c: '#FF3D7F' },
   { n: '03', t: 'Approve the proof', d: 'We send a digital proof. Nothing prints until you say it looks right.', shape: 'sticker', c: '#00A86B' },
   { n: '04', t: 'Print & deliver', d: 'Printed, finished and delivered across the UAE — or pick up in-store.', shape: 'box', c: '#FFB800' },
@@ -60,56 +59,11 @@ export default function Home() {
             <span className="eyebrow">What we do</span>
             <h2 className="display">Four studios.<br />One print partner.</h2>
           </div>
-          <div className="stack">
-            {CATALOG.map((c, i) => {
-              const count = c.groups.reduce((a, g) => a + g.items.length, 0);
-              const sample = c.groups.flatMap((g) => g.items).slice(0, 7);
-              return (
-                <article key={c.id} className="stack-card" style={{ '--c': c.color, '--t': c.tint, '--i': i }}>
-                  <div className="stack-text">
-                    <div className="stack-top">
-                      <span className="stack-num">0{i + 1}</span>
-                      <span className="pill pill-solid">{count} products</span>
-                    </div>
-                    <h3>{c.name}</h3>
-                    <p>{c.tagline}</p>
-                    <div className="stack-chips">
-                      {sample.map(([n]) => (
-                        <Link key={n} href={`/products/${slugify(n)}`} className="chip chip-white">{n}</Link>
-                      ))}
-                    </div>
-                    <Link href={`/products?cat=${c.id}`} className="btn btn-ink">
-                      Explore {c.short.toLowerCase()} <span className="btn-arrow">→</span>
-                    </Link>
-                  </div>
-                  <div className="stack-art">
-                    <div className="stack-circle" />
-                    <Mock shape={c.hero} color={c.color} className="stack-mock" />
-                    <Mock shape={c.groups[0].items[2][1]} color={c.color} className="stack-mock-sm a" />
-                    <Mock shape={c.groups[c.groups.length - 1].items[0][1]} color={c.color} className="stack-mock-sm b" />
-                  </div>
-                </article>
-              );
-            })}
-          </div>
+          <ServicesStack />
         </div>
       </section>
 
-      {/* Bestsellers */}
-      <section className="section bestsellers">
-        <div className="container">
-          <div className="section-head split" data-reveal>
-            <div>
-              <span className="eyebrow">Bestsellers</span>
-              <h2 className="display">Customers&apos; <span className="hl">favourites</span></h2>
-            </div>
-            <Link href="/products" className="btn btn-ghost">See all {PRODUCTS.length} products <span className="btn-arrow">→</span></Link>
-          </div>
-          <div className="p-grid">
-            {FEATURED.slice(0, 8).map((p, i) => <ProductCard key={p.id} p={p} i={i} />)}
-          </div>
-        </div>
-      </section>
+      <Bestsellers />
 
       {/* Process */}
       <section className="section process">
@@ -135,7 +89,7 @@ export default function Home() {
       <section className="stats">
         <div className="container stats-grid">
           {[
-            [`${PRODUCTS.length}+`, 'Products & services'],
+            [<ProductCount key="n" />, 'Products & services'],
             ['Same day', 'Express printing'],
             ['4', 'In-house studios'],
             ['7', 'Emirates we deliver to'],

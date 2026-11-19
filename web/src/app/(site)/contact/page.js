@@ -1,10 +1,22 @@
+import { fetchQuery } from 'convex/nextjs';
+import { api } from '@convex/_generated/api';
 import ContactForm from './ContactForm';
-import { COMPANY, waLink } from '@/data/catalog';
+import { COMPANY, waLink } from '@/data/site';
 
 export const metadata = { title: 'Contact & quote — Dar Al Najah Advertising' };
 
 export default async function ContactPage({ searchParams }) {
-  const { product } = await searchParams;
+  const { product, details, estimate } = await searchParams;
+  const r = typeof product === 'string' ? await fetchQuery(api.catalog.getProduct, { slug: product }) : null;
+  const pre = r?.status === 'ok'
+    ? {
+        slug: r.product.id,
+        name: r.product.name,
+        category: r.product.category,
+        details: typeof details === 'string' ? details.slice(0, 500) : null,
+        estimate: Number.isFinite(Number(estimate)) ? Number(estimate) : null,
+      }
+    : null;
   return (
     <div className="contact page-pad">
       <div className="container contact-grid">
@@ -28,7 +40,7 @@ export default async function ContactPage({ searchParams }) {
             </div>
           </div>
         </div>
-        <ContactForm productId={product} />
+        <ContactForm pre={pre} />
       </div>
     </div>
   );

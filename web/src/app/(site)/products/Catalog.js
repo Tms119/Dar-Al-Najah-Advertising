@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from 'react';
 import ProductCard from '@/components/ProductCard';
-import { CATALOG, PRODUCTS } from '@/data/catalog';
+import { useCatalog } from '@/components/CatalogProvider';
 
 export default function Catalog({ initialCat = 'all' }) {
+  const { categories: CATALOG, products: PRODUCTS } = useCatalog();
   const [cat, setCatState] = useState(initialCat);
   const [group, setGroup] = useState('all');
   const [q, setQ] = useState('');
@@ -28,7 +29,7 @@ export default function Catalog({ initialCat = 'all' }) {
     if (sort === 'low') l = [...l].sort((a, b) => a.price - b.price);
     if (sort === 'az') l = [...l].sort((a, b) => a.name.localeCompare(b.name));
     return l;
-  }, [cat, group, q, sort]);
+  }, [PRODUCTS, cat, group, q, sort]);
 
   return (
     <div className="catalog page-pad">

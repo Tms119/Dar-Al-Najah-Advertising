@@ -1,4 +1,4 @@
-import { waLink } from '@/data/catalog';
+import { waLink } from '@/data/site';
 
 export default function WhatsAppFab() {
   return (

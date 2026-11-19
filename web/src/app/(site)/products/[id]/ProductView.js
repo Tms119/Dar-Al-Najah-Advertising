@@ -1,28 +1,27 @@
+'use client';
+
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { usePreloadedQuery } from 'convex/react';
 import Configurator from './Configurator';
 import ProductCard from '@/components/ProductCard';
-import { PRODUCTS, getProduct } from '@/data/catalog';
 
-export function generateStaticParams() {
-  return PRODUCTS.map((p) => ({ id: p.id }));
-}
+export default function ProductView({ preloaded }) {
+  const result = usePreloadedQuery(preloaded);
 
-export async function generateMetadata({ params }) {
-  const { id } = await params;
-  const p = getProduct(id);
-  return { title: p ? `${p.name} — Dar Al Najah Advertising` : 'Product not found' };
-}
+  // the product was hidden or deleted while this page was open
+  if (!result || result.status !== 'ok') {
+    return (
+      <div className="pdp page-pad">
+        <div className="container empty">
+          <h1 className="display sm">This product is no longer available</h1>
+          <p className="muted">It may have been updated or removed.</p>
+          <Link href="/products" className="btn btn-ink">Browse all products</Link>
+        </div>
+      </div>
+    );
+  }
 
-export default async function ProductPage({ params }) {
-  const { id } = await params;
-  const p = getProduct(id);
-  if (!p) notFound();
-
-  const related = PRODUCTS.filter((x) => x.category === p.category && x.id !== p.id)
-    .sort((a, b) => (b.group === p.group) - (a.group === p.group) || b.featured - a.featured)
-    .slice(0, 4);
-
+  const { product: p, related } = result;
   return (
     <div className="pdp page-pad">
       <div className="container">
@@ -32,7 +31,7 @@ export default async function ProductPage({ params }) {
           <span>{p.name}</span>
         </nav>
 
-        <Configurator p={p} />
+        <Configurator p={p} key={p.id} />
 
         <section className="pdp-info">
           {[

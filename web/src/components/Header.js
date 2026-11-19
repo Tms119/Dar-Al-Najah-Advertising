@@ -3,11 +3,15 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { CATALOG, COMPANY, slugify } from '@/data/catalog';
+import { COMPANY } from '@/data/site';
+import { useCatalog } from './CatalogProvider';
 import Logo from './Logo';
 import Mock from './Mock';
 
+const MEGA_LIMIT = 12;
+
 export default function Header() {
+  const { categories: CATALOG } = useCatalog();
   const [mega, setMega] = useState(null);
   const [open, setOpen] = useState(false);
   const [mobileCat, setMobileCat] = useState(null);
@@ -78,9 +82,12 @@ export default function Header() {
                 <div key={g.name} className="mega-col">
                   <h4>{g.name}</h4>
                   <ul>
-                    {g.items.map(([name]) => (
-                      <li key={name}><Link href={`/products/${slugify(name)}`}>{name}</Link></li>
+                    {g.items.slice(0, MEGA_LIMIT).map((it) => (
+                      <li key={it.slug}><Link href={`/products/${it.slug}`}>{it.name}</Link></li>
                     ))}
+                    {g.items.length > MEGA_LIMIT && (
+                      <li><Link href={`/products?cat=${active.id}`} className="mega-more">See all {g.items.length} →</Link></li>
+                    )}
                   </ul>
                 </div>
               ))}
@@ -108,8 +115,8 @@ export default function Header() {
                     <div key={g.name} className="m-group">
                       <h5>{g.name}</h5>
                       <div className="m-chips">
-                        {g.items.map(([name]) => (
-                          <Link key={name} href={`/products/${slugify(name)}`} className="chip">{name}</Link>
+                        {g.items.map((it) => (
+                          <Link key={it.slug} href={`/products/${it.slug}`} className="chip">{it.name}</Link>
                         ))}
                       </div>
                     </div>
@@ -118,8 +125,8 @@ export default function Header() {
               </div>
             </div>
           ))}
-          <Link href="/products" className="m-link" style={{ '--i': 4 }}>All products</Link>
-          <Link href="/contact" className="m-link" style={{ '--i': 5 }}>Contact & quote</Link>
+          <Link href="/products" className="m-link" style={{ '--i': CATALOG.length }}>All products</Link>
+          <Link href="/contact" className="m-link" style={{ '--i': CATALOG.length + 1 }}>Contact & quote</Link>
         </div>
         <div className="mobile-foot">
           <a href={`tel:${COMPANY.phone.replace(/\s/g, '')}`}>{COMPANY.phone}</a>

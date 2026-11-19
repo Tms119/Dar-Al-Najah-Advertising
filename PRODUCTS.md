@@ -1,7 +1,7 @@
 # Dar Al Najah Advertising — Product Catalogue & Data Plan
 
 The full menu, based on the competitor reference (descoonline.com), arranged for **Dar Al Najah Advertising**.
-The demo site already renders **all 95 products** from `web/src/data/catalog.js`.
+All **95 products** are live in the Convex database (seeded from `web/convex/seedData.ts`) and are managed from the admin dashboard at `/admin`.
 **12 are "featured"** and have full demo copy, options and pricing. The rest use sensible per-category defaults until the admin panel fills them in.
 
 > Prices, turnaround times, phone, WhatsApp number, email, testimonials and stats in the demo are **placeholders**. Confirm them with the client before launch.
@@ -288,4 +288,4 @@ quote_requests                        -- from product page + contact form
 - **Auth**: NextAuth or Supabase Auth.
 - **Email**: Resend for quote notifications.
 
-Migration path: replace the `CATALOG` / `PRODUCTS` exports in `web/src/data/catalog.js` with `getCategories()` / `getProducts()` / `getProduct(slug)` DB calls. The components already take plain objects, so the UI does not change.
+**Status:** implemented on Convex instead of Postgres. See `web/convex/schema.ts` (tables), `web/convex/catalog.ts` (public live queries) and `web/convex/admin.ts` (admin-only mutations). Options and quantity tiers are stored on the product document; images use Convex file storage.

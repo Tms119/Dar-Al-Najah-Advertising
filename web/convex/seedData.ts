@@ -1,15 +1,21 @@
-/* =========================================================
-   Dar Al Najah Advertising — catalogue data (demo)
-   Mirrors the future database schema described in PRODUCTS.md.
-   When the admin panel + DB land, replace these exports with
-   queries (getCategories(), getProducts(), getProduct(id)).
-   ========================================================= */
+/* Starter catalogue used once to seed the database (convex/seed.ts).
+   After seeding, the admin dashboard is the source of truth. */
 
-export const slugify = (s) =>
-  s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+export type SeedCategory = {
+  id: string; name: string; short: string; tagline: string; color: string; tint: string; hero: string;
+  groups: { name: string; items: [string, string][] }[];
+};
+export type SeedDetail = {
+  price: number; unit: string; turnaround: string; badge?: string; desc: string;
+  options: Record<string, string[]>; qty: number[];
+};
+export type SeedDefault = { price: number; turnaround: string; options: Record<string, string[]>; qty: number[] };
 
-/* [name, shape] — shape picks the illustrated mockup in <Mock /> */
-export const CATALOG = [
+export const slugify = (s: string) =>
+  s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+/* [name, shape] — shape picks the illustrated mockup on the website */
+export const CATALOG: SeedCategory[] = [
   {
     id: 'printing',
     name: 'Printing Services',
@@ -99,7 +105,7 @@ export const CATALOG = [
 ];
 
 /* Rich data for the featured demo products. */
-const DETAILS = {
+export const DETAILS: Record<string, SeedDetail> = {
   'business-cards': {
     price: 45, unit: '100 cards', turnaround: 'Same day', badge: 'Bestseller',
     desc: 'Premium business cards on 350–800gsm stocks with matte, gloss, soft-touch or spot-UV finishes. Rounded corners, foil and raised ink available.',
@@ -174,56 +180,10 @@ const DETAILS = {
   },
 };
 
-const DEFAULTS = {
+export const DEFAULTS: Record<string, SeedDefault> = {
   printing: { price: 50, turnaround: '24–48 hours', options: { Size: ['Small', 'Medium', 'Large'], Finish: ['Matte', 'Gloss'] }, qty: [50, 100, 250, 500] },
   fabric: { price: 35, turnaround: '3–5 days', options: { Size: ['S', 'M', 'L', 'XL', 'XXL'], Method: ['Embroidery', 'Print'] }, qty: [10, 25, 50, 100] },
   gifts: { price: 40, turnaround: '2–4 days', options: { Personalisation: ['Logo', 'Name', 'Logo + Name'], Packaging: ['Standard', 'Gift Box'] }, qty: [1, 10, 25, 50] },
   photo: { price: 30, turnaround: 'Same day', options: { Output: ['Digital', 'Print', 'Digital + Print'] }, qty: [1, 2, 5, 10] },
 };
 
-export const PRODUCTS = (() => {
-  const out = [];
-  const seen = new Set();
-  CATALOG.forEach((cat) =>
-    cat.groups.forEach((g) =>
-      g.items.forEach(([name, shape]) => {
-        const id = slugify(name);
-        if (seen.has(id)) return;
-        seen.add(id);
-        const d = DETAILS[id] || {};
-        const def = DEFAULTS[cat.id];
-        out.push({
-          id, name, shape,
-          category: cat.id, categoryName: cat.name, group: g.name,
-          color: cat.color, tint: cat.tint,
-          price: d.price ?? def.price,
-          unit: d.unit ?? 'starting from',
-          turnaround: d.turnaround ?? def.turnaround,
-          badge: d.badge ?? null,
-          desc: d.desc ?? `Custom ${name.toLowerCase()} produced in-house at Dar Al Najah. Send your artwork or let our designers create it — we handle print, finishing and delivery across the UAE.`,
-          options: d.options ?? def.options,
-          qty: d.qty ?? def.qty,
-          featured: Boolean(DETAILS[id]),
-        });
-      })
-    )
-  );
-  return out;
-})();
-
-export const FEATURED = PRODUCTS.filter((p) => p.featured);
-export const getProduct = (id) => PRODUCTS.find((p) => p.id === id);
-export const getCategory = (id) => CATALOG.find((c) => c.id === id);
-
-export const COMPANY = {
-  name: 'Dar Al Najah',
-  full: 'Dar Al Najah Advertising',
-  phone: '+971 4 000 0000',
-  whatsapp: '971500000000',
-  email: 'hello@daralnajahadv.com',
-  address: 'Dubai, United Arab Emirates',
-  hours: 'Sat–Thu · 9:00–22:00',
-};
-
-export const waLink = (text) =>
-  `https://wa.me/${COMPANY.whatsapp}?text=${encodeURIComponent(text)}`;

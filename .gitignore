@@ -14,3 +14,6 @@ build/
 *.log
 *.pem
 .claude/
+
+# agent tooling (regenerate with `npx convex ai-files install`)
+.agents/
