@@ -1,14 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useMutation } from 'convex/react';
-import { ConvexError } from 'convex/values';
-import { api } from '@convex/_generated/api';
 import { useCatalog } from '@/components/CatalogProvider';
 
 export default function ContactForm({ pre }) {
   const { categories } = useCatalog();
-  const submit = useMutation(api.quotes.submit);
   const [cats, setCats] = useState(pre ? [pre.category] : []);
   const [state, setState] = useState('idle'); // idle | sending | sent
   const [error, setError] = useState(null);
@@ -23,7 +19,10 @@ export default function ContactForm({ pre }) {
     setError(null);
     setState('sending');
     try {
-      await submit({
+      const res = await fetch('/api/quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
         name: String(f.get('name') || ''),
         company: String(f.get('company') || ''),
         email: String(f.get('email') || ''),
@@ -33,11 +32,16 @@ export default function ContactForm({ pre }) {
         productSlug: pre?.slug ?? null,
         details: pre?.details ?? null,
         estimate: pre?.estimate ?? null,
+        }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Something went wrong. Please try WhatsApp instead.');
+      }
       setState('sent');
     } catch (err) {
       setState('idle');
-      setError(err instanceof ConvexError ? String(err.data) : 'Something went wrong. Please try WhatsApp instead.');
+      setError(err.message || 'Something went wrong. Please try WhatsApp instead.');
     }
   };
 

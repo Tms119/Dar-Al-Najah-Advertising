@@ -1,14 +1,24 @@
 import { ConvexError, v } from "convex/values";
 import { RateLimiter, HOUR, MINUTE } from "@convex-dev/rate-limiter";
 import { components } from "./_generated/api";
-import { mutation } from "./_generated/server";
+import { env, mutation } from "./_generated/server";
 
 const rateLimiter = new RateLimiter(components.rateLimiter, {
-  // whole-site ceiling so a bot can't flood the inbox
-  quoteGlobal: { kind: "token bucket", rate: 60, period: HOUR, capacity: 20 },
-  // per-email ceiling
+  // per visitor IP (supplied by the website server): the main anti-spam limit
+  quotePerIp: { kind: "token bucket", rate: 5, period: HOUR, capacity: 3 },
+  // per email address
   quotePerEmail: { kind: "fixed window", rate: 3, period: 10 * MINUTE },
+  // whole-site safety ceiling, generous so one attacker can't lock out customers
+  quoteGlobal: { kind: "token bucket", rate: 300, period: HOUR, capacity: 60 },
 });
+
+/** Constant-time comparison so the key can't be guessed byte by byte. */
+function sameKey(a: string, b: string) {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -18,9 +28,13 @@ function clean(s: string, max: number, field: string) {
   return t;
 }
 
-/** Public: website quote / contact form. Validated and rate-limited. */
+/** Quote / contact form. Only accepted from the website server
+ *  (src/app/api/quote/route.js), which adds the visitor IP and the shared key.
+ *  Validated and rate-limited per IP, per email and site-wide. */
 export const submit = mutation({
   args: {
+    serverKey: v.string(),
+    ip: v.string(),
     name: v.string(),
     email: v.string(),
     phone: v.string(),
@@ -33,14 +47,19 @@ export const submit = mutation({
   },
   returns: v.null(),
   handler: async (ctx, a) => {
+    const expected = env.QUOTE_SERVER_KEY;
+    if (!expected || !sameKey(a.serverKey, expected)) throw new ConvexError("Not allowed");
+    const ip = a.ip.trim().slice(0, 64) || "unknown";
+
     const name = clean(a.name, 100, "Name");
     const email = clean(a.email, 200, "Email").toLowerCase();
     if (!name) throw new ConvexError("Please enter your name");
     if (!EMAIL_RE.test(email)) throw new ConvexError("Please enter a valid email");
     if (a.interests.length > 10) throw new ConvexError("Too many categories selected");
 
-    await rateLimiter.limit(ctx, "quoteGlobal", { throws: true });
+    await rateLimiter.limit(ctx, "quotePerIp", { key: ip, throws: true });
     await rateLimiter.limit(ctx, "quotePerEmail", { key: email, throws: true });
+    await rateLimiter.limit(ctx, "quoteGlobal", { throws: true });
 
     let productSlug: string | null = null;
     if (a.productSlug) {
