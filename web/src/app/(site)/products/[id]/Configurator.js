@@ -39,7 +39,7 @@ export default function Configurator({ p }) {
           ) : (
             <>
               <Mock shape={p.shape} color={p.color} className="pdp-mock" title={p.name} key={view} />
-              <span className="pdp-note">Illustration — product photos coming soon</span>
+              <span className="pdp-note">Illustration. Product photos coming soon</span>
             </>
           )}
         </div>
@@ -90,7 +90,7 @@ export default function Configurator({ p }) {
           </div>
         )}
 
-        <p className="pdp-artwork">Have artwork ready? Send it on WhatsApp after you request a quote — or let our designers create it.</p>
+        <p className="pdp-artwork">Have artwork ready? Send it on WhatsApp after you request a quote, or let our designers create it.</p>
 
         <div className="pdp-buy">
           <div className="pdp-price">
@@ -102,7 +102,7 @@ export default function Configurator({ p }) {
             <Link className="btn btn-ink" href={quoteHref}>
               Request a quote <span className="btn-arrow">→</span>
             </Link>
-            <a className="btn btn-ghost" href={waLink(`Hi! I'd like a quote for ${p.name} — ${summary}. Estimated AED ${price}.`)} target="_blank" rel="noopener noreferrer">
+            <a className="btn btn-ghost" href={waLink(`Hi! I'd like a quote for ${p.name}: ${summary}. Estimated AED ${price}.`)} target="_blank" rel="noopener noreferrer">
               WhatsApp
             </a>
           </div>

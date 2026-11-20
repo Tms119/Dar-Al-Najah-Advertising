@@ -23,7 +23,7 @@ export default function ProductEditor({ product, structure }) {
     description: product?.description ?? '',
     basePrice: product?.basePrice ?? 0,
     priceUnit: product?.priceUnit ?? 'starting from',
-    turnaround: product?.turnaround ?? '24–48 hours',
+    turnaround: product?.turnaround ?? '24 to 48 hours',
     badge: product?.badge ?? '',
     mockupShape: product?.mockupShape ?? 'card',
     isActive: product?.isActive ?? true,

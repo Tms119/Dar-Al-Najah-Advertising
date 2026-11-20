@@ -18,7 +18,7 @@ function describe(userError) {
     case 'OTHER_ERROR':
       console.error('Sign-in failed:', userError.cause);
       return 'Something went wrong. Please try again.';
-    default: return 'Sign-in failed. Please try again.';
+    default: return 'Sign in failed. Please try again.';
   }
 }
 

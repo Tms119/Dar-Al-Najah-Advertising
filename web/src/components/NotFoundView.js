@@ -10,7 +10,7 @@ export default function NotFoundView() {
         </div>
         <span className="eyebrow">Error 404</span>
         <h1 className="display xl">Misprint.</h1>
-        <p className="muted">This page doesn&apos;t exist — or the product was moved. Let&apos;s get you back on paper.</p>
+        <p className="muted">This page doesn&apos;t exist, or the product was moved. Let&apos;s get you back on paper.</p>
         <div className="hero-actions" style={{ justifyContent: 'flex-start', animation: 'none' }}>
           <Link href="/products" className="btn btn-ink">Browse products <span className="btn-arrow">→</span></Link>
           <Link href="/" className="btn btn-ghost">Go home</Link>

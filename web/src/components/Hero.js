@@ -16,8 +16,8 @@ const FLOATERS = [
 
 const QUICK = [
   ['Business cards', 'business-cards'],
-  ['Roll-ups', 'roll-up-stands'],
-  ['T-shirts', 't-shirt-printing'],
+  ['Roll ups', 'roll-up-stands'],
+  ['T shirts', 't-shirt-printing'],
   ['Stickers', 'sticker'],
   ['Boxes', 'box'],
   ['Passport photos', 'passport-size-photo'],
@@ -63,14 +63,14 @@ export default function Hero() {
 
       <div className="hero-content">
         <span className="eyebrow hero-eyebrow">
-          <i className="live-dot" /> Dubai&apos;s one-stop print shop
+          <i className="live-dot" /> Dubai&apos;s one stop print shop
         </span>
 
         <h1 className="hero-title">
           <span className="ht-line"><span>Print that</span></span>
           <span className="ht-line">
             <span>gets</span>
-            <span className="tag tag-blue">same-day printing</span>
+            <span className="tag tag-blue">same day printing</span>
           </span>
           <span className="ht-line">
             <span className="ht-outline">noticed.</span>
@@ -79,7 +79,7 @@ export default function Hero() {
         </h1>
 
         <p className="hero-sub">
-          Business cards to banners, embroidered caps to corporate gifts — designed, printed and finished
+          Business cards to banners, embroidered caps to corporate gifts, all designed, printed and finished
           under one roof by <b>Dar Al Najah Advertising</b>.
         </p>
 

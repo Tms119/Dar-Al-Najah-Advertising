@@ -14,10 +14,10 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 export const metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: 'Dar Al Najah Advertising — Printing, Embroidery & Gifts in Dubai',
-    template: '%s — Dar Al Najah Advertising',
+    default: 'Dar Al Najah Advertising | Printing, Embroidery & Gifts in Dubai',
+    template: '%s | Dar Al Najah Advertising',
   },
-  description: 'Business cards, flyers, roll-ups, packaging, embroidery, corporate gifts and photo studio services in Dubai. Same-day printing available.',
+  description: 'Business cards, flyers, roll up banners, packaging, embroidery, corporate gifts and photo studio services in Dubai. Same day printing available.',
   applicationName: 'Dar Al Najah Advertising',
   openGraph: {
     type: 'website',

@@ -19,7 +19,7 @@ function text(s: string, max: number, field: string, required = true) {
 
 async function checkImage(ctx: MutationCtx, id: Id<"_storage">) {
   const meta = await ctx.db.system.get("_storage", id);
-  if (!meta) throw new ConvexError("An uploaded image is missing — please upload it again");
+  if (!meta) throw new ConvexError("An uploaded image is missing. Please upload it again");
   if (!meta.contentType?.startsWith("image/")) throw new ConvexError("Only image files can be used as photos");
   if (meta.size > 8 * 1024 * 1024) throw new ConvexError("Images must be under 8 MB");
 }
@@ -261,7 +261,7 @@ export const listProducts = query({
         categorySlug: cat?.slug ?? null,
         categoryName: cat?.name ?? "Unassigned",
         color: cat?.color ?? "#888888",
-        groupName: group?.name ?? "—",
+        groupName: group?.name ?? "No group",
         menuCount: links.length,
         updated: p._creationTime,
       });
@@ -334,14 +334,14 @@ export const saveProduct = mutation({
     if (a.options.length > 8) throw new ConvexError("Up to 8 option groups");
     for (const o of a.options) {
       text(o.name, 40, "Option name");
-      if (!o.values.length || o.values.length > 20) throw new ConvexError(`"${o.name}" needs 1–20 values`);
+      if (!o.values.length || o.values.length > 20) throw new ConvexError(`"${o.name}" needs 1 to 20 values`);
       for (const val of o.values) {
         text(val.label, 60, "Option value");
         if (!Number.isFinite(val.priceModifier) || val.priceModifier < -90 || val.priceModifier > 1000)
           throw new ConvexError("Price modifier must be between -90% and 1000%");
       }
     }
-    if (!a.quantityTiers.length || a.quantityTiers.length > 10) throw new ConvexError("Add 1–10 quantity tiers");
+    if (!a.quantityTiers.length || a.quantityTiers.length > 10) throw new ConvexError("Add 1 to 10 quantity tiers");
     for (const t of a.quantityTiers) {
       if (!Number.isInteger(t.quantity) || t.quantity < 1) throw new ConvexError("Quantities must be whole numbers ≥ 1");
       if (!Number.isFinite(t.price) || t.price < 0) throw new ConvexError("Tier prices must be positive");

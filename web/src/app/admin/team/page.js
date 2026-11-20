@@ -34,7 +34,7 @@ export default function AdminTeam() {
     setErr(null); setMsg(null); setBusy(true);
     try {
       await create({ username, password });
-      setMsg(`Account "${username.trim().toLowerCase()}" created. Share the username and password with them privately — they can change the password after signing in.`);
+      setMsg(`Account "${username.trim().toLowerCase()}" created. Share the username and password with them privately. They can change the password after signing in.`);
       setUsername(''); setPassword('');
     } catch (e2) { setErr(errText(e2)); } finally { setBusy(false); }
   };
@@ -50,7 +50,7 @@ export default function AdminTeam() {
         e2.error === 'INVALID_CREDENTIALS' ? 'Current password is incorrect.'
         : e2.error === 'PASSWORD_TOO_SHORT' ? `New password must be at least ${e2.minimumLength} characters.`
         : e2.error === 'PASSWORD_TOO_COMMON' ? 'That password is too common.'
-        : e2.error === 'RATE_LIMITED' ? 'Too many attempts — wait a moment.'
+        : e2.error === 'RATE_LIMITED' ? 'Too many attempts. Wait a moment and try again.'
         : 'Could not change password.' });
     } catch (e3) { setPwMsg({ ok: false, text: errText(e3) }); }
   };
@@ -60,7 +60,7 @@ export default function AdminTeam() {
       <header className="a-head">
         <div>
           <h1>Team</h1>
-          <p className="a-muted">This is an internal dashboard — there is no public sign-up. Only admins can add accounts here.</p>
+          <p className="a-muted">This is an internal dashboard with no public sign up. Only admins can add accounts here.</p>
         </div>
       </header>
 

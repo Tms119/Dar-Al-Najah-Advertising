@@ -17,3 +17,9 @@ build/
 
 # agent tooling (regenerate with `npx convex ai-files install`)
 .agents/
+
+# internal team docs (ops, admin accounts, planning) and local AI tooling: never published
+internal/
+web/AGENTS.md
+web/CLAUDE.md
+web/skills-lock.json

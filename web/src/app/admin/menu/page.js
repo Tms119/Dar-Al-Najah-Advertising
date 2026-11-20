@@ -94,7 +94,7 @@ function GroupProducts({ groupId, onError }) {
   const items = useQuery(api.admin.groupProducts, { groupId });
   const move = useMutation(api.admin.moveProductInGroup);
   if (items === undefined) return <p className="a-muted a-small a-indent">Loading…</p>;
-  if (!items.length) return <p className="a-muted a-small a-indent">No products yet — assign them from a product&apos;s editor.</p>;
+  if (!items.length) return <p className="a-muted a-small a-indent">No products yet. Assign them from a product&apos;s editor.</p>;
   return (
     <ol className="a-order">
       {items.map((it, i) => (
@@ -125,7 +125,7 @@ function CategoryForm({ value, onSave, onCancel }) {
       if (!res.ok) throw new Error();
       const { storageId } = await res.json();
       setV((s) => ({ ...s, imageId: storageId, imageUrl: URL.createObjectURL(file) }));
-    } catch { setErr('Upload failed — please try again.'); } finally { setBusy(false); }
+    } catch { setErr('Upload failed. Please try again.'); } finally { setBusy(false); }
   };
   const set = (k, x) => setV((s) => ({ ...s, [k]: x }));
   const slugify = (s) => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -146,7 +146,7 @@ function CategoryForm({ value, onSave, onCancel }) {
         </label>
       </div>
       <div className="a-field">
-        <span>Photo (optional — replaces the illustration in the menu and on the home page)</span>
+        <span>Photo (optional, replaces the illustration in the menu and on the home page)</span>
         <div className="a-cat-photo">
           <div className="a-cat-photo-preview" style={{ background: v.tint }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}

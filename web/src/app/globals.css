@@ -15,7 +15,8 @@
   --line-2: rgba(18, 18, 18, 0.06);
 
   --blue: #2B3BFF;
-  --cyan: #00B4F0;
+  --cyan: #21AAE1; /* logo blue */
+  --brand-orange: #F8991D; /* logo orange */
   --pink: #FF3D7F;
   --yellow: #FFB800;
   --green: #00A86B;
@@ -148,9 +149,8 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 
 .logo { display: inline-flex; align-items: center; gap: 10px; flex: none; }
-.logo-dots { display: grid; grid-template-columns: repeat(2, 9px); gap: 3px; transition: transform 0.6s var(--ease-back); }
-.logo-dots i { width: 9px; height: 9px; border-radius: 50%; }
-.logo:hover .logo-dots { transform: rotate(90deg); }
+.logo-mark { width: 40px; height: auto; flex: none; transition: transform 0.5s var(--ease-back); }
+.logo:hover .logo-mark { transform: rotate(-6deg) scale(1.06); }
 .logo-text { display: flex; flex-direction: column; line-height: 1; }
 .logo-text b { font-family: var(--f-display); font-weight: 800; font-size: 19px; letter-spacing: -0.01em; text-transform: uppercase; font-variation-settings: 'wdth' 85; }
 .logo-text small { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
@@ -803,12 +803,7 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 [data-no-intro] .intro { display: none; }
 @keyframes introOut { to { clip-path: inset(0 0 100% 0); visibility: hidden; } }
 .intro-inner { display: flex; flex-direction: column; align-items: center; gap: 18px; }
-.intro-dots { display: grid; grid-template-columns: repeat(2, 18px); gap: 6px; }
-.intro-dots i { width: 18px; height: 18px; border-radius: 50%; animation: dotDrop 0.55s var(--ease-back) both; }
-.intro-dots i:nth-child(1) { background: var(--cyan); }
-.intro-dots i:nth-child(2) { background: var(--pink); animation-delay: 0.08s; }
-.intro-dots i:nth-child(3) { background: var(--yellow); animation-delay: 0.16s; }
-.intro-dots i:nth-child(4) { background: var(--ink); animation-delay: 0.24s; }
+.intro-mark { width: clamp(64px, 9vw, 92px); height: auto; animation: dotDrop 0.7s var(--ease-back) both; }
 @keyframes dotDrop { from { transform: translateY(-60px) scale(0.4); opacity: 0; } }
 .intro-word {
   display: flex; overflow: hidden; padding: 0.05em 0.1em;
@@ -942,3 +937,8 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
   .pdp-gallery { position: sticky; top: 100px; }
   .pdp-panel .display.lg { font-size: clamp(32px, 5vw, 48px); }
 }
+
+/* official logo in the footer (on white, so its dark text stays visible) */
+.f-logo { display: block; width: min(300px, 100%); padding: 16px 18px; margin-bottom: 22px; border-radius: var(--r); background: #fff; transition: transform 0.4s var(--ease); }
+.f-logo:hover { transform: translateY(-3px); }
+.f-logo img { width: 100%; height: auto; }

@@ -6,7 +6,7 @@ export const COMPANY = {
   whatsapp: '971500000000',
   email: 'hello@daralnajahadv.com',
   address: 'Dubai, United Arab Emirates',
-  hours: 'Sat–Thu · 9:00–22:00',
+  hours: 'Saturday to Thursday, 9am to 10pm',
 };
 
 export const waLink = (text) =>

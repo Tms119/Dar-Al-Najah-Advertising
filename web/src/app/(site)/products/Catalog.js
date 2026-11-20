@@ -37,7 +37,7 @@ export default function Catalog({ initialCat = 'all' }) {
         <header className="cat-head" style={{ '--c': category?.color || 'var(--ink)' }}>
           <span className="eyebrow">{category ? 'Category' : 'Shop'}</span>
           <h1 className="display xl">{category ? category.name : 'All products'}</h1>
-          <p className="muted">{category ? category.tagline : 'Everything we print, stitch, engrave and shoot — in one place.'}</p>
+          <p className="muted">{category ? category.tagline : 'Everything we print, stitch, engrave and shoot, all in one place.'}</p>
         </header>
 
         <div className="cat-toolbar">
@@ -60,7 +60,7 @@ export default function Catalog({ initialCat = 'all' }) {
             <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort">
               <option value="featured">Featured</option>
               <option value="low">Price: low to high</option>
-              <option value="az">A–Z</option>
+              <option value="az">A to Z</option>
             </select>
           </div>
         </div>
@@ -83,7 +83,7 @@ export default function Catalog({ initialCat = 'all' }) {
         ) : (
           <div className="empty">
             <h3>Nothing matches “{q}”</h3>
-            <p className="muted">We probably still make it — ask us on WhatsApp.</p>
+            <p className="muted">We probably still make it. Ask us on WhatsApp.</p>
           </div>
         )}
       </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { COMPANY, waLink } from '@/data/site';
 import { useCatalog } from './CatalogProvider';
@@ -41,8 +42,11 @@ export default function Footer() {
         {/* Link grid */}
         <div className="f-grid">
           <div className="f-about">
+            <Link href="/" className="f-logo" aria-label="Dar Al Najah Advertising, home">
+              <Image src="/brand/logo-1200.webp" alt="Dar Al Najah Advertising. All Kinds of Printing Solution" width={1200} height={602} sizes="300px" />
+            </Link>
             <p className="f-about-text">
-              Full-service printing, embroidery, gifting and photo studio in Dubai — designed, printed and finished in-house.
+              Printing, embroidery, gifting and a photo studio in Dubai. Everything is designed, printed and finished in our own studio.
             </p>
             <dl className="f-info">
               <div><dt>Visit</dt><dd>{COMPANY.address}</dd></div>

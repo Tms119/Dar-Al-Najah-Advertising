@@ -47,7 +47,7 @@ export default function AdminQuotes() {
                 {(q.productSlug || q.details) && (
                   <p className="a-quote-product">
                     {q.productSlug && <a href={`/products/${q.productSlug}`} target="_blank" rel="noreferrer"><b>{q.productSlug}</b></a>}
-                    {q.details && <span> — {q.details}</span>}
+                    {q.details && <span>: {q.details}</span>}
                     {q.estimate !== null && <span className="a-muted"> · est. AED {q.estimate.toLocaleString()}</span>}
                   </p>
                 )}

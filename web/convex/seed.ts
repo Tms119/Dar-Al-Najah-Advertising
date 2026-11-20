@@ -1,6 +1,7 @@
 import { internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { CATALOG, DEFAULTS, DETAILS, slugify } from "./seedData";
+import { cleanCopy } from "./lib/copy";
 
 const QTY_MULT = [1, 2.1, 3.8, 6.9, 12];
 
@@ -21,7 +22,7 @@ export const run = internalMutation({
         slug: cat.id,
         name: cat.name,
         shortName: cat.short,
-        tagline: cat.tagline,
+        tagline: cleanCopy(cat.tagline),
         color: cat.color,
         tint: cat.tint,
         heroShape: cat.hero,
@@ -46,18 +47,18 @@ export const run = internalMutation({
             productId = await ctx.db.insert("products", {
               slug,
               name,
-              description:
+              description: cleanCopy(
                 d?.desc ??
-                `Custom ${name.toLowerCase()} produced in-house at Dar Al Najah. Send your artwork or let our designers create it — we handle print, finishing and delivery across the UAE.`,
+                `Custom ${name.toLowerCase()} produced in our own studio at Dar Al Najah. Send your artwork or let our designers create it, and we handle print, finishing and delivery across the UAE.`),
               basePrice: base,
-              priceUnit: d?.unit ?? "starting from",
-              turnaround: d?.turnaround ?? def.turnaround,
+              priceUnit: cleanCopy(d?.unit ?? "starting from"),
+              turnaround: cleanCopy(d?.turnaround ?? def.turnaround),
               badge: d?.badge ?? null,
               mockupShape: shape,
               imageIds: [],
               options: Object.entries(optionMap).map(([optName, labels]) => ({
-                name: optName,
-                values: labels.map((label, i) => ({ label, priceModifier: i * 8 })),
+                name: cleanCopy(optName),
+                values: labels.map((label, i) => ({ label: cleanCopy(label), priceModifier: i * 8 })),
               })),
               quantityTiers: qty.map((quantity, i) => ({
                 quantity,

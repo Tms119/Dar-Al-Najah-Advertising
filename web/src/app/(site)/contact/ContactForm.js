@@ -37,7 +37,7 @@ export default function ContactForm({ pre }) {
       setState('sent');
     } catch (err) {
       setState('idle');
-      setError(err instanceof ConvexError ? String(err.data) : 'Something went wrong — please try WhatsApp instead.');
+      setError(err instanceof ConvexError ? String(err.data) : 'Something went wrong. Please try WhatsApp instead.');
     }
   };
 
@@ -45,7 +45,7 @@ export default function ContactForm({ pre }) {
     return (
       <div className="form-card sent">
         <span className="sent-ic">✓</span>
-        <h2 className="display sm">Thanks — we&apos;re on it!</h2>
+        <h2 className="display sm">Thanks, we&apos;re on it!</h2>
         <p className="muted">We&apos;ve received your request and will reply with a quote shortly, usually within a few working hours.</p>
         <button className="btn btn-ghost" onClick={() => setState('idle')}>Send another</button>
       </div>

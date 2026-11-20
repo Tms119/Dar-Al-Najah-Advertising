@@ -22,7 +22,8 @@ export default function IntroLoader({ word }) {
   return (
     <div className="intro" aria-hidden="true" ref={ref}>
       <div className="intro-inner">
-        <div className="intro-dots"><i /><i /><i /><i /></div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/brand/mark-144.webp" alt="" width={92} height={87} className="intro-mark" fetchPriority="high" />
         <div className="intro-word">
           {[...word].map((c, i) => (
             <span key={i} style={{ '--i': i }}>{c === ' ' ? ' ' : c}</span>

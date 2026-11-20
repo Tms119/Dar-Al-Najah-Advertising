@@ -13,7 +13,7 @@ const USERNAME_RE = /^[a-z0-9._-]{3,32}$/;
 async function createAccount(ctx: MutationCtx, rawUsername: string, password: string): Promise<Id<"users">> {
   const username = rawUsername.trim().toLowerCase();
   if (!USERNAME_RE.test(username))
-    throw new ConvexError("Username must be 3–32 characters: lowercase letters, numbers, dots, dashes or underscores");
+    throw new ConvexError("Username must be 3 to 32 characters: lowercase letters, numbers, dots, dashes or underscores");
   if (password.length < MIN_PASSWORD) throw new ConvexError(`Password must be at least ${MIN_PASSWORD} characters`);
   if (password.length > 128) throw new ConvexError("Password is too long");
   if (password.trim() !== password) throw new ConvexError("Password can't start or end with a space");
@@ -30,7 +30,7 @@ async function createAccount(ctx: MutationCtx, rawUsername: string, password: st
     minimumLength: MIN_PASSWORD,
   });
   if (!p.success) {
-    const msg = p.userError.error === "PASSWORD_TOO_COMMON" ? "That password is too common — choose a stronger one" : `Invalid password (${p.userError.error})`;
+    const msg = p.userError.error === "PASSWORD_TOO_COMMON" ? "That password is too common. Choose a stronger one" : `Invalid password (${p.userError.error})`;
     throw new ConvexError(msg); // throwing rolls back the user + username above
   }
   return userId;
