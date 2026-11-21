@@ -59,7 +59,7 @@ export default function AdminProducts() {
 
       <div className="a-card a-table-wrap">
         {products === undefined ? <p className="a-muted">Loading…</p> : (
-          <table className="a-table">
+          <table className="a-table prod-table">
             <thead>
               <tr><th>Product</th><th>Category</th><th>From</th><th>Live</th><th>Featured</th><th aria-label="Actions" /></tr>
             </thead>

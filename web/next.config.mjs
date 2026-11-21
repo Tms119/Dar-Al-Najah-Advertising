@@ -2,13 +2,17 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 // Content Security Policy: only this site, Convex (data + uploaded images)
 // and Vercel's preview toolbar may load resources.
-const csp = [
+// `admin` additionally lets the invoice PDF engine load its WebAssembly
+// (data: URL) and run in a background worker (blob: URL). The public site
+// keeps the stricter policy.
+const buildCsp = ({ admin }) => [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://vercel.live https://va.vercel-scripts.com`,
+  `script-src 'self' 'unsafe-inline'${admin ? " 'wasm-unsafe-eval'" : ''}${isDev ? " 'unsafe-eval'" : ''} https://vercel.live https://va.vercel-scripts.com`,
+  ...(admin ? ["worker-src 'self' blob:"] : []),
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://*.convex.cloud https://*.convex.site https://vercel.com https://vercel.live",
   "font-src 'self' data: https://vercel.live",
-  "connect-src 'self' https://va.vercel-scripts.com https://*.convex.cloud wss://*.convex.cloud https://*.convex.site https://vercel.live wss://ws-us3.pusher.com",
+  `connect-src 'self'${admin ? ' data: blob:' : ''} https://va.vercel-scripts.com https://*.convex.cloud wss://*.convex.cloud https://*.convex.site https://vercel.live wss://ws-us3.pusher.com`,
   "frame-src https://vercel.live",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -17,8 +21,7 @@ const csp = [
   ...(isDev ? [] : ['upgrade-insecure-requests']),
 ].join('; ');
 
-const securityHeaders = [
-  { key: 'Content-Security-Policy', value: csp },
+const commonHeaders = [
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
@@ -37,8 +40,17 @@ const nextConfig = {
   },
   async headers() {
     return [
-      { source: '/:path*', headers: securityHeaders },
-      { source: '/admin/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }, { key: 'Cache-Control', value: 'no-store' }] },
+      { source: '/:path*', headers: commonHeaders },
+      // everything except /admin gets the strict policy (one CSP header per page)
+      { source: '/((?!admin(?:/|$)).*)', headers: [{ key: 'Content-Security-Policy', value: buildCsp({ admin: false }) }] },
+      {
+        source: '/admin/:path*',
+        headers: [
+          { key: 'Content-Security-Policy', value: buildCsp({ admin: true }) },
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+          { key: 'Cache-Control', value: 'no-store' },
+        ],
+      },
     ];
   },
 };

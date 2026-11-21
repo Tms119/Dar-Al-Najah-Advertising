@@ -11,6 +11,7 @@
 import type * as admin from "../admin.js";
 import type * as auth from "../auth.js";
 import type * as catalog from "../catalog.js";
+import type * as invoices from "../invoices.js";
 import type * as lib_admin from "../lib/admin.js";
 import type * as lib_copy from "../lib/copy.js";
 import type * as maintenance from "../maintenance.js";
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   auth: typeof auth;
   catalog: typeof catalog;
+  invoices: typeof invoices;
   "lib/admin": typeof lib_admin;
   "lib/copy": typeof lib_copy;
   maintenance: typeof maintenance;

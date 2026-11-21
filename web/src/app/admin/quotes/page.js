@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@convex/_generated/api';
@@ -54,6 +55,7 @@ export default function AdminQuotes() {
                 {q.interests.length > 0 && <p className="a-small">Interested in: {q.interests.join(', ')}</p>}
                 {q.message && <p className="a-quote-msg">{q.message}</p>}
                 <div className="a-actions">
+                  <Link className="a-btn a-btn-sm a-btn-primary" href={`/admin/invoices/new?quote=${q._id}`}>Create invoice</Link>
                   <a className="a-btn a-btn-sm" href={`mailto:${q.email}?subject=${encodeURIComponent('Your quote from Dar Al Najah')}`}>✉ {q.email}</a>
                   {phone && <a className="a-btn a-btn-sm" href={`https://wa.me/${phone}`} target="_blank" rel="noreferrer">WhatsApp {q.phone}</a>}
                   <button className="a-btn a-btn-sm a-btn-danger" onClick={() => window.confirm('Delete this request permanently?') && remove({ id: q._id })}>Delete</button>

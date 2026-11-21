@@ -42,7 +42,12 @@ export const overview = query({
       .withIndex("by_status", (q) => q.eq("status", "new"))
       .take(1000);
     const categories = await ctx.db.query("categories").take(50);
+    const unpaid = await ctx.db
+      .query("invoices")
+      .withIndex("by_status", (q) => q.eq("status", "issued"))
+      .take(1000);
     return {
+      unpaidInvoices: unpaid.length,
       products: products.length,
       activeProducts: products.filter((p) => p.isActive).length,
       featured: products.filter((p) => p.isFeatured && p.isActive).length,

@@ -28,6 +28,30 @@ export const quoteStatus = v.union(
   v.literal("lost"),
 );
 
+export const invoiceStatus = v.union(
+  v.literal("draft"),
+  v.literal("issued"),
+  v.literal("paid"),
+  v.literal("void"),
+);
+
+export const invoiceCustomer = v.object({
+  name: v.string(),
+  company: v.string(),
+  email: v.string(),
+  phone: v.string(),
+  address: v.string(),
+  trn: v.string(), // customer's UAE tax registration number (optional, may be "")
+});
+
+export const invoiceItem = v.object({
+  productId: v.union(v.id("products"), v.null()), // null = typed manually
+  description: v.string(),
+  details: v.string(),
+  quantity: v.number(),
+  unitPrice: v.number(), // AED, before VAT
+});
+
 export default defineSchema({
   // app-owned user rows; usernames/passwords live in the Convex Auth components
   // isAdmin: accounts created through Admin → Team or the CLI bootstrap
@@ -96,4 +120,40 @@ export default defineSchema({
   })
     .index("by_groupId_and_sortOrder", ["groupId", "sortOrder"])
     .index("by_productId", ["productId"]),
+
+  invoices: defineTable({
+    number: v.string(), // INV-2026-0001
+    year: v.number(),
+    status: invoiceStatus,
+    issueDate: v.number(), // ms
+    dueDate: v.union(v.number(), v.null()),
+    customer: invoiceCustomer,
+    items: v.array(invoiceItem),
+    discount: v.number(), // AED off the subtotal
+    vatRate: v.number(), // percent, 5 = UAE standard rate
+    notes: v.string(),
+    // computed on the server on every save
+    subtotal: v.number(),
+    vat: v.number(),
+    total: v.number(),
+    quoteId: v.union(v.id("quoteRequests"), v.null()),
+    createdBy: v.id("users"),
+  })
+    .index("by_number", ["number"])
+    .index("by_status", ["status"]),
+
+  // sequential invoice numbers per year, incremented inside the same transaction
+  counters: defineTable({ name: v.string(), value: v.number() }).index("by_name", ["name"]),
+
+  // single document: company details printed on invoices
+  invoiceSettings: defineTable({
+    companyName: v.string(),
+    address: v.string(),
+    phone: v.string(),
+    email: v.string(),
+    trn: v.string(),
+    bankDetails: v.string(),
+    terms: v.string(),
+    defaultDueDays: v.number(),
+  }),
 });
