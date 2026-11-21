@@ -102,6 +102,8 @@ export const list = query({
       issueDate: i.issueDate,
       dueDate: i.dueDate,
       customerName: i.customer.company || i.customer.name,
+      contactName: i.customer.name,
+      phone: i.customer.phone,
       total: i.total,
       itemCount: i.items.length,
     }));

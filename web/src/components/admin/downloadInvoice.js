@@ -50,10 +50,13 @@ export function waNumber(raw) {
 export function invoiceMessage(invoice, settings) {
   const t = totals(invoice.items, invoice.discount, invoice.vatRate);
   const name = invoice.customer.name || invoice.customer.company;
+  const overdue = invoice.status === 'issued' && invoice.dueDate && invoice.dueDate < Date.now() - 86400000;
   return [
     `Hello${name ? ' ' + name : ''},`,
     '',
-    `Here is your invoice ${invoice.number} from ${settings.companyName}.`,
+    overdue
+      ? `A friendly reminder that invoice ${invoice.number} from ${settings.companyName} is now overdue.`
+      : `Here is your invoice ${invoice.number} from ${settings.companyName}.`,
     `Total: ${aed(t.total)}`,
     invoice.dueDate ? `Due: ${fmtDate(invoice.dueDate)}` : null,
     '',
