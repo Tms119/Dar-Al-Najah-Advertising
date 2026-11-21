@@ -3,12 +3,11 @@ import { aed, fmtDate, num, totals } from '@/lib/invoice';
 
 /* Short, simple A4 invoice in the website's style: condensed display
    headline (Bricolage Grotesque, registered as "Display" before render),
-   ink pills, cream paper panel, CMYK dots. Body text uses built-in Helvetica. */
+   ink pills, cream paper panel. Body text uses built-in Helvetica. */
 const INK = '#121212';
 const MUTED = '#6B665F';
 const PAPER = '#F6F2EC';
 const LINE = '#E6E1D9';
-const DOTS = ['#21AAE1', '#FF3D7F', '#FFB800', INK];
 
 const s = StyleSheet.create({
   page: { padding: 44, fontSize: 10, fontFamily: 'Helvetica', color: INK, lineHeight: 1.45 },
@@ -37,8 +36,6 @@ const s = StyleSheet.create({
   foot: { marginTop: 32, paddingTop: 12, borderTopWidth: 0.7, borderTopColor: LINE, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
   footText: { color: MUTED, fontSize: 8.5, maxWidth: 380 },
   footName: { color: INK, fontFamily: 'Helvetica-Bold', fontSize: 9 },
-  dots: { flexDirection: 'row', flexWrap: 'wrap', width: 22, gap: 3 },
-  dot: { width: 8, height: 8, borderRadius: 4 },
 });
 
 export default function InvoicePdf({ invoice, settings, logoSrc }) {
@@ -100,7 +97,6 @@ export default function InvoicePdf({ invoice, settings, logoSrc }) {
             {settings.bankDetails ? <Text style={{ marginTop: 5 }}>{settings.bankDetails}</Text> : null}
             {settings.terms ? <Text style={{ marginTop: 5 }}>{settings.terms}</Text> : null}
           </View>
-          <View style={s.dots}>{DOTS.map((d) => <View key={d} style={[s.dot, { backgroundColor: d }]} />)}</View>
         </View>
       </Page>
     </Document>

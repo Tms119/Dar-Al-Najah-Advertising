@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import { api } from '@convex/_generated/api';
 import InvoicePreview from './InvoicePreview';
-import { buildInvoicePdf, canShareFiles, invoiceMessage, saveFile, waLinkFor } from './downloadInvoice';
+import { buildInvoicePdf, saveFile, waLinkFor, waNumber } from './downloadInvoice';
 import { aed, addDays, fromInput, todayMs, toInput, totals, STATUS_LABEL } from '@/lib/invoice';
 
 let keySeq = 0;
@@ -47,8 +47,6 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
   const [q, setQ] = useState('');
   const pickerRef = useRef(null);
   const [saved, setSaved] = useState(invoice ? { id: invoice._id, number: invoice.number } : null);
-  const [shareFile, setShareFile] = useState(null); // pre-built PDF for the phone share sheet
-  const [version, setVersion] = useState(0);
 
   const locked = f.status === 'void';
   const set = (patch) => { setF((x) => ({ ...x, ...patch })); setDirty(true); setNotice(null); };
@@ -91,7 +89,6 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
     setSaved(r);
     setDirty(false);
     setF((x) => ({ ...x, status }));
-    setVersion((v) => v + 1);
     if (!invoice) window.history.replaceState(null, '', `/admin/invoices/${r.id}`);
     return r;
   };
@@ -114,17 +111,13 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
     finally { setBusy(null); }
   };
 
-  // Phones with file sharing: send the PDF itself into WhatsApp via the share sheet.
-  // Everywhere else: open WhatsApp with a ready message and download the PDF to attach.
+  // WhatsApp goes to the customer's own number: opens that chat with a ready
+  // message, and downloads the PDF so it can be attached in the chat.
+  const phone = waNumber(f.customer.phone);
   const onWhatsApp = async () => {
+    if (!phone) return;
     setError(null);
     const status = f.status === 'draft' ? 'issued' : f.status;
-    if (shareFile && !dirty && status === f.status) {
-      try {
-        await navigator.share({ files: [shareFile], title: shareFile.name, text: invoiceMessage({ ...f, number: saved.number }, settings) });
-        return;
-      } catch (e) { if (e?.name === 'AbortError') return; /* fall back below */ }
-    }
     const win = window.open('', '_blank'); // opened now so pop-up blockers allow it
     setBusy('wa');
     try {
@@ -132,22 +125,12 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
       const url = waLinkFor(inv, settings);
       if (win) win.location.href = url; else window.location.href = url;
       saveFile(await buildInvoicePdf(inv, settings));
-      setNotice(inv.customer.phone ? 'WhatsApp opened and the PDF downloaded. Attach the PDF in the chat.' : 'No phone number on this invoice, so pick the contact in WhatsApp. The PDF was downloaded to attach.');
+      setNotice(`WhatsApp opened for ${f.customer.phone}. The PDF was downloaded: attach it in the chat.`);
     } catch (e) {
       win?.close();
       setError(e instanceof ConvexError ? errText(e) : 'Could not prepare the invoice. Please try again.');
     } finally { setBusy(null); }
   };
-
-  // pre-build the PDF on share-capable phones so the share sheet opens instantly
-  useEffect(() => {
-    let cancelled = false;
-    setShareFile(null);
-    if (!saved || dirty || !canShareFiles()) return;
-    buildInvoicePdf({ ...f, number: saved.number }, settings).then((file) => { if (!cancelled) setShareFile(file); }).catch(() => {});
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [saved?.id, dirty, version]);
 
   const onStatus = async (status) => {
     if (status === 'void' && !window.confirm('Void this invoice? It stays in your records but can no longer be edited.')) return;
@@ -172,9 +155,14 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
           {saved && !dirty && <button className="a-btn inv-print" onClick={() => window.print()}>Print</button>}
           <button className="a-btn" onClick={onDownload} disabled={!!busy}>{busy === 'pdf' ? 'Creating…' : 'Download PDF'}</button>
           {!locked && (
-            <button className="a-btn a-btn-wa" onClick={onWhatsApp} disabled={!!busy}>
+            <button
+              className="a-btn a-btn-wa"
+              onClick={onWhatsApp}
+              disabled={!!busy || !phone}
+              title={phone ? `Send to ${f.customer.phone} on WhatsApp` : 'Add the customer’s phone number to send on WhatsApp'}
+            >
               <svg viewBox="0 0 32 32" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.2.6 4.4 1.7 6.3L3 29l7.3-1.9c1.8 1 3.8 1.5 5.8 1.5 7 0 12.7-5.6 12.7-12.6S23 3 16 3zm5.8 15.2c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1c-.3-.2-1.3-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2s0-.5.1-.6l.5-.6c.2-.2.2-.3.3-.5s0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4s-1 1-1 2.5 1.1 2.9 1.2 3.1 2.1 3.2 5.1 4.5c2.6 1.1 3.1.9 3.7.8.6-.1 1.9-.8 2.1-1.5s.3-1.3.2-1.5c0-.1-.3-.2-.6-.4z" /></svg>
-              {busy === 'wa' ? 'Preparing…' : 'WhatsApp'}
+              {busy === 'wa' ? 'Preparing…' : phone ? 'WhatsApp' : 'Add phone to use WhatsApp'}
             </button>
           )}
           {!locked && (f.status === 'draft' ? (

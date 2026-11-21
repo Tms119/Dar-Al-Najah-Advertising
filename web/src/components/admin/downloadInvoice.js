@@ -61,15 +61,9 @@ export function invoiceMessage(invoice, settings) {
   ].filter((l) => l !== null).join('\n');
 }
 
+/** Chat link to the customer's own number (callers check the number first). */
 export function waLinkFor(invoice, settings) {
   const n = waNumber(invoice.customer.phone);
+  if (!n) throw new Error('No valid phone number');
   return `https://wa.me/${n}?text=${encodeURIComponent(invoiceMessage(invoice, settings))}`;
-}
-
-/** True when this device can share a PDF straight into apps like WhatsApp. */
-export function canShareFiles() {
-  try {
-    return typeof navigator !== 'undefined' && !!navigator.canShare &&
-      navigator.canShare({ files: [new File(['x'], 'x.pdf', { type: 'application/pdf' })] });
-  } catch { return false; }
 }

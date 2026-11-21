@@ -52,7 +52,6 @@ export default function InvoicePreview({ invoice, settings }) {
       {invoice.notes && <p className="inv-doc-notes">{invoice.notes}</p>}
 
       <footer className="inv-doc-foot">
-        <i className="inv-doc-dots" aria-hidden="true"><i /><i /><i /><i /></i>
         <b>{settings.companyName}{settings.trn ? ` · TRN ${settings.trn}` : ''}</b>
         {settings.address && <span>{settings.address}</span>}
         {contact && <span>{contact}</span>}
