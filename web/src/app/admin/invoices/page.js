@@ -63,18 +63,20 @@ export default function AdminInvoices() {
           </div>
         ) : (
           <table className="a-table inv-table">
-            <thead><tr><th>Invoice</th><th>Customer</th><th>Issued</th><th>Due</th><th>Total</th><th>Status</th></tr></thead>
+            <thead><tr><th>Invoice</th><th>Customer</th><th>Issued</th><th>Due</th><th>Total</th><th>Status</th><th aria-hidden="true" /></tr></thead>
             <tbody>
               {list.map((i) => {
                 const late = i.status === 'issued' && i.dueDate && i.dueDate < today;
                 return (
-                  <tr key={i._id} className={i.status === 'void' ? 'is-off' : ''}>
-                    <td><Link href={`/admin/invoices/${i._id}`} className="inv-num-link">{i.number}</Link></td>
+                  <tr key={i._id} className={`inv-row-link ${i.status === 'void' ? 'is-off' : ''}`}>
+                    {/* the link stretches over the whole row (see .inv-num-link::after) */}
+                    <td><Link href={`/admin/invoices/${i._id}`} className="inv-num-link" aria-label={`Open invoice ${i.number}, ${i.customerName || 'no name'}, ${aed(i.total)}`}>{i.number}</Link></td>
                     <td>{i.customerName || <span className="a-muted">No name</span>}</td>
                     <td>{fmtDate(i.issueDate)}</td>
                     <td className={late ? 'is-warn' : ''}>{i.dueDate ? fmtDate(i.dueDate) : 'On receipt'}{late ? ' · overdue' : ''}</td>
                     <td><b>{aed(i.total)}</b></td>
                     <td><span className={`inv-badge st-${i.status}`}>{STATUS_LABEL[i.status]}</span></td>
+                    <td className="inv-chev" aria-hidden="true">›</td>
                   </tr>
                 );
               })}

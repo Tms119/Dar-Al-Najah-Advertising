@@ -430,3 +430,17 @@ label.a-btn { cursor: pointer; }
 @media print { .inv-actions { display: none !important; } }
 
 .a-btn-wa:disabled { background: var(--bg-2); color: var(--muted); opacity: 1; }
+
+/* invoice list: the whole row opens the invoice */
+.inv-table tr.inv-row-link { position: relative; cursor: pointer; transition: background 0.15s; }
+.inv-table tr.inv-row-link:hover { background: var(--bg); }
+.inv-num-link::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+.inv-num-link:focus-visible { outline: none; }
+.inv-table tr.inv-row-link:has(.inv-num-link:focus-visible) { box-shadow: inset 0 0 0 2px var(--blue); }
+.inv-chev { width: 28px; color: var(--muted); font-size: 20px; text-align: right; transition: transform 0.2s, color 0.2s; }
+.inv-table tr.inv-row-link:hover .inv-chev { color: var(--ink); transform: translateX(3px); }
+.inv-table tr.inv-row-link:hover .inv-num-link { color: var(--blue); }
+@media (max-width: 640px) {
+  .inv-chev { display: none; }
+  .inv-table tr.inv-row-link:active { background: var(--bg); }
+}

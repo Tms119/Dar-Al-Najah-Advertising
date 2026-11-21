@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { COMPANY } from '@/data/site';
 import { useCatalog } from './CatalogProvider';
 import Logo from './Logo';
@@ -30,8 +30,16 @@ export default function Header() {
 
   const active = CATALOG.find((c) => c.id === mega);
 
+  // Hover intent: wait a moment before closing, so moving the mouse from a
+  // pill down into the dropdown (or a slightly wobbly path) doesn't close it.
+  const closeTimer = useRef(null);
+  const cancelClose = () => { clearTimeout(closeTimer.current); };
+  const openMega = (id) => { cancelClose(); setMega(id); };
+  const closeMegaSoon = () => { cancelClose(); closeTimer.current = setTimeout(() => setMega(null), 220); };
+  useEffect(() => () => clearTimeout(closeTimer.current), []);
+
   return (
-    <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`} onMouseLeave={() => setMega(null)}>
+    <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`} onMouseLeave={closeMegaSoon} onMouseEnter={cancelClose}>
       <div className="header-bar">
         <Logo />
 
@@ -40,8 +48,8 @@ export default function Header() {
             <button
               key={c.id}
               className={`pill ${mega === c.id ? 'is-active' : ''}`}
-              onMouseEnter={() => setMega(c.id)}
-              onFocus={() => setMega(c.id)}
+              onMouseEnter={() => openMega(c.id)}
+              onFocus={() => openMega(c.id)}
               onClick={() => setMega(mega === c.id ? null : c.id)}
               aria-expanded={mega === c.id}
             >
@@ -49,7 +57,7 @@ export default function Header() {
               {c.short}
             </button>
           ))}
-          <Link className="pill" href="/products" onMouseEnter={() => setMega(null)}>All products</Link>
+          <Link className="pill" href="/products" onMouseEnter={() => { cancelClose(); setMega(null); }}>All products</Link>
         </nav>
 
         <div className="header-right">
@@ -66,7 +74,9 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Desktop mega menu */}
+      {/* Desktop mega menu. The wrapper's top padding bridges the gap under the
+          bar so the pointer never "leaves" the menu on the way down. */}
+      <div className={`mega-wrap ${active ? 'is-open' : ''}`} onMouseEnter={cancelClose}>
       <div className={`mega ${active ? 'is-open' : ''}`} aria-hidden={!active}>
         {active && (
           <div className="mega-inner" key={active.id}>
@@ -99,6 +109,7 @@ export default function Header() {
             </div>
           </div>
         )}
+      </div>
       </div>
 
       {/* Mobile overlay */}

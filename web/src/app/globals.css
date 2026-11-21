@@ -169,7 +169,7 @@ input, select, textarea { font: inherit; color: inherit; }
 /* Mega menu */
 .mega {
   pointer-events: auto;
-  max-width: calc(var(--max) - 2 * var(--gutter) + 40px); margin: 10px auto 0;
+  max-width: calc(var(--max) - 2 * var(--gutter) + 40px); margin: 0 auto;
   background: var(--paper); border-radius: var(--r-lg);
   box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.25), 0 0 0 1px var(--line-2);
   opacity: 0; transform: translateY(-10px) scale(0.99); visibility: hidden;
@@ -177,6 +177,9 @@ input, select, textarea { font: inherit; color: inherit; }
   max-height: calc(100vh - 110px); overflow: auto;
 }
 .mega.is-open { opacity: 1; transform: none; visibility: visible; }
+/* the wrapper's padding is the hoverable bridge between the bar and the panel */
+.mega-wrap { padding-top: 10px; pointer-events: none; }
+.mega-wrap.is-open { pointer-events: auto; }
 .mega:not(.is-open) { pointer-events: none; }
 .mega-inner { display: grid; grid-template-columns: 290px 1fr; gap: 28px; padding: 14px; animation: megaIn 0.45s var(--ease); }
 @keyframes megaIn { from { opacity: 0; transform: translateY(8px); } }
@@ -708,7 +711,7 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 
 @media (max-width: 980px) {
   .nav-pills { display: none; }
-  .mega { display: none; }
+  .mega, .mega-wrap { display: none; }
   .burger { display: block; }
   .steps { grid-template-columns: repeat(2, 1fr); }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
