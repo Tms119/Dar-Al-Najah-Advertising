@@ -31,6 +31,9 @@ type Env = {
   readonly CONVEX_CLOUD_URL: string;
   readonly CONVEX_SITE_URL: string;
   readonly ADMIN_USERNAMES: string | undefined;
+  readonly CLOUDFLARE_ACCOUNT_ID: string | undefined;
+  readonly CLOUDFLARE_API_TOKEN: string | undefined;
+  readonly CLOUDFLARE_IMAGE_MODEL: string | undefined;
   readonly QUOTE_SERVER_KEY: string | undefined;
 };
 

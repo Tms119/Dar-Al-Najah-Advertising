@@ -15,6 +15,7 @@ import type * as invoices from "../invoices.js";
 import type * as lib_admin from "../lib/admin.js";
 import type * as lib_copy from "../lib/copy.js";
 import type * as maintenance from "../maintenance.js";
+import type * as mockups from "../mockups.js";
 import type * as quotes from "../quotes.js";
 import type * as seed from "../seed.js";
 import type * as seedData from "../seedData.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   "lib/admin": typeof lib_admin;
   "lib/copy": typeof lib_copy;
   maintenance: typeof maintenance;
+  mockups: typeof mockups;
   quotes: typeof quotes;
   seed: typeof seed;
   seedData: typeof seedData;
