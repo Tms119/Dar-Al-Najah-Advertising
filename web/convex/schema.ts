@@ -4,29 +4,8 @@ import { v } from "convex/values";
 /* Catalogue model
    categories → groups → (productGroups) → products
    The menu, footer, catalogue and product pages are all derived from these
-   tables, so adding/disabling a product updates every place at once. */
-
-export const optionValidator = v.object({
-  name: v.string(), // "Paper"
-  values: v.array(
-    v.object({
-      label: v.string(), // "350gsm Matte"
-      priceModifier: v.number(), // % added to the tier price, e.g. 8 = +8%
-    }),
-  ),
-});
-
-export const tierValidator = v.object({
-  quantity: v.number(),
-  price: v.number(), // AED for that quantity before option modifiers
-});
-
-export const quoteStatus = v.union(
-  v.literal("new"),
-  v.literal("quoted"),
-  v.literal("won"),
-  v.literal("lost"),
-);
+   tables, so adding/disabling a product updates every place at once.
+   Products carry no pricing: customers enquire on WhatsApp. */
 
 export const invoiceStatus = v.union(
   v.literal("draft"),
@@ -57,19 +36,6 @@ export default defineSchema({
   // isAdmin: accounts created through Admin → Team or the CLI bootstrap
   users: defineTable({ isAdmin: v.optional(v.boolean()) }),
 
-  quoteRequests: defineTable({
-    name: v.string(),
-    email: v.string(),
-    phone: v.string(),
-    company: v.string(),
-    message: v.string(),
-    interests: v.array(v.string()), // category slugs
-    productSlug: v.union(v.string(), v.null()),
-    details: v.union(v.string(), v.null()), // chosen options from the product page
-    estimate: v.union(v.number(), v.null()),
-    status: quoteStatus,
-  }).index("by_status", ["status"]),
-
   categories: defineTable({
     slug: v.string(),
     name: v.string(),
@@ -96,14 +62,9 @@ export default defineSchema({
     slug: v.string(),
     name: v.string(),
     description: v.string(),
-    basePrice: v.number(), // "from" price shown on cards (AED)
-    priceUnit: v.string(), // "100 cards"
-    turnaround: v.string(),
     badge: v.union(v.string(), v.null()),
     mockupShape: v.string(), // fallback illustration until photos exist
     imageIds: v.array(v.id("_storage")),
-    options: v.array(optionValidator),
-    quantityTiers: v.array(tierValidator),
     isFeatured: v.boolean(),
     isActive: v.boolean(),
     sortOrder: v.number(),
@@ -136,7 +97,6 @@ export default defineSchema({
     subtotal: v.number(),
     vat: v.number(),
     total: v.number(),
-    quoteId: v.union(v.id("quoteRequests"), v.null()),
     createdBy: v.id("users"),
   })
     .index("by_number", ["number"])
@@ -145,7 +105,17 @@ export default defineSchema({
   // sequential invoice numbers per year, incremented inside the same transaction
   counters: defineTable({ name: v.string(), value: v.number() }).index("by_name", ["name"]),
 
-  // AI product mockups made in the admin Mockup studio
+  // Access passes for the Mockup Studio site: each pass allows `limit` generations
+  studioPasses: defineTable({
+    label: v.string(), // who it's for, e.g. customer name
+    code: v.string(), // normalised access code (uppercase letters and digits)
+    used: v.number(),
+    limit: v.number(),
+    isActive: v.boolean(),
+    createdBy: v.id("users"),
+  }).index("by_code", ["code"]),
+
+  // AI product mockups made in the Mockup Studio
   mockups: defineTable({
     storageId: v.id("_storage"),
     objectLabel: v.string(),
@@ -157,8 +127,8 @@ export default defineSchema({
     hadObjectImage: v.boolean(),
     hadLogo: v.boolean(),
     model: v.string(),
-    createdBy: v.id("users"),
-  }),
+    passId: v.id("studioPasses"),
+  }).index("by_passId", ["passId"]),
 
   // single document: company details printed on invoices
   invoiceSettings: defineTable({

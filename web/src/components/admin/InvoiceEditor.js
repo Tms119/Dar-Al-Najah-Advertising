@@ -17,7 +17,7 @@ let keySeq = 0;
 const k = () => `l${++keySeq}`;
 const blankLine = () => ({ key: k(), productId: null, description: '', details: '', quantity: 1, unitPrice: 0 });
 
-export default function InvoiceEditor({ invoice, prefill, settings }) {
+export default function InvoiceEditor({ invoice, settings }) {
   const router = useRouter();
   const save = useMutation(api.invoices.save);
   const setStatus = useMutation(api.invoices.setStatus);
@@ -31,12 +31,11 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
       status: 'draft',
       issueDate: issue,
       dueDate: addDays(issue, settings.defaultDueDays ?? 7),
-      customer: prefill?.customer ?? { name: '', company: '', email: '', phone: '', address: '', trn: '' },
-      items: prefill?.items?.length ? prefill.items.map((i) => ({ ...i, description: i.details ? `${i.description} (${i.details})` : i.description, details: '', key: k() })) : [blankLine()],
+      customer: { name: '', company: '', email: '', phone: '', address: '', trn: '' },
+      items: [blankLine()],
       discount: 0,
       vatRate: 5,
       notes: '',
-      quoteId: prefill?.quoteId ?? null,
     };
   });
   const [dirty, setDirty] = useState(!invoice);
@@ -61,12 +60,9 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
     [products, q],
   );
 
-  const addProduct = (p, tier) => {
-    const line = {
-      key: k(), productId: p._id, details: '', quantity: 1,
-      description: tier ? `${p.name} (${tier.quantity.toLocaleString('en-US')} pcs)` : p.name,
-      unitPrice: tier ? tier.price : p.basePrice,
-    };
+  // products carry no price: staff type it in after adding the line
+  const addProduct = (p) => {
+    const line = { key: k(), productId: p._id, details: '', quantity: 1, description: p.name, unitPrice: 0 };
     const onlyEmpty = f.items.length === 1 && !f.items[0].description && !Number(f.items[0].unitPrice);
     set({ items: onlyEmpty ? [line] : [...f.items, line] });
     setPicker(false);
@@ -86,7 +82,6 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
       discount: Number(f.discount) || 0,
       vatRate: Number(f.vatRate),
       notes: f.notes,
-      quoteId: f.quoteId ?? null,
     });
     setSaved(r);
     setDirty(false);
@@ -219,16 +214,9 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
                     {products === undefined && <li className="a-muted">Loading…</li>}
                     {shown.map((p) => (
                       <li key={p._id}>
-                        <div className="inv-picker-name"><b>{p.name}</b>{!p.isActive && <span className="a-tag-off">hidden</span>}</div>
-                        <div className="inv-picker-tiers">
-                          {p.tiers.length ? p.tiers.map((tier) => (
-                            <button type="button" key={tier.quantity} className="chip-btn" onClick={() => addProduct(p, tier)}>
-                              {tier.quantity.toLocaleString('en-US')} pcs · {aed(tier.price)}
-                            </button>
-                          )) : (
-                            <button type="button" className="chip-btn" onClick={() => addProduct(p, null)}>{aed(p.basePrice)}</button>
-                          )}
-                        </div>
+                        <button type="button" className="inv-picker-name inv-picker-add" onClick={() => addProduct(p)}>
+                          <b>{p.name}</b>{!p.isActive && <span className="a-tag-off">hidden</span>}<span className="a-muted a-small">Add</span>
+                        </button>
                       </li>
                     ))}
                     {products && shown.length === 0 && <li className="a-muted">No products match.</li>}

@@ -1,9 +1,7 @@
 import { internalMutation } from "./_generated/server";
 import { v } from "convex/values";
-import { CATALOG, DEFAULTS, DETAILS, slugify } from "./seedData";
+import { CATALOG, DETAILS, slugify } from "./seedData";
 import { cleanCopy } from "./lib/copy";
-
-const QTY_MULT = [1, 2.1, 3.8, 6.9, 12];
 
 /** One-time import of the starter catalogue. Safe to re-run: does nothing
  *  if categories already exist.  `npx convex run seed:run` */
@@ -40,30 +38,15 @@ export const run = internalMutation({
 
           if (productId === undefined) {
             const d = DETAILS[slug];
-            const def = DEFAULTS[cat.id];
-            const base = d?.price ?? def.price;
-            const optionMap = d?.options ?? def.options;
-            const qty = d?.qty ?? def.qty;
             productId = await ctx.db.insert("products", {
               slug,
               name,
               description: cleanCopy(
                 d?.desc ??
                 `Custom ${name.toLowerCase()} produced in our own studio at Dar Al Najah. Send your artwork or let our designers create it, and we handle print, finishing and delivery across the UAE.`),
-              basePrice: base,
-              priceUnit: cleanCopy(d?.unit ?? "starting from"),
-              turnaround: cleanCopy(d?.turnaround ?? def.turnaround),
               badge: d?.badge ?? null,
               mockupShape: shape,
               imageIds: [],
-              options: Object.entries(optionMap).map(([optName, labels]) => ({
-                name: cleanCopy(optName),
-                values: labels.map((label, i) => ({ label: cleanCopy(label), priceModifier: i * 8 })),
-              })),
-              quantityTiers: qty.map((quantity, i) => ({
-                quantity,
-                price: Math.round(base * (QTY_MULT[i] ?? i + 1)),
-              })),
               isFeatured: Boolean(d),
               isActive: true,
               sortOrder: productOrder++,

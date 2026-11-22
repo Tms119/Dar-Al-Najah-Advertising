@@ -10,11 +10,7 @@ const app = defineApp({
     // Comma-separated usernames allowed into the admin dashboard,
     // e.g. `npx convex env set ADMIN_USERNAMES=owner,staff1`
     ADMIN_USERNAMES: v.optional(v.string()),
-    // Shared secret between the website server (Next.js /api/quote) and Convex.
-    // Quote requests without it are rejected, so the form can't be spammed
-    // by calling Convex directly (bypassing the per-IP limit).
-    QUOTE_SERVER_KEY: v.optional(v.string()),
-    // Cloudflare Workers AI, used by the admin Mockup studio (free daily allowance).
+    // Cloudflare Workers AI, used by the Mockup Studio (free daily allowance).
     // Set with the Convex dashboard or `npx convex env set`, never in code.
     CLOUDFLARE_ACCOUNT_ID: v.optional(v.string()),
     CLOUDFLARE_API_TOKEN: v.optional(v.string()),

@@ -1,0 +1,29 @@
+/*! Mockup Studio · Dar Al Najah Advertising · Designed & built by PEERBROS x Themeszoo */
+.st-app { min-height: 100vh; display: flex; flex-direction: column; background: #F3F1EC; }
+.st-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px clamp(16px, 3vw, 40px); }
+.st-brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
+.st-brand span { display: flex; flex-direction: column; line-height: 1.15; }
+.st-brand b { font-family: var(--f-display); font-size: 19px; font-weight: 800; }
+.st-brand small { font-size: 12px; color: var(--muted); }
+.st-who { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
+.st-main { flex: 1; width: 100%; max-width: 1240px; margin: 0 auto; padding: 8px clamp(16px, 3vw, 40px) 48px; }
+.st-intro { margin: 8px 0 22px; }
+.st-intro h1 { font-family: var(--f-display); font-size: clamp(26px, 3.4vw, 40px); font-weight: 800; margin: 0 0 6px; letter-spacing: -0.01em; }
+.st-intro p { margin: 0; }
+.st-gate { max-width: 420px; margin: 8vh auto 0; padding: 32px 28px; text-align: center; }
+.st-gate h1 { font-family: var(--f-display); font-size: 32px; font-weight: 800; margin: 6px 0 8px; }
+.st-gate p { margin: 0 0 18px; }
+.st-gate .a-field { text-align: left; }
+.st-gate-ic { display: inline-grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 22px; }
+.st-code { text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; text-align: center; font-size: 17px; }
+.st-ask { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; font-size: 13.5px; font-weight: 600; color: #128C4A; text-decoration: none; }
+.st-ask:hover { text-decoration: underline; }
+.st-left { font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.st-left.is-out { background: #FFE8EC; color: #A3123A; box-shadow: none; }
+.st-out { margin: 10px 0 0; font-size: 14px; }
+.st-out a { font-weight: 700; color: #128C4A; }
+.st-foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 18px clamp(16px, 3vw, 40px); font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line-2); }
+@media (max-width: 640px) {
+  .st-brand small { display: none; }
+  .st-who span { max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}

@@ -1,7 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query, type MutationCtx, type QueryCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
-import { optionValidator, quoteStatus, tierValidator } from "./schema";
 import { requireAdmin } from "./lib/admin";
 import { requiredText, text } from "./lib/validate";
 
@@ -56,17 +55,17 @@ export const overview = query({
   args: {},
   handler: async (ctx) => {
     await requireAdmin(ctx);
-    const [products, newQuotes, categories] = await Promise.all([
+    const [products, categories, unpaid] = await Promise.all([
       ctx.db.query("products").take(1000),
-      ctx.db.query("quoteRequests").withIndex("by_status", (q) => q.eq("status", "new")).take(1000),
       ctx.db.query("categories").take(50),
+      ctx.db.query("invoices").withIndex("by_status", (q) => q.eq("status", "issued")).take(1000),
     ]);
     return {
       products: products.length,
       activeProducts: products.filter((p) => p.isActive).length,
       featured: products.filter((p) => p.isFeatured && p.isActive).length,
-      newQuotes: newQuotes.length,
       categories: categories.length,
+      unpaidInvoices: unpaid.length,
     };
   },
 });
@@ -77,11 +76,8 @@ export const badgeCounts = query({
   args: {},
   handler: async (ctx) => {
     await requireAdmin(ctx);
-    const [newQuotes, unpaid] = await Promise.all([
-      ctx.db.query("quoteRequests").withIndex("by_status", (q) => q.eq("status", "new")).take(100),
-      ctx.db.query("invoices").withIndex("by_status", (q) => q.eq("status", "issued")).take(100),
-    ]);
-    return { newQuotes: newQuotes.length, unpaidInvoices: unpaid.length };
+    const unpaid = await ctx.db.query("invoices").withIndex("by_status", (q) => q.eq("status", "issued")).take(100);
+    return { unpaidInvoices: unpaid.length };
   },
 });
 
@@ -243,7 +239,6 @@ export const listProducts = query({
         _id: p._id,
         slug: p.slug,
         name: p.name,
-        basePrice: p.basePrice,
         isActive: p.isActive,
         isFeatured: p.isFeatured,
         badge: p.badge,
@@ -294,14 +289,9 @@ export const saveProduct = mutation({
     slug: v.string(),
     name: v.string(),
     description: v.string(),
-    basePrice: v.number(),
-    priceUnit: v.string(),
-    turnaround: v.string(),
     badge: v.union(v.string(), v.null()),
     mockupShape: v.string(),
     imageIds: v.array(v.id("_storage")),
-    options: v.array(optionValidator),
-    quantityTiers: v.array(tierValidator),
     isFeatured: v.boolean(),
     isActive: v.boolean(),
     groupIds: v.array(v.id("groups")),
@@ -315,25 +305,8 @@ export const saveProduct = mutation({
     const clash = await ctx.db.query("products").withIndex("by_slug", (q) => q.eq("slug", slug)).unique();
     if (clash && clash._id !== a.id) throw new ConvexError(`Another product already uses the slug "${slug}"`);
 
-    if (!Number.isFinite(a.basePrice) || a.basePrice < 0 || a.basePrice > 1_000_000)
-      throw new ConvexError("Price must be a positive number");
     if (a.imageIds.length > 12) throw new ConvexError("Up to 12 images per product");
     await Promise.all(a.imageIds.map((imgId) => checkImage(ctx, imgId)));
-    if (a.options.length > 8) throw new ConvexError("Up to 8 option groups");
-    for (const o of a.options) {
-      requiredText(o.name, 40, "Option name");
-      if (!o.values.length || o.values.length > 20) throw new ConvexError(`"${o.name}" needs 1 to 20 values`);
-      for (const val of o.values) {
-        requiredText(val.label, 60, "Option value");
-        if (!Number.isFinite(val.priceModifier) || val.priceModifier < -90 || val.priceModifier > 1000)
-          throw new ConvexError("Price modifier must be between -90% and 1000%");
-      }
-    }
-    if (!a.quantityTiers.length || a.quantityTiers.length > 10) throw new ConvexError("Add 1 to 10 quantity tiers");
-    for (const t of a.quantityTiers) {
-      if (!Number.isInteger(t.quantity) || t.quantity < 1) throw new ConvexError("Quantities must be whole numbers ≥ 1");
-      if (!Number.isFinite(t.price) || t.price < 0) throw new ConvexError("Tier prices must be positive");
-    }
 
     const groupIds = [...new Set(a.groupIds)];
     if (!groupIds.length) throw new ConvexError("Choose at least one menu group");
@@ -345,17 +318,9 @@ export const saveProduct = mutation({
       slug,
       name: requiredText(a.name, 80, "Name"),
       description: requiredText(a.description, 2000, "Description"),
-      basePrice: a.basePrice,
-      priceUnit: requiredText(a.priceUnit, 40, "Price unit"),
-      turnaround: requiredText(a.turnaround, 40, "Turnaround"),
       badge: a.badge?.trim() ? requiredText(a.badge, 20, "Badge") : null,
       mockupShape: requiredText(a.mockupShape, 30, "Illustration"),
       imageIds: a.imageIds,
-      options: a.options.map((o) => ({
-        name: o.name.trim(),
-        values: o.values.map((x) => ({ label: x.label.trim(), priceModifier: x.priceModifier })),
-      })),
-      quantityTiers: [...a.quantityTiers].sort((x, y) => x.quantity - y.quantity),
       isFeatured: a.isFeatured,
       isActive: a.isActive,
     };
@@ -453,39 +418,6 @@ export const moveProductInGroup = mutation({
     const link = await ctx.db.get(linkId);
     if (!link) throw new ConvexError("Not found");
     await swapNeighbour(ctx, await linksOfGroup(ctx, link.groupId).take(500), linkId, dir);
-    return null;
-  },
-});
-
-/* ---------------- quote inbox ---------------- */
-
-export const listQuotes = query({
-  args: { status: v.union(quoteStatus, v.null()), limit: v.optional(v.number()) },
-  handler: async (ctx, { status, limit }) => {
-    await requireAdmin(ctx);
-    const n = Math.min(Math.max(1, Math.floor(limit ?? 300)), 300);
-    return status
-      ? await ctx.db.query("quoteRequests").withIndex("by_status", (q) => q.eq("status", status)).order("desc").take(n)
-      : await ctx.db.query("quoteRequests").order("desc").take(n);
-  },
-});
-
-export const setQuoteStatus = mutation({
-  args: { id: v.id("quoteRequests"), status: quoteStatus },
-  returns: v.null(),
-  handler: async (ctx, { id, status }) => {
-    await requireAdmin(ctx);
-    await ctx.db.patch(id, { status });
-    return null;
-  },
-});
-
-export const deleteQuote = mutation({
-  args: { id: v.id("quoteRequests") },
-  returns: v.null(),
-  handler: async (ctx, { id }) => {
-    await requireAdmin(ctx);
-    await ctx.db.delete(id);
     return null;
   },
 });

@@ -1,3 +1,4 @@
+/*! Dar Al Najah Advertising · Designed & built by PEERBROS x Themeszoo */
 /* =========================================================
    Dar Al Najah Advertising — design system
    Light, warm "paper" base · CMYK accent palette · chunky display type
@@ -408,11 +409,10 @@ input, select, textarea { font: inherit; color: inherit; }
   mask-image: radial-gradient(circle at 50% 50%, #000 30%, transparent 70%); -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 30%, transparent 70%);
 }
 .p-mock { width: 62%; transition: transform 0.7s var(--ease); filter: drop-shadow(0 14px 16px rgba(0, 0, 0, 0.1)); }
-.p-badge, .p-time {
+.p-badge {
   position: absolute; top: 12px; font-size: 11.5px; font-weight: 600; padding: 5px 10px; border-radius: 999px; z-index: 2;
 }
 .p-badge { left: 12px; background: var(--ink); color: #fff; }
-.p-time { right: 12px; background: rgba(255, 255, 255, 0.85); }
 .p-cta {
   position: absolute; left: 12px; right: 12px; bottom: 12px; height: 44px; border-radius: 999px; background: var(--ink); color: #fff;
   display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 18px; font-size: 14px; font-weight: 600;
@@ -425,9 +425,6 @@ input, select, textarea { font: inherit; color: inherit; }
 .p-card-body { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; padding: 0 4px; }
 .p-card-body h3 { margin: 0; font-size: 16.5px; font-weight: 700; line-height: 1.25; }
 .p-cat { font-size: 12.5px; color: var(--muted); }
-.p-price { text-align: right; display: flex; flex-direction: column; line-height: 1.15; flex: none; }
-.p-price small { font-size: 11px; color: var(--muted); }
-.p-price b { font-size: 15px; }
 
 /* =========================================================
    Process
@@ -626,35 +623,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .pdp-panel { padding-top: 6px; }
 .pdp-panel .display { margin-top: 16px; }
 .pdp-desc { font-size: 17px; color: var(--ink-2); margin: 18px 0; max-width: 560px; }
-.pdp-meta { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; padding: 14px 0 6px; border-top: 1px solid var(--line); }
-.opt { padding: 18px 0 4px; }
-.opt-label { display: flex; gap: 10px; align-items: baseline; font-size: 12.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
-.opt-label span { text-transform: none; letter-spacing: 0; color: var(--muted); font-weight: 500; font-size: 13.5px; }
-.opt-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.opt-btn {
-  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 14px; background: var(--paper);
-  box-shadow: inset 0 0 0 1px var(--line); font-size: 14px; font-weight: 500; transition: all 0.22s var(--ease);
-}
-.opt-btn:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
-.opt-btn.is-active { background: var(--ink); color: #fff; box-shadow: none; transform: translateY(-1px); }
-.drop {
-  margin-top: 22px; padding: 22px; border-radius: var(--r); border: 1.5px dashed rgba(18, 18, 18, 0.3); background: rgba(255, 255, 255, 0.5);
-  display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; cursor: pointer; transition: all 0.3s;
-}
-.drop b { font-size: 15px; }
-.drop span { font-size: 13px; color: var(--muted); }
-.drop:hover, .drop.is-drag { border-color: var(--blue); background: rgba(43, 59, 255, 0.05); }
-.drop.has-file { border-style: solid; border-color: var(--green); background: rgba(0, 168, 107, 0.06); }
-.drop.has-file b { color: var(--green); }
-.pdp-buy {
-  margin-top: 22px; padding: 22px; border-radius: var(--r); background: var(--paper); box-shadow: 0 0 0 1px var(--line-2), 0 20px 40px -30px rgba(0, 0, 0, 0.3);
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px;
-}
-.pdp-price { display: flex; flex-direction: column; line-height: 1.1; }
-.pdp-price small { font-size: 12px; color: var(--muted); }
-.pdp-price b { font-family: var(--f-display); font-weight: 800; font-size: 38px; margin: 4px 0; animation: priceIn 0.4s var(--ease); font-variation-settings: 'wdth' 85; }
 @keyframes priceIn { from { opacity: 0.2; transform: translateY(6px); } }
-.pdp-btns { display: flex; flex-wrap: wrap; gap: 8px; }
 .pdp-info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: clamp(56px, 8vw, 100px) 0; }
 .info-card { padding: 26px; border-radius: var(--r); background: var(--paper); }
 .info-ic { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: #fff; font-weight: 700; }
@@ -684,15 +653,6 @@ a.c-card:hover::before { transform: none; }
 a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-size: 18px; }
 .form-card { background: var(--paper); border-radius: var(--r-lg); padding: clamp(22px, 3.4vw, 40px); display: flex; flex-direction: column; gap: 16px; box-shadow: 0 30px 60px -40px rgba(0, 0, 0, 0.3); }
 .form-card h2 { margin: 0 0 4px; font-size: 24px; }
-.field-label { font-size: 12.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.field { display: flex; flex-direction: column; gap: 6px; }
-.field span { font-size: 13px; font-weight: 600; }
-.field input, .field textarea {
-  border: 0; border-radius: 14px; padding: 14px 16px; background: var(--bg); box-shadow: inset 0 0 0 1px transparent; outline: 0; resize: vertical; transition: box-shadow 0.2s, background 0.2s;
-}
-.field input:focus, .field textarea:focus { background: #fff; box-shadow: inset 0 0 0 1.5px var(--ink); }
-.form-card.sent { align-items: flex-start; }
 .sent-ic { width: 64px; height: 64px; border-radius: 50%; background: var(--green); color: #fff; display: grid; place-items: center; font-size: 28px; animation: tagPop 0.6s var(--ease-back) both; --r: 0deg; }
 
 /* =========================================================
@@ -749,19 +709,16 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
   .stack-art { min-height: 200px; }
   .p-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .p-card-body { flex-direction: column; gap: 4px; }
-  .p-price { text-align: left; flex-direction: row; gap: 6px; align-items: baseline; }
   .p-card-body h3 { font-size: 15px; }
-  .p-time { display: none; }
   .p-cta { display: none; }
   .review-row { grid-template-columns: 1fr; }
   .f-cols { grid-template-columns: repeat(2, 1fr); }
   .f-quick-btn { min-height: 80px; padding: 14px; }
   .pdp-info { grid-template-columns: 1fr; }
-  .contact-cards, .field-row { grid-template-columns: 1fr; }
+  .contact-cards { grid-template-columns: 1fr; }
   .search input { width: 100%; }
   .faq-a p { padding: 0 0 22px 0; }
   .faq-n { display: none; }
-  .pdp-buy .btn { flex: 1; }
 }
 
 @media (max-width: 420px) {
@@ -783,11 +740,6 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 .pdp-photo { width: 100%; height: 100%; object-fit: contain; animation: pdpIn 0.5s var(--ease); }
 .thumb-photo { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
 .mega-more { color: var(--blue) !important; font-weight: 700 !important; }
-.pdp-artwork { margin: 22px 0 0; padding: 14px 16px; border-radius: var(--r-sm); background: rgba(255, 255, 255, 0.6); font-size: 14px; color: var(--ink-2); }
-.pre-product { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 14px; background: var(--bg); font-size: 14px; }
-.pre-product span { color: var(--muted); font-size: 13px; }
-.form-error { margin: 0; padding: 10px 14px; border-radius: 12px; background: #FFE8EC; color: #A3123A; font-size: 14px; }
-.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .empty .btn { margin-top: 18px; }
 
 /* =========================================================
@@ -905,22 +857,8 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 
 /* product page on phones: sticky price + quote bar while choosing options */
 @media (max-width: 760px) {
-  .pdp-buy {
-    position: sticky; bottom: 10px; z-index: 6; margin-top: 18px; padding: 12px 12px 12px 16px; gap: 10px;
-    box-shadow: 0 0 0 1px var(--line), 0 18px 40px -16px rgba(0, 0, 0, 0.35);
-    display: grid; grid-template-columns: auto 1fr; align-items: center;
-  }
-  .pdp-price b { font-size: 24px; margin: 2px 0 0; }
-  .pdp-price small:last-child { display: none; }
-  .pdp-btns { width: auto; display: grid; grid-template-columns: 1fr auto; gap: 6px; }
-  .pdp-btns .btn { height: 46px; padding: 0 14px; font-size: 14px; flex: none; }
-  .pdp-btns .btn-ghost { padding: 0 12px; }
   /* the bar has its own WhatsApp button */
-  body:has(.pdp-buy) .wa-fab { display: none; }
-}
-@media (max-width: 380px) {
-  .pdp-buy { grid-template-columns: 1fr; }
-  .pdp-price { flex-direction: row; align-items: baseline; gap: 8px; }
+  
 }
 
 /* iOS zooms into form fields under 16px on focus — keep every field at 16px on phones */
@@ -939,3 +877,12 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 .f-logo { display: block; width: min(300px, 100%); padding: 16px 18px; margin-bottom: 22px; border-radius: var(--r); background: #fff; transition: transform 0.4s var(--ease); }
 .f-logo:hover { transform: translateY(-3px); }
 .f-logo img { width: 100%; height: auto; }
+
+/* WhatsApp buttons and the build credit */
+.btn-wa svg { flex: none; }
+.pdp-ask { margin-top: 26px; padding: 20px; border-radius: var(--r); background: #fff; box-shadow: inset 0 0 0 1px var(--line); display: grid; gap: 14px; }
+.pdp-ask p { margin: 0; color: var(--ink-2); }
+.contact-wa { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; align-self: start; }
+.contact-wa .sent-ic { color: #fff; background: #25D366; }
+.f-credit { opacity: 0.75; }
+.f-credit b { font-weight: 700; letter-spacing: 0.02em; }

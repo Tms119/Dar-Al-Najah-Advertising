@@ -3,7 +3,7 @@ export const COMPANY = {
   name: 'Dar Al Najah',
   full: 'Dar Al Najah Advertising',
   phone: '+971 4 000 0000',
-  whatsapp: '971500000000',
+  whatsapp: '971506762586', // +971 50 676 2586
   email: 'hello@daralnajahadv.com',
   address: 'Dubai, United Arab Emirates',
   hours: 'Saturday to Thursday, 9am to 10pm',

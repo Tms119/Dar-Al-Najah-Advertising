@@ -27,9 +27,6 @@ function toCard(
     group: groupName,
     color: cat.color,
     tint: cat.tint,
-    price: p.basePrice,
-    unit: p.priceUnit,
-    turnaround: p.turnaround,
     badge: p.badge,
     featured: p.isFeatured,
     image,
@@ -157,8 +154,6 @@ export const getProduct = query({
         ...toCard(p, cat, group.name, images[0] ?? null),
         images,
         desc: p.description,
-        options: p.options,
-        tiers: p.quantityTiers,
       },
       related,
     };

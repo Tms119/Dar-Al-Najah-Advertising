@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import Mock from './Mock';
 import { useCatalog } from './CatalogProvider';
+import { WhatsAppIcon } from './icons';
+import { waLink } from '@/data/site';
 
 const FLOATERS = [
   { shape: 'card', color: '#2B3BFF', cls: 'f1', depth: 30 },
@@ -63,7 +65,7 @@ export default function Hero() {
 
       <div className="hero-content">
         <span className="eyebrow hero-eyebrow">
-          <i className="live-dot" /> Dubai&apos;s one stop print shop
+          <i className="live-dot" /> Dubai&apos;s one stop print solution
         </span>
 
         <h1 className="hero-title">
@@ -85,7 +87,7 @@ export default function Hero() {
 
         <div className="hero-actions">
           <Link href="/products" className="btn btn-ink">Browse products <span className="btn-arrow">→</span></Link>
-          <Link href="/contact" className="btn btn-ghost">Request a quote</Link>
+          <a href={waLink('Hi Dar Al Najah! I would like to discuss a print job.')} target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><WhatsAppIcon size={18} /> Chat on WhatsApp</a>
         </div>
 
         <div className="hero-quick">

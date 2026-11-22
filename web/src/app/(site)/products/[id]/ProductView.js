@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePreloadedQuery } from 'convex/react';
-import Configurator from './Configurator';
+import ProductDetails from './ProductDetails';
 import ProductCard from '@/components/ProductCard';
 
 export default function ProductView({ preloaded }) {
@@ -31,7 +31,7 @@ export default function ProductView({ preloaded }) {
           <span>{p.name}</span>
         </nav>
 
-        <Configurator p={p} key={p.id} />
+        <ProductDetails p={p} key={p.id} />
 
         <section className="pdp-info">
           {[

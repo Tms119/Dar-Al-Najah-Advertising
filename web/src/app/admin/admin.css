@@ -1,3 +1,4 @@
+/*! Dar Al Najah Advertising · Designed & built by PEERBROS x Themeszoo */
 /* Admin dashboard — calm, dense, functional. Shares tokens with the site. */
 .a-main { padding: 28px clamp(16px, 3vw, 40px) 60px; min-width: 0; }
 
@@ -74,11 +75,9 @@ textarea.a-input { height: auto; padding: 10px 12px; resize: vertical; line-heig
 .a-toggle.is-on span { transform: translateX(18px); }
 
 .a-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; align-items: start; }
-.a-option { padding: 12px; border-radius: 14px; background: var(--bg); margin-bottom: 10px; }
-.a-option-head, .a-value { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.a-value { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
 .a-value > * { flex: 1; }
 .a-value > .a-btn { flex: none; }
-.a-pct { max-width: 120px; }
 .a-images { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
 .a-image { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: var(--bg); }
 .a-image img { width: 100%; height: 100%; object-fit: cover; }
@@ -119,19 +118,6 @@ textarea.a-input { height: auto; padding: 10px 12px; resize: vertical; line-heig
 .a-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
 .a-tab { height: 36px; padding: 0 14px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font-size: 13.5px; font-weight: 600; text-transform: capitalize; }
 .a-tab.is-active { background: var(--ink); color: #fff; box-shadow: none; }
-.a-quotes { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
-.a-quote { margin: 0; border-left: 4px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
-.a-quote.st-new { border-left-color: var(--blue); }
-.a-quote.st-quoted { border-left-color: var(--yellow); }
-.a-quote.st-won { border-left-color: var(--green); }
-.a-quote.st-lost { border-left-color: #bbb; }
-.a-quote-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
-.a-quote h3 { margin: 0; font-size: 16px; }
-.a-quote p { margin: 0; font-size: 14px; }
-.a-quote-product { background: var(--bg); padding: 8px 10px; border-radius: 10px; }
-.a-quote-msg { white-space: pre-wrap; color: var(--ink-2); }
-.a-quote .a-actions { justify-content: flex-start; margin-top: 4px; }
-.a-status { width: auto; height: 34px; text-transform: capitalize; }
 
 .a-auth { min-height: 100vh; display: grid; place-items: center; padding: 20px 16px; background: var(--bg); }
 .a-auth-card { width: min(420px, 100%); background: #fff; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 30px 60px -40px rgba(0,0,0,.35); }
@@ -149,7 +135,6 @@ textarea.a-input { height: auto; padding: 10px 12px; resize: vertical; line-heig
   .a-toolbar .a-input { flex: 1; min-width: 140px; }
 }
 @media (max-width: 520px) {
-  .a-quotes { grid-template-columns: 1fr; }
   .a-stats { grid-template-columns: 1fr 1fr; }
   .a-stat b { font-size: 24px; }
   .a-head-actions { width: 100%; justify-content: space-between; }
@@ -197,10 +182,8 @@ label.a-btn { cursor: pointer; }
   .a-check { min-height: 40px; }
   .a-check input, .a-primary input { width: 20px; height: 20px; }
   .a-image-bar button { width: 34px; height: 34px; }
-  .a-quote-product a { display: inline-block; padding: 6px 0; }
   .a-tab { height: 40px; }
 }
-
 
 /* product table: keep price and row actions on one line */
 @media (min-width: 641px) {
@@ -242,10 +225,6 @@ label.a-btn { cursor: pointer; }
 .inv-picker ul { list-style: none; margin: 8px 0 0; padding: 0; max-height: 320px; overflow: auto; }
 .inv-picker li { padding: 10px 4px; border-top: 1px solid var(--line-2); }
 .inv-picker-name { display: flex; align-items: center; gap: 6px; font-size: 14px; margin-bottom: 6px; }
-.inv-picker-tiers { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip-btn { height: 32px; padding: 0 12px; border-radius: 999px; background: var(--bg); font-size: 12.5px; font-weight: 600; transition: background 0.2s, color 0.2s; }
-.chip-btn:hover { background: var(--ink); color: #fff; }
-
 
 .inv-sum-totals div { display: flex; justify-content: space-between; font-size: 14px; }
 .inv-sum-totals dt { color: var(--muted); }
@@ -316,7 +295,6 @@ label.a-btn { cursor: pointer; }
   .inv-doc { box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; font-size: 11pt; }
   .inv-doc-bill, .inv-doc-grand, .inv-doc-pill, .inv-stamp { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
-
 
 /* =========================================================
    Admin menu: sidebar (desktop) · icon rail (tablet) · top bar + drawer (phone)
@@ -582,3 +560,13 @@ label.a-btn { cursor: pointer; }
   .mk-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .mk-seg button { padding: 0 10px; }
 }
+
+/* ---------- Studio access ---------- */
+.sa-create { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.sa-code { font: 700 14px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.08em; padding: 4px 8px; border-radius: 8px; background: var(--bg); }
+.sa-used { font-weight: 700; }
+.sa-used.is-out { color: #C4163F; }
+.sa-table td, .sa-table th { white-space: nowrap; }
+.inv-picker-add { width: 100%; justify-content: flex-start; background: none; border: 0; padding: 4px; margin: 0; cursor: pointer; font: inherit; color: inherit; text-align: left; }
+.inv-picker-add .a-small { margin-left: auto; color: var(--blue); font-weight: 600; }
+.inv-picker-add:hover b { color: var(--blue); }

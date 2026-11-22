@@ -20,15 +20,10 @@ export default function ProductEditor({ product, structure }) {
     name: product?.name ?? '',
     slug: product?.slug ?? '',
     description: product?.description ?? '',
-    basePrice: product?.basePrice ?? 0,
-    priceUnit: product?.priceUnit ?? 'starting from',
-    turnaround: product?.turnaround ?? '24 to 48 hours',
     badge: product?.badge ?? '',
     mockupShape: product?.mockupShape ?? 'card',
     isActive: product?.isActive ?? true,
     isFeatured: product?.isFeatured ?? false,
-    options: product?.options ?? [{ name: 'Size', values: [{ label: 'Standard', priceModifier: 0 }] }],
-    quantityTiers: product?.quantityTiers ?? [{ quantity: 1, price: 0 }],
     groupIds: product?.groupIds ?? [],
     primaryGroupId: product?.primaryGroupId ?? null,
   }));
@@ -68,10 +63,6 @@ export default function ProductEditor({ product, structure }) {
     const c = [...im]; [c[i], c[j]] = [c[j], c[i]]; return c;
   });
 
-  /* ---------- options ---------- */
-  const setOption = (i, patch) => set('options', f.options.map((o, k) => (k === i ? { ...o, ...patch } : o)));
-  const setValue = (i, j, patch) => setOption(i, { values: f.options[i].values.map((v, k) => (k === j ? { ...v, ...patch } : v)) });
-
   /* ---------- groups ---------- */
   const toggleGroup = (gid) => {
     const on = f.groupIds.includes(gid);
@@ -94,14 +85,9 @@ export default function ProductEditor({ product, structure }) {
         slug: f.slug,
         name: f.name,
         description: f.description,
-        basePrice: Number(f.basePrice),
-        priceUnit: f.priceUnit,
-        turnaround: f.turnaround,
         badge: f.badge.trim() ? f.badge : null,
         mockupShape: f.mockupShape,
         imageIds: images.map((im) => im.id),
-        options: f.options.map((o) => ({ name: o.name, values: o.values.map((v) => ({ label: v.label, priceModifier: Number(v.priceModifier) || 0 })) })),
-        quantityTiers: f.quantityTiers.map((t) => ({ quantity: Number(t.quantity), price: Number(t.price) })),
         isFeatured: f.isFeatured,
         isActive: f.isActive,
         groupIds: f.groupIds,
@@ -142,48 +128,11 @@ export default function ProductEditor({ product, structure }) {
               <textarea className="a-input" rows={5} required maxLength={2000} value={f.description} onChange={(e) => set('description', e.target.value)} />
             </label>
             <div className="a-row3">
-              <label className="a-field"><span>From price (AED)</span><input className="a-input" type="number" min="0" step="0.01" required value={f.basePrice} onChange={(e) => set('basePrice', e.target.value)} /></label>
-              <label className="a-field"><span>Price unit</span><input className="a-input" maxLength={40} required value={f.priceUnit} onChange={(e) => set('priceUnit', e.target.value)} placeholder="100 cards" /></label>
-              <label className="a-field"><span>Turnaround</span><input className="a-input" maxLength={40} required value={f.turnaround} onChange={(e) => set('turnaround', e.target.value)} placeholder="Same day" /></label>
-            </div>
-            <div className="a-row3">
               <label className="a-field"><span>Badge (optional)</span><input className="a-input" maxLength={20} value={f.badge} onChange={(e) => set('badge', e.target.value)} placeholder="Bestseller" /></label>
               <label className="a-field a-inline-field"><span>Featured on home page</span><Toggle checked={f.isFeatured} onChange={(v) => set('isFeatured', v)} label="Featured" /></label>
             </div>
           </section>
 
-          <section className="a-card">
-            <div className="a-card-head"><h2>Options</h2><button type="button" className="a-btn a-btn-sm" onClick={() => set('options', [...f.options, { name: '', values: [{ label: '', priceModifier: 0 }] }])}>+ Option</button></div>
-            <p className="a-muted a-small">Each value can add a % to the price (e.g. Gold foil +20).</p>
-            {f.options.map((o, i) => (
-              <div key={i} className="a-option">
-                <div className="a-option-head">
-                  <input className="a-input" placeholder="Option name (e.g. Paper)" required value={o.name} onChange={(e) => setOption(i, { name: e.target.value })} />
-                  <button type="button" className="a-btn a-btn-sm a-btn-danger" onClick={() => set('options', f.options.filter((_, k) => k !== i))} aria-label="Remove option">✕</button>
-                </div>
-                {o.values.map((v, j) => (
-                  <div key={j} className="a-value">
-                    <input className="a-input" placeholder="Value" required value={v.label} onChange={(e) => setValue(i, j, { label: e.target.value })} />
-                    <div className="a-prefix a-pct"><input className="a-input" type="number" step="1" value={v.priceModifier} onChange={(e) => setValue(i, j, { priceModifier: e.target.value })} /><em>%</em></div>
-                    <button type="button" className="a-btn a-btn-sm a-btn-ghost" disabled={o.values.length === 1} onClick={() => setOption(i, { values: o.values.filter((_, k) => k !== j) })} aria-label="Remove value">✕</button>
-                  </div>
-                ))}
-                <button type="button" className="a-link" onClick={() => setOption(i, { values: [...o.values, { label: '', priceModifier: 0 }] })}>+ Add value</button>
-              </div>
-            ))}
-          </section>
-
-          <section className="a-card">
-            <div className="a-card-head"><h2>Quantity pricing</h2><button type="button" className="a-btn a-btn-sm" onClick={() => set('quantityTiers', [...f.quantityTiers, { quantity: '', price: '' }])}>+ Tier</button></div>
-            <p className="a-muted a-small">Total price for each quantity, before option modifiers.</p>
-            {f.quantityTiers.map((t, i) => (
-              <div key={i} className="a-value">
-                <label className="a-prefix"><em>Qty</em><input className="a-input" type="number" min="1" step="1" required value={t.quantity} onChange={(e) => set('quantityTiers', f.quantityTiers.map((x, k) => (k === i ? { ...x, quantity: e.target.value } : x)))} /></label>
-                <label className="a-prefix"><em>AED</em><input className="a-input" type="number" min="0" step="0.01" required value={t.price} onChange={(e) => set('quantityTiers', f.quantityTiers.map((x, k) => (k === i ? { ...x, price: e.target.value } : x)))} /></label>
-                <button type="button" className="a-btn a-btn-sm a-btn-ghost" disabled={f.quantityTiers.length === 1} onClick={() => set('quantityTiers', f.quantityTiers.filter((_, k) => k !== i))} aria-label="Remove tier">✕</button>
-              </div>
-            ))}
-          </section>
         </div>
 
         <div className="a-col">

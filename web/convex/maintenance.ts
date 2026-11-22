@@ -12,17 +12,9 @@ export const cleanCopy_ = internalMutation({
     let products = 0;
     let categories = 0;
     for (const p of await ctx.db.query("products").take(1000)) {
-      const next = {
-        description: cleanCopy(p.description),
-        priceUnit: cleanCopy(p.priceUnit),
-        turnaround: cleanCopy(p.turnaround),
-        options: p.options.map((o) => ({
-          name: cleanCopy(o.name),
-          values: o.values.map((x) => ({ ...x, label: cleanCopy(x.label) })),
-        })),
-      };
-      if (JSON.stringify(next) !== JSON.stringify({ description: p.description, priceUnit: p.priceUnit, turnaround: p.turnaround, options: p.options })) {
-        await ctx.db.patch(p._id, next);
+      const description = cleanCopy(p.description);
+      if (description !== p.description) {
+        await ctx.db.patch(p._id, { description });
         products++;
       }
     }
@@ -64,9 +56,8 @@ export const integrity = internalQuery({
       linksToMissingProduct: links.filter((l) => !pIds.has(l.productId)).length,
       linksToMissingGroup: links.filter((l) => !gIds.has(l.groupId)).length,
       groupsWithMissingCategory: groups.filter((g) => !cIds.has(g.categoryId)).length,
-      productsWithNoTiers: products.filter((p) => p.quantityTiers.length === 0).map((p) => p.slug),
       copyWithDashes: [
-        ...products.filter((p) => dash.test(p.description + p.turnaround + p.priceUnit + JSON.stringify(p.options))).map((p) => p.slug),
+        ...products.filter((p) => dash.test(p.description)).map((p) => p.slug),
         ...categories.filter((c) => dash.test(c.tagline)).map((c) => `category:${c.slug}`),
       ],
     };

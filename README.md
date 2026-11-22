@@ -2,7 +2,7 @@
 
 The website and internal dashboard for **Dar Al Najah Advertising**, a printing, embroidery, gifting and photo studio business in Dubai.
 
-Customers browse a live product catalogue, configure a product, see an estimated price and request a quote. Staff run the business from a private admin dashboard: products and menus, quote requests, invoices with PDF and WhatsApp sending, and an AI mockup studio for showing customers their logo on a product.
+Customers browse a live product catalogue and talk to the shop on WhatsApp. Staff run the business from a private admin dashboard: products and menus, invoices with PDF and WhatsApp sending, and access passes for the **Mockup Studio**, a separate invite-only site where customers generate AI mockups of their logo on a product.
 
 **Live site:** [daralnajah.vercel.app](https://daralnajah.vercel.app)
 
@@ -34,8 +34,8 @@ Customers browse a live product catalogue, configure a product, see an estimated
 ### Public website
 
 - **Live catalogue**: around 95 products across Printing, Fabric, Gifts and Photo. The mega menu, footer, home page and catalogue all come from the database, so a change in the admin shows up everywhere straight away, with no redeploy.
-- **Product configurator**: options (paper, finish and so on), quantity tiers and a live price estimate, then one click to request a quote or message on WhatsApp.
-- **Quote requests**: a contact form that arrives pre-filled from the product page, protected against spam (see [Security](#security)).
+- **Product pages**: photos (or illustrations), name and description. There are no prices online: every product has an "Ask on WhatsApp" button with a pre-filled message.
+- **WhatsApp first**: the header, hero, product pages, contact page and a floating button all open a WhatsApp chat with the shop.
 - **Photos or illustrations**: every product and category shows uploaded photos when they exist, and falls back to built-in SVG illustrations otherwise.
 - **Motion design**: a first-visit intro loader, a scroll-driven text reveal, sticky stacking cards, marquees and parallax. A "lite" mode turns these down on low-end devices, data saver or reduced motion.
 - **SEO**: per-page metadata, a generated sitemap and robots file, an Open Graph image, and `LocalBusiness` structured data.
@@ -43,18 +43,24 @@ Customers browse a live product catalogue, configure a product, see an estimated
 
 ### Admin dashboard (`/admin`, staff only)
 
-- **Products**: create and edit products with options, quantity pricing, photo uploads (drag to reorder), illustrations, featured and live toggles, and placement in one or more menu groups.
+- **Products**: create and edit products with a description, photo uploads (reorderable), illustrations, featured and live toggles, and placement in one or more menu groups.
 - **Menu & categories**: manage categories and groups, reorder everything, and hide a category in one click.
-- **Quote inbox**: requests with status tracking (new, quoted, won, lost), email and WhatsApp shortcuts, and "Create invoice" from a quote.
 - **Invoices**:
   - catalogue products or custom lines, 5% UAE VAT, discounts and due dates
   - sequential numbering (`INV-2026-0001`) and a draft, issued, paid or void lifecycle
   - **PDF download** in the site's visual style, generated in the browser
   - **WhatsApp sending** to the customer's own number, with a ready message and the PDF
   - list view with clickable rows, quick actions (download, WhatsApp, mark paid with undo), overdue tracking, sortable columns and a per-customer history
-- **Mockup studio**: drop a product photo (or describe one), a logo and/or text, choose the placement, scene and shape, and add extra instructions. It then generates a photorealistic print mockup with AI. Results are saved to a shared team gallery.
+- **Studio access**: create a pass for a customer (a 10 character code, 3 generations), copy the code or a direct link, see usage, top up, switch off or delete, and browse every mockup generated.
 - **Team**: staff accounts are created by an existing admin. There is no public sign-up.
 - **Responsive admin**: a sidebar on desktop, an icon rail on tablets, and a drawer with a fixed action bar on phones.
+
+### Mockup Studio (`/studio`, invite only)
+
+- A separate site with its own look: none of the shop's menus. It can be served from its own subdomain (for example `studio.yourdomain.com`), and its home page is then the studio.
+- Customers enter their access code (or open the link they were sent). Each pass allows **3 generations**, shown as "2 of 3 generations left".
+- They drop a product photo (or describe one) plus a logo and/or text, choose the placement, scene and shape, add extra instructions, and get a photorealistic print mockup in a few seconds. Failed attempts don't use up a generation.
+- Their mockups stay in a personal gallery for download. When the passes run out, they're invited to message the shop on WhatsApp.
 
 ---
 
@@ -71,11 +77,11 @@ flowchart LR
         SSR["Server rendering<br/>+ preloaded queries"]
         Proxy["proxy.js<br/>guards /admin"]
         AuthRoutes["/auth/* routes<br/>httpOnly session cookies"]
-        QuoteAPI["/api/quote<br/>adds client IP + server key"]
+        Studio["/studio<br/>Mockup Studio site"]
     end
 
     subgraph Convex["Convex (backend)"]
-        Queries["Queries & mutations<br/>catalog · admin · invoices · team"]
+        Queries["Queries & mutations<br/>catalog · admin · invoices · team · studio passes"]
         Actions["Actions<br/>mockups.generate"]
         DB[("Database")]
         Files[("File storage")]
@@ -87,9 +93,8 @@ flowchart LR
 
     Site -->|first paint| SSR --> Queries
     Site <-->|live subscription| Queries
-    Site -->|quote form| QuoteAPI --> Queries
     Admin <-->|live subscriptions| Queries
-    Admin --> Actions --> CF
+    Studio -->|access code| Actions --> CF
     Admin --> Proxy
     Admin --> AuthRoutes --> Auth
     Queries --> DB
@@ -104,9 +109,9 @@ flowchart LR
 2. **One catalogue query.** `catalog.getCatalog` builds the whole menu tree and the product cards in a single reactive query. The header, footer, home page and catalogue share it through a React context (`CatalogProvider`), so the catalogue is fetched once per visit.
 3. **Admin.** Admin pages are client components that talk to Convex directly over a WebSocket. Every admin function on the server starts with `requireAdmin()`, so the UI never enforces security on its own.
 4. **Auth.** Convex Auth (username and password) runs behind Next.js route handlers under `/auth/*`, which keep the session in httpOnly cookies. `src/proxy.js` redirects signed-out visitors away from `/admin`.
-5. **Quote form.** The form posts to a Next.js route that adds the visitor's IP (set by Vercel, so it can't be spoofed) and a server-only shared key before calling Convex. Convex then rate-limits per IP, per email and site-wide.
+5. **No online pricing.** Products hold only presentation data (name, description, photos, menu placement). Every enquiry goes to WhatsApp.
 6. **Invoices.** Invoices are stored in Convex, which recomputes the totals on every save. PDFs are generated in the browser with `@react-pdf/renderer`, which is loaded only when needed. WhatsApp sending uses `wa.me` links to the customer's number.
-7. **AI mockups.** The browser shrinks the images, then a Convex **action** checks admin rights and rate limits, calls Cloudflare Workers AI (FLUX.2), stores the result in Convex file storage and records it in the gallery. The API token exists only in Convex environment settings.
+7. **Mockup Studio.** The studio browser app sends the access code with each request. A Convex **action** reserves one generation on the pass inside a transaction (refunded if the image fails), applies per pass and daily rate limits, calls Cloudflare Workers AI (FLUX.2), stores the result in Convex file storage and records it against the pass. The API token exists only in Convex environment settings.
 
 ---
 
@@ -138,17 +143,17 @@ erDiagram
     categories ||--o{ groups : contains
     groups ||--o{ productGroups : lists
     products ||--o{ productGroups : "appears in"
-    quoteRequests |o--o{ invoices : "turned into"
     users ||--o{ invoices : creates
-    users ||--o{ mockups : creates
+    users ||--o{ studioPasses : issues
+    studioPasses ||--o{ mockups : "generated with"
 
     categories { string slug string name string color bool isActive number sortOrder }
     groups { id categoryId string name number sortOrder }
-    products { string slug string name number basePrice array options array quantityTiers array imageIds bool isActive bool isFeatured }
+    products { string slug string name string description array imageIds bool isActive bool isFeatured }
     productGroups { id productId id groupId bool isPrimary number sortOrder }
-    quoteRequests { string name string email string status string productSlug number estimate }
+    studioPasses { string label string code number used number limit bool isActive }
     invoices { string number string status object customer array items number total }
-    mockups { id storageId string objectLabel string text string model }
+    mockups { id passId id storageId string objectLabel string text string model }
 ```
 
 - A product can appear in **several menu groups** (`productGroups`). One placement is the **primary** one, which sets its breadcrumb and colour.
@@ -164,7 +169,7 @@ The full schema, with validators, is in [`web/convex/schema.ts`](web/convex/sche
 - **No public sign-up.** Accounts can only be created by an existing admin (Team page) or from the CLI. Deleting an account revokes access immediately, even for open sessions.
 - **Checked on the server every time.** Every admin query, mutation and action calls `requireAdmin()`. Inputs are validated with Convex validators plus length and range checks, and totals and prices are recomputed on the server.
 - **Sign-in protection.** Convex Auth rate-limits password attempts, and error messages never reveal which usernames exist.
-- **Spam protection** on the quote form: a honeypot field, a server-only shared key, and rate limits per IP, per email and site-wide.
+- **Studio access codes** are 10 random characters (about 10^15 combinations), checked on the server for every generation, and can be switched off at any time. Usage is counted in a database transaction, so the 3-generation limit can't be bypassed.
 - **Content Security Policy**: strict on the public site, with a separate policy for admin pages (for the PDF engine). Plus `frame-ancestors 'none'`, `nosniff` and a strict referrer policy.
 - **Uploads**: only images are accepted, with a size cap, and files that are replaced or removed are deleted from storage.
 - **Secrets** stay in Vercel or Convex environment variables and are never committed. `.env*` files are git-ignored.
@@ -189,19 +194,19 @@ The full schema, with validators, is in [`web/convex/schema.ts`](web/convex/sche
     ├── convex/                Backend (TypeScript)
     │   ├── schema.ts          Database schema and validators
     │   ├── catalog.ts         Public catalogue queries
-    │   ├── admin.ts           Products, menu, quotes (admin only)
+    │   ├── admin.ts           Products and menu (admin only)
     │   ├── invoices.ts        Invoicing
-    │   ├── mockups.ts         AI mockup studio
-    │   ├── quotes.ts          Quote form submission and rate limits
+    │   ├── mockups.ts         Mockup Studio: passes, generation, gallery
     │   ├── team.ts, auth.ts   Staff accounts and sign-in
     │   └── lib/               Shared server helpers (admin check, validation, copy style)
     ├── src/
     │   ├── app/(site)/        Public pages: home, catalogue, product, contact
     │   ├── app/admin/         Admin dashboard pages
-    │   ├── app/api/quote/     Quote form endpoint
+    │   ├── app/studio/        Mockup Studio (standalone, invite only)
     │   ├── app/auth/          Sign-in session routes
     │   ├── components/        Site components (Header, Hero, Mock illustrations…)
     │   ├── components/admin/  Admin components (editors, invoice PDF, shell)
+    │   ├── components/studio/ Mockup Studio UI
     │   ├── lib/               Shared client helpers (errors, uploads, WhatsApp…)
     │   ├── data/site.js       Business details (phone, hours, address)
     │   └── proxy.js           Guards /admin routes
@@ -243,9 +248,8 @@ Sign in at `http://localhost:3000/admin`.
 
 | Variable | Purpose |
 |---|---|
-| `QUOTE_SERVER_KEY` | Shared secret for the quote form (same value in Vercel) |
 | `ADMIN_USERNAMES` | Comma-separated usernames that are always admins |
-| `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN` | Enable the Mockup studio (Workers AI token) |
+| `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN` | Enable the Mockup Studio (Workers AI token) |
 
 ---
 
@@ -265,5 +269,11 @@ Run these from `web/`:
 
 ## Deployment
 
-- **Website:** pushing to `main` deploys on **Vercel** automatically (Root Directory `web`). Set `NEXT_PUBLIC_CONVEX_URL`, `NEXT_PUBLIC_SITE_URL` and `QUOTE_SERVER_KEY` in the Vercel project.
+- **Website:** pushing to `main` deploys on **Vercel** automatically (Root Directory `web`). Set `NEXT_PUBLIC_CONVEX_URL` and `NEXT_PUBLIC_SITE_URL` in the Vercel project. To give the Mockup Studio its own address, add a `studio.` subdomain to the Vercel project.
 - **Backend:** changes in `web/convex` are deployed with `npx convex deploy` from `web/`.
+
+---
+
+## Credits
+
+Designed & built by **PEERBROS x Themeszoo**.

@@ -17,7 +17,6 @@ import type * as lib_copy from "../lib/copy.js";
 import type * as lib_validate from "../lib/validate.js";
 import type * as maintenance from "../maintenance.js";
 import type * as mockups from "../mockups.js";
-import type * as quotes from "../quotes.js";
 import type * as seed from "../seed.js";
 import type * as seedData from "../seedData.js";
 import type * as team from "../team.js";
@@ -39,7 +38,6 @@ declare const fullApi: ApiFromModules<{
   "lib/validate": typeof lib_validate;
   maintenance: typeof maintenance;
   mockups: typeof mockups;
-  quotes: typeof quotes;
   seed: typeof seed;
   seedData: typeof seedData;
   team: typeof team;

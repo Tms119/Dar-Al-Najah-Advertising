@@ -61,7 +61,7 @@ export default function AdminProducts() {
         {products === undefined ? <p className="a-muted">Loading…</p> : (
           <table className="a-table prod-table">
             <thead>
-              <tr><th>Product</th><th>Category</th><th>From</th><th>Live</th><th>Featured</th><th aria-label="Actions" /></tr>
+              <tr><th>Product</th><th>Category</th><th>Live</th><th>Featured</th><th aria-label="Actions" /></tr>
             </thead>
             <tbody>
               {list.map((p) => (
@@ -76,7 +76,6 @@ export default function AdminProducts() {
                     </Link>
                   </td>
                   <td><span className="a-tag" style={{ '--c': p.color }}>{p.categoryName}</span><div className="a-muted a-small">{p.groupName}{p.menuCount > 1 ? ` +${p.menuCount - 1}` : ''}</div></td>
-                  <td>AED {p.basePrice}</td>
                   <td><Toggle checked={p.isActive} onChange={(v) => setActive({ id: p._id, isActive: v })} label={`Show ${p.name} on website`} /></td>
                   <td><Toggle checked={p.isFeatured} onChange={(v) => setFeatured({ id: p._id, isFeatured: v })} label={`Feature ${p.name} on home page`} /></td>
                   <td className="a-actions">

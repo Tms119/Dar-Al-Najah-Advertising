@@ -14,7 +14,6 @@ const Icon = ({ name }) => {
     overview: <><rect x="3" y="3" width="7.5" height="7.5" rx="2" /><rect x="13.5" y="3" width="7.5" height="7.5" rx="2" /><rect x="3" y="13.5" width="7.5" height="7.5" rx="2" /><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2" /></>,
     products: <><path d="M12 2.8 20.5 7.4v9.2L12 21.2 3.5 16.6V7.4z" /><path d="M3.8 7.6 12 12l8.2-4.4M12 12v9" /></>,
     menu: <><path d="M4 6h16M4 12h16M4 18h10" /></>,
-    quotes: <><path d="M4 5h16v11H8.5L4 20z" /><path d="M8 9.5h8M8 12.5h5" /></>,
     invoices: <><path d="M6 2.8h9l4 4v14.4l-2.5-1.5-2.5 1.5-2.5-1.5-2.5 1.5-2.5-1.5L6 21.2z" /><path d="M9 10h6M9 13.5h6M9 7h3" /></>,
     mockups: <><path d="M12 3.5l1.6 4.2 4.4 1.6-4.4 1.6L12 15.1l-1.6-4.2L6 9.3l4.4-1.6z" /><path d="M18.5 14.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z" /><path d="M5.5 15.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4L3.5 17.5l1.4-.6z" /></>,
     team: <><circle cx="9" cy="8" r="3.2" /><path d="M3 19.5c.6-3.3 3-5.3 6-5.3s5.4 2 6 5.3" /><circle cx="17" cy="9" r="2.4" /><path d="M16.5 14.3c2.3.2 4 1.9 4.5 4.7" /></>,
@@ -33,9 +32,8 @@ const GROUPS = [
     { href: '/admin/menu', label: 'Menu & categories', short: 'Menu', icon: 'menu' },
   ] },
   { label: 'Sales', items: [
-    { href: '/admin/quotes', label: 'Quote requests', short: 'Quotes', icon: 'quotes', count: 'newQuotes' },
     { href: '/admin/invoices', label: 'Invoices', icon: 'invoices', count: 'unpaidInvoices' },
-    { href: '/admin/mockups', label: 'Mockup studio', short: 'Mockups', icon: 'mockups' },
+    { href: '/admin/mockups', label: 'Studio access', short: 'Studio', icon: 'mockups' },
   ] },
   { label: 'Settings', items: [
     { href: '/admin/team', label: 'Team', icon: 'team' },
@@ -139,7 +137,7 @@ function Guarded({ pathname, children }) {
         <span className="a-topbar-title">{current?.short ?? current?.label ?? 'Admin'}</span>
         <button className="a-icon-btn a-menu-btn" onClick={() => setOpen(true)} aria-label="Open menu" aria-expanded={open}>
           <Icon name="open" />
-          {(counts?.newQuotes || 0) + (counts?.unpaidInvoices || 0) > 0 && <i className="a-dot" aria-hidden="true" />}
+          {counts?.unpaidInvoices > 0 && <i className="a-dot" aria-hidden="true" />}
         </button>
       </header>
       <div className={`a-drawer ${open ? 'is-open' : ''}`} aria-hidden={!open}>

@@ -51,7 +51,15 @@ const nextConfig = {
           { key: 'Cache-Control', value: 'no-store' },
         ],
       },
+      { source: '/studio/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
     ];
+  },
+  // The Mockup Studio is its own site: point a subdomain such as
+  // studio.daralnajahadv.com at this project and its home page is the studio.
+  async rewrites() {
+    return {
+      beforeFiles: [{ source: '/', has: [{ type: 'host', value: 'studio\\..+' }], destination: '/studio' }],
+    };
   },
 };
 

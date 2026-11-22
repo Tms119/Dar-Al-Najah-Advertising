@@ -32,8 +32,8 @@ export default function Footer() {
             <a href={`mailto:${COMPANY.email}`} className="f-quick-btn">
               <small>Email</small><b>{COMPANY.email}</b><span aria-hidden="true">↗</span>
             </a>
-            <Link href="/contact" className="f-quick-btn is-accent">
-              <small>Online</small><b>Request a quote</b><span aria-hidden="true">→</span>
+            <Link href="/products" className="f-quick-btn is-accent">
+              <small>Catalogue</small><b>Browse products</b><span aria-hidden="true">→</span>
             </Link>
           </div>
         </div>
@@ -73,7 +73,7 @@ export default function Footer() {
               <ul>
                 <li><Link href="/">Home</Link></li>
                 <li><Link href="/products">All products</Link></li>
-                <li><Link href="/contact">Contact &amp; quote</Link></li>
+                <li><Link href="/contact">Contact</Link></li>
                 <li><a href={waLink('Hi! I have a question.')} target="_blank" rel="noopener noreferrer">WhatsApp support</a></li>
               </ul>
             </div>
@@ -91,6 +91,7 @@ export default function Footer() {
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} {COMPANY.full}. All rights reserved.</span>
           <span>Printed with care in Dubai</span>
+          <span className="f-credit">Designed &amp; built by <b>PEERBROS</b> x <b>Themeszoo</b></span>
           <button type="button" className="f-top" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             Back to top ↑
           </button>

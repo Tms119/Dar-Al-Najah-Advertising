@@ -32,7 +32,6 @@ export default function Catalog({ initialCat = 'all' }) {
     );
     // filter() already returned a fresh array, so sorting in place is safe
     if (sort === 'featured') l.sort((a, b) => b.featured - a.featured);
-    if (sort === 'low') l.sort((a, b) => a.price - b.price);
     if (sort === 'az') l.sort((a, b) => a.name.localeCompare(b.name));
     return l;
   }, [PRODUCTS, cat, group, q, sort]);
@@ -65,7 +64,6 @@ export default function Catalog({ initialCat = 'all' }) {
             </label>
             <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort">
               <option value="featured">Featured</option>
-              <option value="low">Price: low to high</option>
               <option value="az">A to Z</option>
             </select>
           </div>

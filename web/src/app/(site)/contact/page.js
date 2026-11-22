@@ -1,22 +1,9 @@
-import { fetchQuery } from 'convex/nextjs';
-import { api } from '@convex/_generated/api';
-import ContactForm from './ContactForm';
 import { COMPANY, telHref, waLink } from '@/data/site';
+import { WhatsAppIcon } from '@/components/icons';
 
-export const metadata = { title: 'Contact & quote', description: 'Request a printing quote from Dar Al Najah Advertising in Dubai. We reply fast on WhatsApp and email.' };
+export const metadata = { title: 'Contact', description: 'Talk to Dar Al Najah Advertising in Dubai on WhatsApp, by phone or email, or visit our studio.' };
 
-export default async function ContactPage({ searchParams }) {
-  const { product, details, estimate } = await searchParams;
-  const r = typeof product === 'string' ? await fetchQuery(api.catalog.getProduct, { slug: product }) : null;
-  const pre = r?.status === 'ok'
-    ? {
-        slug: r.product.id,
-        name: r.product.name,
-        category: r.product.category,
-        details: typeof details === 'string' ? details.slice(0, 500) : null,
-        estimate: Number.isFinite(Number(estimate)) ? Number(estimate) : null,
-      }
-    : null;
+export default function ContactPage() {
   return (
     <div className="contact page-pad">
       <div className="container contact-grid">
@@ -26,9 +13,6 @@ export default async function ContactPage({ searchParams }) {
             <span>Want</span><span>to start</span><span className="hl">a new</span><span>print?</span>
           </h1>
           <div className="contact-cards">
-            <a href={waLink('Hi Dar Al Najah!')} target="_blank" rel="noopener noreferrer" className="c-card" style={{ '--c': '#00A86B' }}>
-              <small>WhatsApp</small><b>Chat with us</b><span>↗</span>
-            </a>
             <a href={telHref} className="c-card" style={{ '--c': '#2B3BFF' }}>
               <small>Call</small><b>{COMPANY.phone}</b><span>↗</span>
             </a>
@@ -40,7 +24,16 @@ export default async function ContactPage({ searchParams }) {
             </div>
           </div>
         </div>
-        <ContactForm pre={pre} />
+
+        <div className="form-card contact-wa">
+          <span className="sent-ic"><WhatsAppIcon size={30} /></span>
+          <h2 className="display sm">Message us on WhatsApp</h2>
+          <p className="muted">Send us the product, quantity, size and deadline, and your artwork if you have it. We usually reply within minutes during opening hours.</p>
+          <a className="btn btn-ink btn-block btn-wa" href={waLink('Hi Dar Al Najah! I would like to discuss a print job.')} target="_blank" rel="noopener noreferrer">
+            <WhatsAppIcon size={18} /> Chat on WhatsApp
+          </a>
+          <small className="muted">{COMPANY.hours}</small>
+        </div>
       </div>
     </div>
   );

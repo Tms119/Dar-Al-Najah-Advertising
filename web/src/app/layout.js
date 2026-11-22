@@ -1,3 +1,7 @@
+/*!
+ * Dar Al Najah Advertising
+ * Designed & built by PEERBROS x Themeszoo
+ */
 import { Suspense } from 'react';
 import { Bricolage_Grotesque, Inter_Tight } from 'next/font/google';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -18,6 +22,8 @@ export const metadata = {
   },
   description: 'Business cards, flyers, roll up banners, packaging, embroidery, corporate gifts and photo studio services in Dubai. Same day printing available.',
   applicationName: 'Dar Al Najah Advertising',
+  authors: [{ name: 'PEERBROS x Themeszoo' }],
+  creator: 'PEERBROS x Themeszoo',
   openGraph: {
     type: 'website',
     siteName: 'Dar Al Najah Advertising',
@@ -31,10 +37,10 @@ export const viewport = { themeColor: '#F6F2EC', width: 'device-width', initialS
 
 /* Runs before first paint:
    - data-lite: low-end device / data-saver / reduced motion → lighter effects
-   - data-no-intro: skip the loader on repeat views this session, in admin, or for reduced motion */
+   - data-no-intro: skip the loader on repeat views this session, in admin/studio, or for reduced motion */
 const bootScript = `(function(){var d=document.documentElement;try{var n=navigator,rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(rm||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||(n.deviceMemory&&n.deviceMemory<=4)||(n.connection&&n.connection.saveData))d.setAttribute('data-lite','');
-if(rm||location.pathname.indexOf('/admin')===0||sessionStorage.getItem('dn-intro'))d.setAttribute('data-no-intro','');else sessionStorage.setItem('dn-intro','1');
+if(rm||/^\/(admin|studio)/.test(location.pathname)||sessionStorage.getItem('dn-intro'))d.setAttribute('data-no-intro','');else sessionStorage.setItem('dn-intro','1');
 }catch(e){d.setAttribute('data-no-intro','')}})();`;
 
 const WORD = 'Dar Al Najah';

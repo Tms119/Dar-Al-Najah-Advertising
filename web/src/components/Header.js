@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { COMPANY, telHref } from '@/data/site';
+import { COMPANY, telHref, waLink } from '@/data/site';
+import { WhatsAppIcon } from './icons';
 import { useCatalog } from './CatalogProvider';
 import Logo from './Logo';
 import Image from 'next/image';
@@ -68,9 +69,9 @@ export default function Header() {
             <span>{COMPANY.hours}</span>
             <a href={telHref}>{COMPANY.phone}</a>
           </div>
-          <Link href="/contact" className="btn btn-ink btn-sm">
-            Get a quote <span className="btn-arrow">↗</span>
-          </Link>
+          <a href={waLink('Hi Dar Al Najah! I have a question about printing.')} target="_blank" rel="noopener noreferrer" className="btn btn-ink btn-sm btn-wa">
+            <WhatsAppIcon size={16} /> WhatsApp
+          </a>
           <button className="burger" onClick={() => setOpen(true)} aria-label="Open menu">
             <span /><span />
           </button>
@@ -145,7 +146,7 @@ export default function Header() {
             </div>
           ))}
           <Link href="/products" className="m-link" style={{ '--i': CATALOG.length }}>All products</Link>
-          <Link href="/contact" className="m-link" style={{ '--i': CATALOG.length + 1 }}>Contact & quote</Link>
+          <Link href="/contact" className="m-link" style={{ '--i': CATALOG.length + 1 }}>Contact</Link>
         </div>
         <div className="mobile-foot">
           <a href={telHref}>{COMPANY.phone}</a>

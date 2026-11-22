@@ -1,6 +1,5 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query, type MutationCtx } from "./_generated/server";
-import type { Doc } from "./_generated/dataModel";
 import { invoiceCustomer, invoiceItem, invoiceStatus } from "./schema";
 import { requireAdmin } from "./lib/admin";
 import { round2, text } from "./lib/validate";
@@ -111,28 +110,6 @@ export const get = query({
   },
 });
 
-/** Data to pre-fill a new invoice from a quote request. */
-export const fromQuote = query({
-  args: { quoteId: v.id("quoteRequests") },
-  handler: async (ctx, { quoteId }) => {
-    await requireAdmin(ctx);
-    const q = await ctx.db.get(quoteId);
-    if (!q) return null;
-    let product: Doc<"products"> | null = null;
-    if (q.productSlug) {
-      product = await ctx.db.query("products").withIndex("by_slug", (x) => x.eq("slug", q.productSlug!)).unique();
-    }
-    return {
-      quoteId: q._id,
-      customer: { name: q.name, company: q.company, email: q.email, phone: q.phone, address: "", trn: "" },
-      items: product
-        ? [{ productId: product._id, description: product.name, details: q.details ?? "", quantity: 1, unitPrice: q.estimate ?? product.basePrice }]
-        : [],
-      notes: q.message ? `Customer request: ${q.message.slice(0, 300)}` : "",
-    };
-  },
-});
-
 export const save = mutation({
   args: {
     id: v.union(v.id("invoices"), v.null()),
@@ -144,7 +121,6 @@ export const save = mutation({
     discount: v.number(),
     vatRate: v.number(),
     notes: v.string(),
-    quoteId: v.union(v.id("quoteRequests"), v.null()),
   },
   returns: v.object({ id: v.id("invoices"), number: v.string() }),
   handler: async (ctx, a) => {
@@ -188,7 +164,6 @@ export const save = mutation({
       discount,
       vatRate: a.vatRate,
       notes: text(a.notes, 1000, "Notes"),
-      quoteId: a.quoteId && (await ctx.db.get(a.quoteId)) ? a.quoteId : null,
       ...totals,
     };
 
@@ -240,14 +215,7 @@ export const productPicker = query({
     await requireAdmin(ctx);
     const products = await ctx.db.query("products").take(1000);
     return products
-      .map((p) => ({
-        _id: p._id,
-        name: p.name,
-        isActive: p.isActive,
-        basePrice: p.basePrice,
-        priceUnit: p.priceUnit,
-        tiers: p.quantityTiers,
-      }))
+      .map((p) => ({ _id: p._id, name: p.name, isActive: p.isActive }))
       .sort((a, b) => a.name.localeCompare(b.name));
   },
 });
