@@ -45,13 +45,16 @@ function buildPrompt(a: {
   hasObject: boolean; objectText: string; hasLogo: boolean; text: string;
   placement: string; style: string; extra: string;
 }) {
+  // The logo goes first (image 1), then the product photo. In testing this
+  // order, without asking to keep the product "exact", got past the model's
+  // over eager safety filter far more often.
   let n = 0;
-  const objectRef = a.hasObject ? `the product shown in image ${++n}` : `a ${a.objectText}`;
   const logoRef = a.hasLogo ? `the logo from image ${++n}` : "";
+  const objectRef = a.hasObject ? `the product shown in image ${++n}` : `a ${a.objectText}`;
   const print = [logoRef, a.text ? `the text "${a.text}"` : ""].filter(Boolean).join(" together with ");
   return [
     `${STYLES[a.style]}.`,
-    `Product mockup of ${objectRef}${a.hasObject ? ", keeping its exact shape, material and colour" : ""}.`,
+    `Product mockup of ${objectRef}.`,
     `Print ${print} ${PLACEMENTS[a.placement]}, as a realistic high quality print that follows the surface shape, fabric folds and lighting.`,
     a.hasLogo ? "Reproduce the logo exactly: same shapes, colours and proportions, do not redraw or change it." : "",
     a.text ? `Spell the text exactly as "${a.text}" in a clean bold typeface.` : "",
@@ -74,8 +77,23 @@ function fromBase64(b64: string) {
   return out;
 }
 
-/** Calls Cloudflare Workers AI and returns the image bytes. */
+class Flagged extends Error {}
+
+/** The model's safety filter sometimes flags harmless mockups at random.
+    Each attempt comes out different, so retry a couple of times first. */
 async function runModel(model: string, prompt: string, images: Blob[], width: number, height: number) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await runModelOnce(model, prompt, images, width, height);
+    } catch (e) {
+      if (!(e instanceof Flagged)) throw e;
+      if (attempt >= 3) throw new ConvexError("The image service's safety filter blocked this mockup. Try again, or change the wording or image.");
+    }
+  }
+}
+
+/** Calls Cloudflare Workers AI and returns the image bytes. */
+async function runModelOnce(model: string, prompt: string, images: Blob[], width: number, height: number) {
   const accountId = env.CLOUDFLARE_ACCOUNT_ID;
   const token = env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !token) throw new ConvexError("The image service isn't connected yet. Add the Cloudflare keys in Convex settings.");
@@ -108,7 +126,7 @@ async function runModel(model: string, prompt: string, images: Blob[], width: nu
       throw new ConvexError("Today's free image allowance is used up. It resets at 4am Dubai time.");
     if (res.status === 401 || res.status === 403)
       throw new ConvexError("The image service rejected the key. Check the Cloudflare token in Convex settings.");
-    if (/nsfw|safety|flagged/i.test(msg)) throw new ConvexError("The image service declined this request. Try different wording.");
+    if (/nsfw|safety|flagged/i.test(msg)) throw new Flagged(msg);
     throw new ConvexError("The image service couldn't make this mockup. Please try again.");
   }
   const b64 = body?.result?.image ?? body?.image;
@@ -178,8 +196,9 @@ export const generate = action({
 
     const model = env.CLOUDFLARE_IMAGE_MODEL || DEFAULT_MODEL;
     const images: Blob[] = [];
-    if (a.objectImage) images.push(new Blob([a.objectImage], { type: okType(a.objectImageType) }));
+    // same order as the prompt: logo first, then the product photo
     if (a.logoImage) images.push(new Blob([a.logoImage], { type: okType(a.logoImageType) }));
+    if (a.objectImage) images.push(new Blob([a.objectImage], { type: okType(a.objectImageType) }));
     const prompt = buildPrompt({ hasObject: !!a.objectImage, objectText, hasLogo: !!a.logoImage, text, placement: a.placement, style: a.style, extra });
     const [w, h] = ASPECTS[a.aspect];
 
