@@ -146,6 +146,21 @@ export default defineSchema({
   counters: defineTable({ name: v.string(), value: v.number() }).index("by_name", ["name"]),
 
   // single document: company details printed on invoices
+  // AI product mockups made in the admin Mockup studio
+  mockups: defineTable({
+    storageId: v.id("_storage"),
+    objectLabel: v.string(),
+    text: v.string(),
+    placement: v.string(),
+    style: v.string(),
+    aspect: v.string(),
+    extra: v.string(),
+    hadObjectImage: v.boolean(),
+    hadLogo: v.boolean(),
+    model: v.string(),
+    createdBy: v.id("users"),
+  }),
+
   invoiceSettings: defineTable({
     companyName: v.string(),
     address: v.string(),

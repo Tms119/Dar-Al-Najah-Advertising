@@ -14,6 +14,12 @@ const app = defineApp({
     // Quote requests without it are rejected, so the form can't be spammed
     // by calling Convex directly (bypassing the per-IP limit).
     QUOTE_SERVER_KEY: v.optional(v.string()),
+    // Cloudflare Workers AI, used by the admin Mockup studio (free daily allowance).
+    // Set with the Convex dashboard or `npx convex env set`, never in code.
+    CLOUDFLARE_ACCOUNT_ID: v.optional(v.string()),
+    CLOUDFLARE_API_TOKEN: v.optional(v.string()),
+    // optional override, defaults to @cf/black-forest-labs/flux-2-klein-4b
+    CLOUDFLARE_IMAGE_MODEL: v.optional(v.string()),
   },
 });
 

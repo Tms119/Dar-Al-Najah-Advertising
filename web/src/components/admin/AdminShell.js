@@ -16,6 +16,7 @@ const Icon = ({ name }) => {
     menu: <><path d="M4 6h16M4 12h16M4 18h10" /></>,
     quotes: <><path d="M4 5h16v11H8.5L4 20z" /><path d="M8 9.5h8M8 12.5h5" /></>,
     invoices: <><path d="M6 2.8h9l4 4v14.4l-2.5-1.5-2.5 1.5-2.5-1.5-2.5 1.5-2.5-1.5L6 21.2z" /><path d="M9 10h6M9 13.5h6M9 7h3" /></>,
+    mockups: <><path d="M12 3.5l1.6 4.2 4.4 1.6-4.4 1.6L12 15.1l-1.6-4.2L6 9.3l4.4-1.6z" /><path d="M18.5 14.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z" /><path d="M5.5 15.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4L3.5 17.5l1.4-.6z" /></>,
     team: <><circle cx="9" cy="8" r="3.2" /><path d="M3 19.5c.6-3.3 3-5.3 6-5.3s5.4 2 6 5.3" /><circle cx="17" cy="9" r="2.4" /><path d="M16.5 14.3c2.3.2 4 1.9 4.5 4.7" /></>,
     external: <><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" /></>,
     logout: <><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" /><path d="M10 16l-4-4 4-4M6 12h10" /></>,
@@ -34,6 +35,7 @@ const GROUPS = [
   { label: 'Sales', items: [
     { href: '/admin/quotes', label: 'Quote requests', short: 'Quotes', icon: 'quotes', count: 'newQuotes' },
     { href: '/admin/invoices', label: 'Invoices', icon: 'invoices', count: 'unpaidInvoices' },
+    { href: '/admin/mockups', label: 'Mockup studio', short: 'Mockups', icon: 'mockups' },
   ] },
   { label: 'Settings', items: [
     { href: '/admin/team', label: 'Team', icon: 'team' },
