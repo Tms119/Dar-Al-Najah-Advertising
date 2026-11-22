@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useAction, useMutation, useQuery } from 'convex/react';
-import { ConvexError } from 'convex/values';
 import { api } from '@convex/_generated/api';
-import { saveFile } from '@/components/admin/downloadInvoice';
+import { DownloadIcon } from '@/components/icons';
+import { saveFile } from '@/lib/download';
+import { errorMessage } from '@/lib/errors';
 
 const QUICK = ['T shirt', 'Hoodie', 'Cap', 'Mug', 'Tote bag', 'Business card', 'Notebook', 'Pen', 'Water bottle', 'Roll up banner'];
 const PLACEMENTS = [['auto', 'Best spot'], ['front', 'Centre front'], ['chest', 'Left chest'], ['back', 'Back'], ['wrap', 'All over']];
@@ -138,7 +139,7 @@ export default function MockupStudio() {
       });
       setResult({ ...r, aspect });
     } catch (e) {
-      setError(e instanceof ConvexError ? String(e.data) : 'Something went wrong. Please try again.');
+      setError(errorMessage(e));
     } finally { setBusy(false); }
   };
 
@@ -259,7 +260,7 @@ export default function MockupStudio() {
                   <span>{m.text || (m.hadLogo ? 'Logo' : '')}<small>{m.objectLabel} · {new Date(m._creationTime).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</small></span>
                   <span className="mk-tile-actions">
                     <button className="inv-qa-btn" onClick={() => download(m.url, fileName(m))} title="Download" aria-label="Download mockup">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5" /><path d="M5 19.5h14" /></svg>
+                      <DownloadIcon size={16} />
                     </button>
                     <button className="inv-qa-btn mk-del" onClick={() => onDelete(m)} title="Delete" aria-label="Delete mockup">
                       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 7h14M10 11v6M14 11v6M6.5 7l1 12.5h9l1-12.5M9.5 7V4.5h5V7" /></svg>

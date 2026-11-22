@@ -4,13 +4,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useMutation } from 'convex/react';
-import { ConvexError } from 'convex/values';
 import { api } from '@convex/_generated/api';
 import Mock, { SHAPES } from '@/components/Mock';
 import Toggle from './Toggle';
-
-const slugify = (s) => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-const MAX_MB = 8;
+import { errorMessage } from '@/lib/errors';
+import { slugify } from '@/lib/slugify';
+import { MAX_UPLOAD_MB as MAX_MB, checkImageFile, uploadToStorage } from '@/lib/upload';
 
 export default function ProductEditor({ product, structure }) {
   const router = useRouter();
@@ -47,18 +46,15 @@ export default function ProductEditor({ product, structure }) {
   const upload = async (files) => {
     setError(null);
     const list = [...files].filter((file) => {
-      if (!file.type.startsWith('image/')) { setError(`${file.name} isn't an image`); return false; }
-      if (file.size > MAX_MB * 1024 * 1024) { setError(`${file.name} is over ${MAX_MB} MB`); return false; }
-      return true;
+      const invalid = checkImageFile(file);
+      if (invalid) setError(invalid);
+      return !invalid;
     });
     if (!list.length) return;
     setUploading(true);
     try {
       for (const file of list) {
-        const url = await genUploadUrl();
-        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': file.type }, body: file });
-        if (!res.ok) throw new Error('Upload failed');
-        const { storageId } = await res.json();
+        const storageId = await uploadToStorage(genUploadUrl, file);
         setImages((im) => [...im, { id: storageId, url: URL.createObjectURL(file) }]);
       }
     } catch {
@@ -113,7 +109,7 @@ export default function ProductEditor({ product, structure }) {
       });
       router.push('/admin/products');
     } catch (err) {
-      setError(err instanceof ConvexError ? String(err.data) : 'Could not save. Check the fields and try again.');
+      setError(errorMessage(err, 'Could not save. Check the fields and try again.'));
       setSaving(false);
     }
   };

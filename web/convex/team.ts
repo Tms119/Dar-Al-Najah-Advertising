@@ -1,6 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { components } from "./_generated/api";
-import { internalMutation, internalQuery, mutation, query, type MutationCtx } from "./_generated/server";
+import { internalMutation, internalQuery, mutation, query, type MutationCtx, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { requireAdmin } from "./lib/admin";
 
@@ -8,6 +8,9 @@ import { requireAdmin } from "./lib/admin";
    accounts are created here by an existing admin, or once from the CLI. */
 
 const MIN_PASSWORD = 10;
+
+const usernameOf = (ctx: QueryCtx, userId: Id<"users">) =>
+  ctx.runQuery(components.authUsername.public.getUsername, { userId });
 const USERNAME_RE = /^[a-z0-9._-]{3,32}$/;
 
 async function createAccount(ctx: MutationCtx, rawUsername: string, password: string): Promise<Id<"users">> {
@@ -42,12 +45,13 @@ export const list = query({
   handler: async (ctx) => {
     const me = await requireAdmin(ctx);
     const users = await ctx.db.query("users").take(200);
-    const out = [];
-    for (const u of users) {
-      const username = await ctx.runQuery(components.authUsername.public.getUsername, { userId: u._id });
-      if (username) out.push({ _id: u._id, username, isAdmin: u.isAdmin === true, isMe: u._id === me, created: u._creationTime });
-    }
-    return out.sort((a, b) => a.created - b.created);
+    const names = await Promise.all(users.map((u) => usernameOf(ctx, u._id)));
+    return users
+      .flatMap((u, i) => {
+        const username = names[i];
+        return username ? [{ _id: u._id, username, isAdmin: u.isAdmin === true, isMe: u._id === me, created: u._creationTime }] : [];
+      })
+      .sort((a, b) => a.created - b.created);
   },
 });
 
@@ -93,15 +97,11 @@ export const auditAccounts = internalQuery({
   args: {},
   handler: async (ctx) => {
     const users = await ctx.db.query("users").take(500);
-    const out = [];
-    for (const u of users) {
-      out.push({
-        userId: u._id,
-        username: await ctx.runQuery(components.authUsername.public.getUsername, { userId: u._id }),
-        isAdmin: u.isAdmin === true,
-      });
-    }
-    return out;
+    return await Promise.all(users.map(async (u) => ({
+      userId: u._id,
+      username: await usernameOf(ctx, u._id),
+      isAdmin: u.isAdmin === true,
+    })));
   },
 });
 

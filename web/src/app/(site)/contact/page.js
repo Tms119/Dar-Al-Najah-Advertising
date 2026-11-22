@@ -1,7 +1,7 @@
 import { fetchQuery } from 'convex/nextjs';
 import { api } from '@convex/_generated/api';
 import ContactForm from './ContactForm';
-import { COMPANY, waLink } from '@/data/site';
+import { COMPANY, telHref, waLink } from '@/data/site';
 
 export const metadata = { title: 'Contact & quote', description: 'Request a printing quote from Dar Al Najah Advertising in Dubai. We reply fast on WhatsApp and email.' };
 
@@ -29,7 +29,7 @@ export default async function ContactPage({ searchParams }) {
             <a href={waLink('Hi Dar Al Najah!')} target="_blank" rel="noopener noreferrer" className="c-card" style={{ '--c': '#00A86B' }}>
               <small>WhatsApp</small><b>Chat with us</b><span>↗</span>
             </a>
-            <a href={`tel:${COMPANY.phone.replace(/\s/g, '')}`} className="c-card" style={{ '--c': '#2B3BFF' }}>
+            <a href={telHref} className="c-card" style={{ '--c': '#2B3BFF' }}>
               <small>Call</small><b>{COMPANY.phone}</b><span>↗</span>
             </a>
             <a href={`mailto:${COMPANY.email}`} className="c-card" style={{ '--c': '#FF3D7F' }}>

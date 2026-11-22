@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { COMPANY } from '@/data/site';
+import { COMPANY, telHref } from '@/data/site';
 import { useCatalog } from './CatalogProvider';
 import Logo from './Logo';
 import Image from 'next/image';
@@ -19,7 +19,10 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
-  useEffect(() => { setOpen(false); setMega(null); }, [pathname]);
+  // close menus on navigation (reset during render, not in an effect: no extra paint)
+  const [shownPath, setShownPath] = useState(pathname);
+  if (pathname !== shownPath) { setShownPath(pathname); setOpen(false); setMega(null); }
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
@@ -63,7 +66,7 @@ export default function Header() {
         <div className="header-right">
           <div className="header-hours">
             <span>{COMPANY.hours}</span>
-            <a href={`tel:${COMPANY.phone.replace(/\s/g, '')}`}>{COMPANY.phone}</a>
+            <a href={telHref}>{COMPANY.phone}</a>
           </div>
           <Link href="/contact" className="btn btn-ink btn-sm">
             Get a quote <span className="btn-arrow">↗</span>
@@ -145,7 +148,7 @@ export default function Header() {
           <Link href="/contact" className="m-link" style={{ '--i': CATALOG.length + 1 }}>Contact & quote</Link>
         </div>
         <div className="mobile-foot">
-          <a href={`tel:${COMPANY.phone.replace(/\s/g, '')}`}>{COMPANY.phone}</a>
+          <a href={telHref}>{COMPANY.phone}</a>
           <span>{COMPANY.hours}</span>
         </div>
       </div>

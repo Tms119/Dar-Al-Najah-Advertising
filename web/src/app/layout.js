@@ -4,15 +4,14 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/next';
 import { ConvexAuthNextjsServerProvider } from '@/lib/convexAuth';
 import IntroLoader from '@/components/IntroLoader';
+import { SITE_URL } from '@/data/site';
 import './globals.css';
 
 const display = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-display', axes: ['wdth', 'opsz'], display: 'swap' });
 const body = Inter_Tight({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-
 export const metadata = {
-  metadataBase: new URL(SITE),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'Dar Al Najah Advertising | Printing, Embroidery & Gifts in Dubai',
     template: '%s | Dar Al Najah Advertising',

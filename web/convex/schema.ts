@@ -145,7 +145,6 @@ export default defineSchema({
   // sequential invoice numbers per year, incremented inside the same transaction
   counters: defineTable({ name: v.string(), value: v.number() }).index("by_name", ["name"]),
 
-  // single document: company details printed on invoices
   // AI product mockups made in the admin Mockup studio
   mockups: defineTable({
     storageId: v.id("_storage"),
@@ -161,6 +160,7 @@ export default defineSchema({
     createdBy: v.id("users"),
   }),
 
+  // single document: company details printed on invoices
   invoiceSettings: defineTable({
     companyName: v.string(),
     address: v.string(),

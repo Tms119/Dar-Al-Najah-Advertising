@@ -1,10 +1,10 @@
 import { fetchQuery } from 'convex/nextjs';
 import { api } from '@convex/_generated/api';
+import { SITE_URL as base } from '@/data/site';
 
 export const revalidate = 3600;
 
 export default async function sitemap() {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   const { categories, products } = await fetchQuery(api.catalog.getCatalog, {});
   return [
     { url: `${base}/`, priority: 1 },

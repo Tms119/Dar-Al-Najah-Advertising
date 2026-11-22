@@ -1,5 +1,6 @@
+import { SITE_URL as base } from '@/data/site';
+
 export default function robots() {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   return {
     rules: { userAgent: '*', allow: '/', disallow: ['/admin', '/auth'] },
     sitemap: `${base}/sitemap.xml`,

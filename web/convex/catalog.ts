@@ -46,43 +46,48 @@ async function buildCatalog(ctx: QueryCtx) {
     .withIndex("by_isActive_and_sortOrder", (q) => q.eq("isActive", true))
     .take(MAX_CATEGORIES);
 
-  const productCache = new Map<Id<"products">, Doc<"products"> | null>();
-  const getProduct = async (id: Id<"products">) => {
-    if (!productCache.has(id)) productCache.set(id, await ctx.db.get(id));
-    return productCache.get(id) ?? null;
-  };
-
-  const categories = [];
-  const cards = [];
-  const placed = new Set<Id<"products">>();
-
-  for (const cat of cats) {
+  // 1. Load the whole tree (category → groups → links) in parallel.
+  const tree = await Promise.all(cats.map(async (cat) => {
     const groups = await ctx.db
       .query("groups")
       .withIndex("by_categoryId_and_sortOrder", (q) => q.eq("categoryId", cat._id))
       .take(MAX_GROUPS);
+    const groupLinks = await Promise.all(groups.map((g) => ctx.db
+      .query("productGroups")
+      .withIndex("by_groupId_and_sortOrder", (q) => q.eq("groupId", g._id))
+      .take(MAX_ITEMS_PER_GROUP)));
+    return { cat, groups: groups.map((g, i) => ({ g, links: groupLinks[i] })) };
+  }));
 
+  // 2. Fetch every referenced product once.
+  const ids = [...new Set(tree.flatMap((t) => t.groups.flatMap((x) => x.links.map((l) => l.productId))))];
+  const docs = await Promise.all(ids.map((id) => ctx.db.get(id)));
+  const products = new Map(ids.map((id, i) => [id, docs[i]]));
+
+  // A product whose primary link sits in a live category shows its card there;
+  // otherwise its card falls back to the first live group it appears in.
+  const livePrimary = new Set<Id<"products">>();
+  for (const t of tree) for (const x of t.groups) for (const l of x.links) if (l.isPrimary) livePrimary.add(l.productId);
+
+  // 3. Walk the tree in menu order to build the navigation and the cards.
+  const categories = [];
+  const cardSources: { p: Doc<"products">; cat: Doc<"categories">; group: string }[] = [];
+  const placed = new Set<Id<"products">>();
+  for (const { cat, groups } of tree) {
     const navGroups = [];
-    for (const g of groups) {
-      const links = await ctx.db
-        .query("productGroups")
-        .withIndex("by_groupId_and_sortOrder", (q) => q.eq("groupId", g._id))
-        .take(MAX_ITEMS_PER_GROUP);
-
+    for (const { g, links } of groups) {
       const items = [];
       for (const link of links) {
-        const p = await getProduct(link.productId);
-        if (!p || !p.isActive) continue;
+        const p = products.get(link.productId);
+        if (!p?.isActive) continue;
         items.push({ name: p.name, slug: p.slug, shape: p.mockupShape });
-        // a product's card lives in its primary group (or first live group)
-        if (!placed.has(p._id) && (link.isPrimary || !(await hasLivePrimary(ctx, p._id)))) {
+        if (!placed.has(p._id) && (link.isPrimary || !livePrimary.has(p._id))) {
           placed.add(p._id);
-          cards.push(toCard(p, cat, g.name, await firstImage(ctx, p)));
+          cardSources.push({ p, cat, group: g.name });
         }
       }
       if (items.length) navGroups.push({ name: g.name, items });
     }
-
     if (navGroups.length) {
       categories.push({
         id: cat.slug,
@@ -93,29 +98,17 @@ async function buildCatalog(ctx: QueryCtx) {
         tint: cat.tint,
         hero: cat.heroShape,
         image: cat.imageId ? await ctx.storage.getUrl(cat.imageId) : null,
-        count: navGroups.reduce((a, g) => a + g.items.length, 0),
+        count: navGroups.reduce((a, x) => a + x.items.length, 0),
         groups: navGroups,
       });
     }
   }
 
-  return { categories, products: cards };
+  const images = await Promise.all(cardSources.map(({ p }) => firstImage(ctx, p)));
+  return { categories, products: cardSources.map(({ p, cat, group }, i) => toCard(p, cat, group, images[i])) };
 }
 
-/** true if the product's primary group belongs to an active category */
-async function hasLivePrimary(ctx: QueryCtx, productId: Id<"products">) {
-  const links = await ctx.db
-    .query("productGroups")
-    .withIndex("by_productId", (q) => q.eq("productId", productId))
-    .take(20);
-  const primary = links.find((l) => l.isPrimary);
-  if (!primary) return false;
-  const group = await ctx.db.get(primary.groupId);
-  const cat = group ? await ctx.db.get(group.categoryId) : null;
-  return Boolean(cat?.isActive);
-}
-
-/** Everything the menu, footer, home page and catalogue need — one live subscription. */
+/** Everything the menu, footer, home page and catalogue need, in one live subscription. */
 export const getCatalog = query({
   args: {},
   handler: async (ctx) => buildCatalog(ctx),
@@ -153,13 +146,10 @@ export const getProduct = query({
       .query("productGroups")
       .withIndex("by_groupId_and_sortOrder", (q) => q.eq("groupId", group._id))
       .take(MAX_ITEMS_PER_GROUP);
-    const related = [];
-    for (const l of sameGroup) {
-      if (related.length >= 4) break;
-      if (l.productId === p._id) continue;
-      const r = await ctx.db.get(l.productId);
-      if (r?.isActive) related.push(toCard(r, cat, group.name, await firstImage(ctx, r)));
-    }
+    const candidates = (await Promise.all(
+      sameGroup.filter((l) => l.productId !== p._id).slice(0, 12).map((l) => ctx.db.get(l.productId)),
+    )).filter((r): r is Doc<"products"> => r?.isActive === true).slice(0, 4);
+    const related = await Promise.all(candidates.map(async (r) => toCard(r, cat, group.name, await firstImage(ctx, r))));
 
     return {
       status: "ok" as const,

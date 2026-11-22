@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@convex/_generated/api';
+import { waChat, waNumber } from '@/lib/whatsapp';
 
 const STATUSES = ['new', 'quoted', 'won', 'lost'];
 
@@ -33,7 +34,7 @@ export default function AdminQuotes() {
       ) : (
         <div className="a-quotes">
           {quotes.map((q) => {
-            const phone = q.phone.replace(/[^\d]/g, '');
+            const phone = waNumber(q.phone);
             return (
               <article key={q._id} className={`a-card a-quote st-${q.status}`}>
                 <div className="a-quote-head">
@@ -57,7 +58,7 @@ export default function AdminQuotes() {
                 <div className="a-actions">
                   <Link className="a-btn a-btn-sm a-btn-primary" href={`/admin/invoices/new?quote=${q._id}`}>Create invoice</Link>
                   <a className="a-btn a-btn-sm" href={`mailto:${q.email}?subject=${encodeURIComponent('Your quote from Dar Al Najah')}`}>✉ {q.email}</a>
-                  {phone && <a className="a-btn a-btn-sm" href={`https://wa.me/${phone}`} target="_blank" rel="noreferrer">WhatsApp {q.phone}</a>}
+                  {phone && <a className="a-btn a-btn-sm" href={waChat(phone)} target="_blank" rel="noreferrer">WhatsApp {q.phone}</a>}
                   <button className="a-btn a-btn-sm a-btn-danger" onClick={() => window.confirm('Delete this request permanently?') && remove({ id: q._id })}>Delete</button>
                 </div>
               </article>

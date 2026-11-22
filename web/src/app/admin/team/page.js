@@ -2,10 +2,8 @@
 
 import { useState } from 'react';
 import { useMutation, useQuery } from 'convex/react';
-import { ConvexError } from 'convex/values';
 import { api } from '@convex/_generated/api';
-
-const errText = (e) => (e instanceof ConvexError ? String(e.data) : 'Something went wrong.');
+import { errorMessage as errText } from '@/lib/errors';
 
 function genPassword() {
   const a = new Uint8Array(12);

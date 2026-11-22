@@ -52,12 +52,14 @@ export default function AdminShell({ children }) {
 
 function Guarded({ pathname, children }) {
   const me = useQuery(api.users.me);
-  const counts = useQuery(api.admin.overview, me?.isAdmin ? {} : 'skip');
+  const counts = useQuery(api.admin.badgeCounts, me?.isAdmin ? {} : 'skip');
   const { signOut } = useAuthActions();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  useEffect(() => { setOpen(false); }, [pathname]);
+  // close the drawer on navigation (reset during render, not in an effect)
+  const [shownPath, setShownPath] = useState(pathname);
+  if (pathname !== shownPath) { setShownPath(pathname); setOpen(false); }
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
     const onKey = (e) => e.key === 'Escape' && setOpen(false);

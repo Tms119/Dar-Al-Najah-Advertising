@@ -2,13 +2,17 @@
 
 import { useState } from 'react';
 import { useMutation, useQuery } from 'convex/react';
-import { ConvexError } from 'convex/values';
 import { api } from '@convex/_generated/api';
 import Mock, { SHAPES } from '@/components/Mock';
 import Toggle from '@/components/admin/Toggle';
+import { errorMessage as errText } from '@/lib/errors';
+import { slugify } from '@/lib/slugify';
+import { checkImageFile, uploadToStorage } from '@/lib/upload';
+
+/** The editable fields of a category, as saveCategory expects them. */
+const catFields = (c) => ({ id: c._id, slug: c.slug, name: c.name, shortName: c.shortName, tagline: c.tagline, color: c.color, tint: c.tint, heroShape: c.heroShape, imageId: c.imageId ?? null, isActive: c.isActive });
 
 const blankCat = { id: null, slug: '', name: '', shortName: '', tagline: '', color: '#2B3BFF', tint: '#E6E8FF', heroShape: 'card', imageId: null, imageUrl: null, isActive: true };
-const errText = (e) => (e instanceof ConvexError ? String(e.data) : 'Something went wrong.');
 
 export default function AdminMenu() {
   const structure = useQuery(api.admin.structure);
@@ -57,10 +61,10 @@ export default function AdminMenu() {
               <span className="a-muted a-small">/{c.slug} · {c.groups.reduce((a, g) => a + g.productCount, 0)} placements</span>
             </div>
             <div className="a-actions">
-              <label className="a-inline a-small"><Toggle checked={c.isActive} onChange={(v) => run(() => saveCategory({ id: c._id, slug: c.slug, name: c.name, shortName: c.shortName, tagline: c.tagline, color: c.color, tint: c.tint, heroShape: c.heroShape, imageId: c.imageId ?? null, isActive: v }))} label={`Show ${c.name}`} /> Live</label>
+              <label className="a-inline a-small"><Toggle checked={c.isActive} onChange={(v) => run(() => saveCategory({ ...catFields(c), isActive: v }))} label={`Show ${c.name}`} /> Live</label>
               <button className="a-btn a-btn-sm a-btn-ghost" disabled={ci === 0} onClick={() => run(() => moveCategory({ id: c._id, direction: 'up' }))} aria-label="Move up">↑</button>
               <button className="a-btn a-btn-sm a-btn-ghost" disabled={ci === structure.length - 1} onClick={() => run(() => moveCategory({ id: c._id, direction: 'down' }))} aria-label="Move down">↓</button>
-              <button className="a-btn a-btn-sm" onClick={() => setEditing({ id: c._id, slug: c.slug, name: c.name, shortName: c.shortName, tagline: c.tagline, color: c.color, tint: c.tint, heroShape: c.heroShape, imageId: c.imageId ?? null, imageUrl: c.imageUrl, isActive: c.isActive })}>Edit</button>
+              <button className="a-btn a-btn-sm" onClick={() => setEditing({ ...catFields(c), imageUrl: c.imageUrl })}>Edit</button>
               <button className="a-btn a-btn-sm a-btn-danger" onClick={() => window.confirm(`Delete category "${c.name}"?`) && run(() => deleteCategory({ id: c._id }))} aria-label="Delete category">✕</button>
             </div>
           </div>
@@ -117,18 +121,15 @@ function CategoryForm({ value, onSave, onCancel }) {
   const [err, setErr] = useState(null);
   const upload = async (file) => {
     if (!file) return;
-    if (!file.type.startsWith('image/')) return setErr("That file isn't an image");
-    if (file.size > 8 * 1024 * 1024) return setErr('Image must be under 8 MB');
+    const invalid = checkImageFile(file);
+    if (invalid) return setErr(invalid);
     setErr(null); setBusy(true);
     try {
-      const res = await fetch(await genUploadUrl(), { method: 'POST', headers: { 'Content-Type': file.type }, body: file });
-      if (!res.ok) throw new Error();
-      const { storageId } = await res.json();
+      const storageId = await uploadToStorage(genUploadUrl, file);
       setV((s) => ({ ...s, imageId: storageId, imageUrl: URL.createObjectURL(file) }));
     } catch { setErr('Upload failed. Please try again.'); } finally { setBusy(false); }
   };
   const set = (k, x) => setV((s) => ({ ...s, [k]: x }));
-  const slugify = (s) => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   return (
     <form className="a-card a-catform" onSubmit={(e) => { e.preventDefault(); onSave(v); }}>
       <h2>{v.id ? 'Edit category' : 'New category'}</h2>

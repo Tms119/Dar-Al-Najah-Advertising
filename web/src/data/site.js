@@ -1,4 +1,4 @@
-/* Business details shown across the site. Placeholder values — confirm with the client. */
+/* Business details shown across the site. Placeholder values: confirm with the client. */
 export const COMPANY = {
   name: 'Dar Al Najah',
   full: 'Dar Al Najah Advertising',
@@ -9,5 +9,11 @@ export const COMPANY = {
   hours: 'Saturday to Thursday, 9am to 10pm',
 };
 
+/** Canonical site origin, used for metadata, sitemap and structured data. */
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
+export const telHref = `tel:${COMPANY.phone.replace(/\s/g, '')}`;
+
+/** WhatsApp chat with the shop, with a pre-filled message. */
 export const waLink = (text) =>
   `https://wa.me/${COMPANY.whatsapp}?text=${encodeURIComponent(text)}`;

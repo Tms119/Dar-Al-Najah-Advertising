@@ -2,11 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { COMPANY, waLink } from '@/data/site';
+import { COMPANY, telHref, waLink } from '@/data/site';
 import { useCatalog } from './CatalogProvider';
 
 const SOCIALS = ['Instagram', 'TikTok', 'LinkedIn', 'Facebook'];
-const tel = COMPANY.phone.replace(/\s/g, '');
 
 export default function Footer() {
   const { categories } = useCatalog();
@@ -27,7 +26,7 @@ export default function Footer() {
             <a href={waLink('Hi Dar Al Najah! I need a quote.')} target="_blank" rel="noopener noreferrer" className="f-quick-btn is-wa">
               <small>WhatsApp</small><b>Chat with us</b><span aria-hidden="true">↗</span>
             </a>
-            <a href={`tel:${tel}`} className="f-quick-btn">
+            <a href={telHref} className="f-quick-btn">
               <small>Call</small><b>{COMPANY.phone}</b><span aria-hidden="true">↗</span>
             </a>
             <a href={`mailto:${COMPANY.email}`} className="f-quick-btn">

@@ -12,7 +12,6 @@ export default async function OgImage() {
   return new ImageResponse(
     (
       <div style={{ width: '100%', height: '100%', background: '#FFFFFF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 34, fontFamily: 'sans-serif' }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={src} width={760} height={381} alt="" />
         <div style={{ display: 'flex', gap: 16, fontSize: 28, color: '#121212' }}>
           <span>Printing</span><span style={{ color: '#21AAE1' }}>·</span>

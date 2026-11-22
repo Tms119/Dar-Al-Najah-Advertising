@@ -1,11 +1,18 @@
+import { cache } from 'react';
 import { notFound, redirect } from 'next/navigation';
-import { fetchQuery, preloadQuery, preloadedQueryResult } from 'convex/nextjs';
+import { preloadQuery, preloadedQueryResult } from 'convex/nextjs';
 import { api } from '@convex/_generated/api';
 import ProductView from './ProductView';
 
+// generateMetadata and the page share one Convex request per render
+const loadProduct = cache(async (slug) => {
+  const preloaded = await preloadQuery(api.catalog.getProduct, { slug });
+  return { preloaded, result: preloadedQueryResult(preloaded) };
+});
+
 export async function generateMetadata({ params }) {
   const { id } = await params;
-  const r = await fetchQuery(api.catalog.getProduct, { slug: id });
+  const { result: r } = await loadProduct(id);
   if (r?.status !== 'ok') return { title: 'Product not found' };
   return {
     title: r.product.name,
@@ -16,8 +23,7 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductPage({ params }) {
   const { id } = await params;
-  const preloaded = await preloadQuery(api.catalog.getProduct, { slug: id });
-  const result = preloadedQueryResult(preloaded);
+  const { preloaded, result } = await loadProduct(id);
   if (!result) notFound();
   // hidden/disabled product → send visitors to its category instead of a dead page
   if (result.status === 'inactive') redirect(result.categorySlug ? `/products?cat=${result.categorySlug}` : '/products');

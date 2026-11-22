@@ -4,16 +4,18 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'convex/react';
-import { ConvexError } from 'convex/values';
 import { api } from '@convex/_generated/api';
 import InvoicePreview from './InvoicePreview';
-import { buildInvoicePdf, saveFile, waLinkFor, waNumber } from './downloadInvoice';
+import { buildInvoicePdf, waLinkFor } from './downloadInvoice';
+import { WhatsAppIcon } from '@/components/icons';
+import { saveFile } from '@/lib/download';
+import { errorMessage } from '@/lib/errors';
+import { waNumber } from '@/lib/whatsapp';
 import { aed, addDays, fromInput, todayMs, toInput, totals, STATUS_LABEL } from '@/lib/invoice';
 
 let keySeq = 0;
 const k = () => `l${++keySeq}`;
 const blankLine = () => ({ key: k(), productId: null, description: '', details: '', quantity: 1, unitPrice: 0 });
-const errText = (e) => (e instanceof ConvexError ? String(e.data) : 'Something went wrong. Please try again.');
 
 export default function InvoiceEditor({ invoice, prefill, settings }) {
   const router = useRouter();
@@ -101,13 +103,13 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
   const onSave = async (status) => {
     setError(null); setBusy('save');
     try { await persist(status); setNotice(status === 'issued' && f.status === 'draft' ? 'Invoice issued.' : 'Saved.'); }
-    catch (e) { setError(errText(e)); } finally { setBusy(null); }
+    catch (e) { setError(errorMessage(e)); } finally { setBusy(null); }
   };
 
   const onDownload = async () => {
     setError(null); setBusy('pdf');
     try { const inv = await ensureSaved(); saveFile(await buildInvoicePdf(inv, settings)); }
-    catch (e) { setError(e instanceof ConvexError ? errText(e) : 'Could not create the PDF. Please try again.'); }
+    catch (e) { setError(errorMessage(e, 'Could not create the PDF. Please try again.')); }
     finally { setBusy(null); }
   };
 
@@ -128,7 +130,7 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
       setNotice(`WhatsApp opened for ${f.customer.phone}. The PDF was downloaded: attach it in the chat.`);
     } catch (e) {
       win?.close();
-      setError(e instanceof ConvexError ? errText(e) : 'Could not prepare the invoice. Please try again.');
+      setError(errorMessage(e, 'Could not prepare the invoice. Please try again.'));
     } finally { setBusy(null); }
   };
 
@@ -136,12 +138,12 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
     if (status === 'void' && !window.confirm('Void this invoice? It stays in your records but can no longer be edited.')) return;
     setError(null);
     try { await setStatus({ id: saved.id, status }); setF((x) => ({ ...x, status })); setNotice(`Marked as ${STATUS_LABEL[status].toLowerCase()}.`); }
-    catch (e) { setError(errText(e)); }
+    catch (e) { setError(errorMessage(e)); }
   };
 
   const onDelete = async () => {
     if (!window.confirm(`Delete draft ${saved.number}? This can't be undone.`)) return;
-    try { await remove({ id: saved.id }); router.push('/admin/invoices'); } catch (e) { setError(errText(e)); }
+    try { await remove({ id: saved.id }); router.push('/admin/invoices'); } catch (e) { setError(errorMessage(e)); }
   };
 
   return (
@@ -161,7 +163,7 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
               disabled={!!busy || !phone}
               title={phone ? `Send to ${f.customer.phone} on WhatsApp` : 'Add the customer’s phone number to send on WhatsApp'}
             >
-              <svg viewBox="0 0 32 32" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.2.6 4.4 1.7 6.3L3 29l7.3-1.9c1.8 1 3.8 1.5 5.8 1.5 7 0 12.7-5.6 12.7-12.6S23 3 16 3zm5.8 15.2c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1c-.3-.2-1.3-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2s0-.5.1-.6l.5-.6c.2-.2.2-.3.3-.5s0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4s-1 1-1 2.5 1.1 2.9 1.2 3.1 2.1 3.2 5.1 4.5c2.6 1.1 3.1.9 3.7.8.6-.1 1.9-.8 2.1-1.5s.3-1.3.2-1.5c0-.1-.3-.2-.6-.4z" /></svg>
+              <WhatsAppIcon size={17} />
               {busy === 'wa' ? 'Preparing…' : phone ? 'WhatsApp' : 'Add phone to use WhatsApp'}
             </button>
           )}
@@ -281,7 +283,7 @@ export default function InvoiceEditor({ invoice, prefill, settings }) {
               {f.status === 'paid' && <button className="a-btn" onClick={() => onStatus('issued')}>Mark as unpaid</button>}
               {(f.status === 'issued' || f.status === 'paid') && <button className="a-btn a-btn-ghost a-btn-danger" onClick={() => onStatus('void')}>Void</button>}
               {f.status === 'draft' && <button className="a-btn a-btn-ghost a-btn-danger" onClick={onDelete}>Delete draft</button>}
-              {f.status === 'void' && <p className="a-muted a-small">Void invoices are kept for your records and can't be edited.</p>}
+              {f.status === 'void' && <p className="a-muted a-small">Void invoices are kept for your records and can&apos;t be edited.</p>}
             </div>
           )}
         </div>

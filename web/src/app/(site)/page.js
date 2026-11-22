@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Hero from '@/components/Hero';
 import Marquee from '@/components/Marquee';
 import ScrollText from '@/components/ScrollText';
@@ -52,7 +51,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Services — sticky stacking cards */}
+      {/* Services: sticky stacking cards */}
       <section className="section services" id="services">
         <div className="container">
           <div className="section-head" data-reveal>
@@ -70,7 +69,7 @@ export default function Home() {
         <div className="container">
           <div className="section-head" data-reveal>
             <span className="eyebrow">How it works</span>
-            <h2 className="display">From idea to<br />in-hand in 4 steps</h2>
+            <h2 className="display">From idea to<br />in hand in 4 steps</h2>
           </div>
           <div className="steps">
             {STEPS.map((s, i) => (

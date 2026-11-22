@@ -1,6 +1,7 @@
 'use client';
 
 import { aed, fmtDate, totals } from '@/lib/invoice';
+import { waChat, waNumber } from '@/lib/whatsapp';
 
 /* The PDF library (~1 MB) is loaded only when an invoice PDF is needed. */
 export async function buildInvoicePdf(invoice, settings) {
@@ -21,31 +22,7 @@ export function invoiceFileName(invoice) {
   return `${invoice.number}${who ? ' ' + who : ''}.pdf`.replace(/[\\/:*?"<>|]/g, '');
 }
 
-export function saveFile(file) {
-  const url = URL.createObjectURL(file);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = file.name;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 10000);
-}
-
-export async function downloadInvoicePdf(invoice, settings) {
-  saveFile(await buildInvoicePdf(invoice, settings));
-}
-
 /* ---------- WhatsApp ---------- */
-
-/** Digits only, in international format. UAE local numbers (05x…) get 971. */
-export function waNumber(raw) {
-  let d = String(raw || '').replace(/\D/g, '');
-  if (d.startsWith('00')) d = d.slice(2);
-  if (d.length === 10 && d.startsWith('05')) d = '971' + d.slice(1);
-  if (d.length === 9 && d.startsWith('5')) d = '971' + d;
-  return d.length >= 8 ? d : '';
-}
 
 export function invoiceMessage(invoice, settings) {
   const t = totals(invoice.items, invoice.discount, invoice.vatRate);
@@ -68,5 +45,5 @@ export function invoiceMessage(invoice, settings) {
 export function waLinkFor(invoice, settings) {
   const n = waNumber(invoice.customer.phone);
   if (!n) throw new Error('No valid phone number');
-  return `https://wa.me/${n}?text=${encodeURIComponent(invoiceMessage(invoice, settings))}`;
+  return waChat(n, invoiceMessage(invoice, settings));
 }

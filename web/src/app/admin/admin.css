@@ -34,7 +34,7 @@
 .a-stat span { font-size: 13px; color: var(--muted); }
 .a-stat b { font-family: var(--f-display); font-size: 30px; font-weight: 800; }
 .a-list { list-style: none; margin: 0; padding: 0; }
-.a-list li { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line-2); }
+.a-list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line-2); }
 
 .a-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
 .a-input { height: 40px; padding: 0 12px; border: 0; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); outline: 0; font-size: 14px; width: 100%; }
@@ -100,7 +100,7 @@ textarea.a-input { height: auto; padding: 10px 12px; resize: vertical; line-heig
 
 .a-cat.is-off { opacity: 0.7; }
 .a-cat-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.a-cat-swatch { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; flex: none; }
+.a-cat-swatch { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; flex: none; overflow: hidden; }
 .a-cat-swatch svg { width: 70%; }
 .a-cat-title { flex: 1; min-width: 140px; }
 .a-cat-title h2 { margin: 0; }
@@ -173,7 +173,6 @@ textarea.a-input { height: auto; padding: 10px 12px; resize: vertical; line-heig
   .a-prod { min-width: 0; }
 }
 
-.a-cat-swatch { overflow: hidden; }
 .a-cat-swatch img { width: 100%; height: 100%; object-fit: cover; }
 .a-cat-photo { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .a-cat-photo-preview { width: 120px; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; display: grid; place-items: center; }
@@ -185,7 +184,6 @@ label.a-btn { cursor: pointer; }
 .a-display-badge.is-photo { background: #DDF6EA; color: #0B7A4E; }
 .a-member { display: flex; align-items: center; gap: 12px; }
 .a-ok { background: #DDF6EA; color: #0B6B45; padding: 10px 14px; border-radius: 12px; font-size: 14px; margin: 0 0 12px; }
-.a-list li { align-items: center; }
 
 /* touch screens: finger-sized targets (≥ 40px) without changing the desktop layout */
 @media (pointer: coarse) {
@@ -306,7 +304,6 @@ label.a-btn { cursor: pointer; }
   .inv-row:not(.inv-row-head) { padding: 10px; border-radius: 14px; background: var(--bg); }
   .inv-doc { padding: 20px; font-size: 12px; }
   .inv-doc-title h2 { font-size: 28px; }
-  .inv-actions { width: 100%; justify-content: flex-start; }
 }
 
 /* print: only the invoice */
@@ -319,14 +316,12 @@ label.a-btn { cursor: pointer; }
   .inv-doc { box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; font-size: 11pt; }
   .inv-doc-bill, .inv-doc-grand, .inv-doc-pill, .inv-stamp { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
-.inv-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 640px; }
 
 
 /* =========================================================
    Admin menu: sidebar (desktop) · icon rail (tablet) · top bar + drawer (phone)
    ========================================================= */
 .a-app { display: grid; grid-template-columns: 252px minmax(0, 1fr); min-height: 100vh; background: #F3F1EC; }
-.a-main { padding: 28px clamp(16px, 3vw, 40px) 60px; min-width: 0; }
 .a-ic { flex: none; }
 
 .a-side { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 18px; padding: 18px 12px; background: #fff; border-right: 1px solid var(--line); overflow-y: auto; }
@@ -418,7 +413,7 @@ label.a-btn { cursor: pointer; }
 
   .inv-editor { padding-bottom: 92px; }
   .inv-actions {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; margin: 0;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; margin: 0; width: 100%; justify-content: flex-start;
     display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px;
     padding: 10px 12px max(10px, env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.98);
     border-top: 1px solid var(--line); box-shadow: 0 -12px 30px -20px rgba(0, 0, 0, 0.3);

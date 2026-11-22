@@ -2,6 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { RateLimiter, HOUR, MINUTE } from "@convex-dev/rate-limiter";
 import { components } from "./_generated/api";
 import { env, mutation } from "./_generated/server";
+import { text as clean } from "./lib/validate";
 
 const rateLimiter = new RateLimiter(components.rateLimiter, {
   // per visitor IP (supplied by the website server): the main anti-spam limit
@@ -21,12 +22,6 @@ function sameKey(a: string, b: string) {
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-function clean(s: string, max: number, field: string) {
-  const t = s.trim();
-  if (t.length > max) throw new ConvexError(`${field} is too long (max ${max} characters)`);
-  return t;
-}
 
 /** Quote / contact form. Only accepted from the website server
  *  (src/app/api/quote/route.js), which adds the visitor IP and the shared key.

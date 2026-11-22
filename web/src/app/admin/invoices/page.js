@@ -3,10 +3,13 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useConvex, useMutation, useQuery } from 'convex/react';
-import { ConvexError } from 'convex/values';
 import { api } from '@convex/_generated/api';
 import { aed, fmtDate, todayMs, STATUS_LABEL } from '@/lib/invoice';
-import { buildInvoicePdf, saveFile, waLinkFor, waNumber } from '@/components/admin/downloadInvoice';
+import { buildInvoicePdf, waLinkFor } from '@/components/admin/downloadInvoice';
+import { DownloadIcon } from '@/components/icons';
+import { saveFile } from '@/lib/download';
+import { errorMessage } from '@/lib/errors';
+import { waNumber } from '@/lib/whatsapp';
 
 const TABS = [null, 'draft', 'issued', 'overdue', 'paid', 'void'];
 const TAB_LABEL = { ...STATUS_LABEL, overdue: 'Overdue' };
@@ -20,13 +23,11 @@ const COLS = [
 ];
 const STATUS_ORDER = { overdue: 0, issued: 1, draft: 2, paid: 3, void: 4 };
 const custKey = (i) => (i.customerName || '').trim().toLowerCase();
-const errText = (e) => (e instanceof ConvexError ? String(e.data) : 'Something went wrong. Please try again.');
 
 const Ic = ({ d }) => (
   <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
 );
 const IC = {
-  download: <><path d="M12 4v11M7 10.5l5 5 5-5" /><path d="M5 19.5h14" /></>,
   wa: <><path d="M4.5 19.5l1.2-3.6A7.6 7.6 0 1 1 8.6 18.6z" /><path d="M9.3 9.2c.3 2.4 2.1 4.3 4.6 4.8l.9-1.1 1.8.8-.4 1.5c-3.6.2-7.2-3.3-7-7l1.5-.4.8 1.8z" /></>,
   paid: <><path d="M5 12.5l4.2 4.2L19 7" /></>,
 };
@@ -92,7 +93,7 @@ export default function AdminInvoices() {
   };
   const run = async (row, action, fn) => {
     setBusy(`${row._id}:${action}`); setMsg(null);
-    try { await fn(); } catch (e) { setMsg({ err: true, text: errText(e) }); } finally { setBusy(null); }
+    try { await fn(); } catch (e) { setMsg({ err: true, text: errorMessage(e) }); } finally { setBusy(null); }
   };
   const onDownload = (row) => run(row, 'pdf', async () => {
     saveFile(await buildInvoicePdf(await fullInvoice(row._id), settings));
@@ -242,7 +243,7 @@ export default function AdminInvoices() {
                     <td className="inv-qa">
                       <div className="inv-qa-btns">
                         <button className="inv-qa-btn" onClick={() => onDownload(i)} disabled={!settings || b('pdf')} title="Download PDF" aria-label={`Download ${i.number} as PDF`}>
-                          {b('pdf') ? <span className="inv-spin" /> : <Ic d={IC.download} />}
+                          {b('pdf') ? <span className="inv-spin" /> : <DownloadIcon />}
                         </button>
                         {i.status !== 'void' && (
                           <button className="inv-qa-btn is-wa" onClick={() => onWhatsApp(i)} disabled={!settings || !hasWa || b('wa')}
@@ -285,7 +286,7 @@ function SettingsForm({ onDone }) {
       const { _id, _creationTime, ...rest } = v;
       await save({ ...rest, defaultDueDays: Number(rest.defaultDueDays) });
       onDone();
-    } catch (e2) { setErr(e2 instanceof ConvexError ? String(e2.data) : 'Could not save.'); } finally { setBusy(false); }
+    } catch (e2) { setErr(errorMessage(e2, 'Could not save.')); } finally { setBusy(false); }
   };
 
   return (

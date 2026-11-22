@@ -6,7 +6,7 @@ import { api } from '@convex/_generated/api';
 
 export default function AdminHome() {
   const o = useQuery(api.admin.overview);
-  const quotes = useQuery(api.admin.listQuotes, { status: 'new' });
+  const quotes = useQuery(api.admin.listQuotes, { status: 'new', limit: 6 });
 
   return (
     <>
@@ -43,7 +43,7 @@ export default function AdminHome() {
           <p className="a-muted">No new requests. They&apos;ll show up here as soon as a customer submits the form.</p>
         ) : (
           <ul className="a-list">
-            {quotes.slice(0, 6).map((q) => (
+            {quotes.map((q) => (
               <li key={q._id}>
                 <div>
                   <b>{q.name}</b> <span className="a-muted">· {q.email}</span>

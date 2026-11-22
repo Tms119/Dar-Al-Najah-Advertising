@@ -3,6 +3,7 @@ import { mutation, query, type MutationCtx } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
 import { invoiceCustomer, invoiceItem, invoiceStatus } from "./schema";
 import { requireAdmin } from "./lib/admin";
+import { round2, text } from "./lib/validate";
 
 /* Simple invoicing for the admin dashboard. Every function is admin-only.
    Totals are always computed here (never trusted from the browser). */
@@ -17,14 +18,6 @@ const DEFAULT_SETTINGS = {
   terms: "Payment due within 7 days. Thank you for your business.",
   defaultDueDays: 7,
 };
-
-const round2 = (n: number) => Math.round(n * 100) / 100;
-
-function text(s: string, max: number, field: string) {
-  const t = s.trim();
-  if (t.length > max) throw new ConvexError(`${field} must be at most ${max} characters`);
-  return t;
-}
 
 function computeTotals(items: { quantity: number; unitPrice: number }[], discount: number, vatRate: number) {
   const subtotal = round2(items.reduce((a, i) => a + i.quantity * i.unitPrice, 0));

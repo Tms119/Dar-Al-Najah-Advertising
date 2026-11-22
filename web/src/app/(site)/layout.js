@@ -6,17 +6,15 @@ import Footer from '@/components/Footer';
 import RevealObserver from '@/components/RevealObserver';
 import WhatsAppFab from '@/components/WhatsAppFab';
 import PerfObserver from '@/components/PerfObserver';
-import { COMPANY } from '@/data/site';
-
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+import { COMPANY, SITE_URL } from '@/data/site';
 
 // structured data so search engines show the business card (name, phone, hours)
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: COMPANY.full,
-  url: SITE,
-  image: `${SITE}/opengraph-image`,
+  url: SITE_URL,
+  image: `${SITE_URL}/opengraph-image`,
   telephone: COMPANY.phone,
   email: COMPANY.email,
   address: { '@type': 'PostalAddress', addressLocality: 'Dubai', addressCountry: 'AE' },

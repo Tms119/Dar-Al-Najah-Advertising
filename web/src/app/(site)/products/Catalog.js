@@ -12,6 +12,11 @@ export default function Catalog({ initialCat = 'all' }) {
   const [sort, setSort] = useState('featured');
 
   const category = CATALOG.find((c) => c.id === cat);
+  const countByCat = useMemo(() => {
+    const m = {};
+    for (const p of PRODUCTS) m[p.category] = (m[p.category] ?? 0) + 1;
+    return m;
+  }, [PRODUCTS]);
 
   const setCat = (id) => {
     setGroup('all');
@@ -25,9 +30,10 @@ export default function Catalog({ initialCat = 'all' }) {
       (group === 'all' || p.group === group) &&
       (!q || `${p.name} ${p.group} ${p.categoryName}`.toLowerCase().includes(q.toLowerCase()))
     );
-    if (sort === 'featured') l = [...l].sort((a, b) => b.featured - a.featured);
-    if (sort === 'low') l = [...l].sort((a, b) => a.price - b.price);
-    if (sort === 'az') l = [...l].sort((a, b) => a.name.localeCompare(b.name));
+    // filter() already returned a fresh array, so sorting in place is safe
+    if (sort === 'featured') l.sort((a, b) => b.featured - a.featured);
+    if (sort === 'low') l.sort((a, b) => a.price - b.price);
+    if (sort === 'az') l.sort((a, b) => a.name.localeCompare(b.name));
     return l;
   }, [PRODUCTS, cat, group, q, sort]);
 
@@ -48,7 +54,7 @@ export default function Catalog({ initialCat = 'all' }) {
             {CATALOG.map((c) => (
               <button key={c.id} role="tab" aria-selected={cat === c.id} className={`tab ${cat === c.id ? 'is-active' : ''}`} onClick={() => setCat(c.id)} style={{ '--c': c.color }}>
                 <i className="dot" style={{ background: c.color }} />{c.short}
-                <span>{PRODUCTS.filter((p) => p.category === c.id).length}</span>
+                <span>{countByCat[c.id] ?? 0}</span>
               </button>
             ))}
           </div>
