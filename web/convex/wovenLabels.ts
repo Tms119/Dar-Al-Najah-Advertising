@@ -14,7 +14,7 @@ import { DEFAULT_MODEL, runModel, sniffType } from "./lib/imageModel";
 export const CATEGORY = {
   slug: "woven-labels",
   name: "Woven Labels",
-  shortName: "Labels",
+  shortName: "Woven Labels",
   tagline: "Custom woven labels for clothing, caps, bags and uniforms, woven in Dubai to your exact brand colours.",
   color: "#7B3FE4",
   tint: "#EFE7FF",
@@ -198,6 +198,19 @@ export const setup = internalMutation({
       }
     }
     return { skipped: false, products: count };
+  },
+});
+
+/** Copies the category's name, menu label and tagline from CATEGORY above
+    (for deployments set up before a wording change). */
+export const syncCategory = internalMutation({
+  args: {},
+  returns: v.boolean(),
+  handler: async (ctx) => {
+    const cat = await ctx.db.query("categories").withIndex("by_slug", (q) => q.eq("slug", CATEGORY.slug)).unique();
+    if (!cat) return false;
+    await ctx.db.patch(cat._id, { name: CATEGORY.name, shortName: CATEGORY.shortName, tagline: CATEGORY.tagline });
+    return true;
   },
 });
 

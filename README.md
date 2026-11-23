@@ -170,7 +170,8 @@ The full schema, with validators, is in [`web/convex/schema.ts`](web/convex/sche
 - **No public sign-up.** Accounts can only be created by an existing admin (Team page) or from the CLI. Deleting an account revokes access immediately, even for open sessions.
 - **Checked on the server every time.** Every admin query, mutation and action calls `requireAdmin()`. Inputs are validated with Convex validators plus length and range checks, and totals and prices are recomputed on the server.
 - **Sign-in protection.** Convex Auth rate-limits password attempts, and error messages never reveal which usernames exist.
-- **Studio access codes** are 10 random characters (about 10^15 combinations), checked on the server for every generation, and can be switched off at any time. Usage is counted in a database transaction, so the 3-generation limit can't be bypassed.
+- **Mockup Studio sign-in**: access codes are 10 random characters (about 10^15 combinations) and can only be checked through the website server (`/api/studio/session`), which adds the visitor IP and a server-only key. Each IP gets 8 attempts (refilling one every 2 minutes) under a site-wide ceiling, and requests from other websites are refused. A correct code returns a 256-bit session key; only its SHA-256 hash is stored, sessions expire after 30 days, and switching a pass off signs out every device. Usage is counted in a database transaction, so the 3-generation limit can't be bypassed.
+- **No SQL injection surface**: Convex has no query language to inject into. Every query is built with typed index lookups, and every function argument is checked by a schema validator before the code runs. React escapes all user content, and the only raw HTML is two fixed scripts.
 - **Content Security Policy**: strict on the public site, with a separate policy for admin pages (for the PDF engine). Plus `frame-ancestors 'none'`, `nosniff` and a strict referrer policy.
 - **Uploads**: only images are accepted, with a size cap, and files that are replaced or removed are deleted from storage.
 - **Secrets** stay in Vercel or Convex environment variables and are never committed. `.env*` files are git-ignored.
@@ -251,6 +252,7 @@ Sign in at `http://localhost:3000/admin`.
 |---|---|
 | `ADMIN_USERNAMES` | Comma-separated usernames that are always admins |
 | `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN` | Enable the Mockup Studio (Workers AI token) |
+| `STUDIO_SERVER_KEY` | Shared secret for Mockup Studio sign-in (same value in Vercel) |
 
 ---
 
@@ -270,7 +272,7 @@ Run these from `web/`:
 
 ## Deployment
 
-- **Website:** pushing to `main` deploys on **Vercel** automatically (Root Directory `web`). Set `NEXT_PUBLIC_CONVEX_URL` and `NEXT_PUBLIC_SITE_URL` in the Vercel project. To give the Mockup Studio its own address, add a `studio.` subdomain to the Vercel project.
+- **Website:** pushing to `main` deploys on **Vercel** automatically (Root Directory `web`). Set `NEXT_PUBLIC_CONVEX_URL`, `NEXT_PUBLIC_SITE_URL` and `STUDIO_SERVER_KEY` in the Vercel project. To give the Mockup Studio its own address, add a `studio.` subdomain to the Vercel project.
 - **Backend:** changes in `web/convex` are deployed with `npx convex deploy` from `web/`.
 
 ---

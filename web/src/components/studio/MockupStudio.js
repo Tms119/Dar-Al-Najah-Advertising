@@ -87,10 +87,10 @@ const Seg = ({ value, options, onChange, label }) => (
   </div>
 );
 
-/** The studio itself. `code` is the visitor's access code, `pass` its status
-    from mockups.checkPass ({ label, used, limit, remaining }). */
-export default function MockupStudio({ code, pass }) {
-  const gallery = useQuery(api.mockups.passMockups, { code });
+/** The studio itself. `token` is this device's session key, `pass` its status
+    from mockups.session ({ label, used, limit, remaining }). */
+export default function MockupStudio({ token, pass }) {
+  const gallery = useQuery(api.mockups.passMockups, { token });
   const generate = useAction(api.mockups.generate);
 
   const [object, setObject] = useState(null);
@@ -132,7 +132,7 @@ export default function MockupStudio({ code, pass }) {
     setError(null); setBusy(true); setElapsed(0);
     try {
       const r = await generate({
-        code,
+        token,
         objectImage: object?.bytes ?? null,
         objectImageType: object?.type ?? '',
         objectText: object ? '' : objectText,

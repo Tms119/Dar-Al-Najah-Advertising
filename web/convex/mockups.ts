@@ -18,7 +18,13 @@ export const GENERATIONS_PER_PASS = 3;
 const CODE_ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"; // no 0/O/1/I lookalikes
 const CODE_LENGTH = 10; // 32^10 ≈ 10^15 combinations: not guessable
 
+const SESSION_DAYS = 30;
+
 const rateLimiter = new RateLimiter(components.rateLimiter, {
+  // code checks: 8 tries per visitor IP, refilling one every ~2 minutes
+  studioLoginPerIp: { kind: "token bucket", rate: 30, period: HOUR, capacity: 8 },
+  // site-wide ceiling on code checks, so a botnet can't grind through codes
+  studioLoginGlobal: { kind: "token bucket", rate: 600, period: HOUR, capacity: 100 },
   // a pass can use its 3 back to back, but failed (refunded) attempts can't loop
   mockupPerPass: { kind: "token bucket", rate: 10, period: HOUR, capacity: 3 },
   // stays inside Cloudflare's free daily allowance for the default model
@@ -33,6 +39,36 @@ function newCode() {
   const bytes = new Uint8Array(CODE_LENGTH);
   crypto.getRandomValues(bytes);
   return Array.from(bytes, (b) => CODE_ALPHABET[b % CODE_ALPHABET.length]).join("");
+}
+
+/** Constant-time comparison, so a secret can't be guessed byte by byte. */
+function sameSecret(a: string, b: string) {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+async function sha256(text: string) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function newSessionToken() {
+  const bytes = new Uint8Array(32); // 256 bits
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/** The active pass behind a session key, or null. Expiry is enforced where a
+    generation is spent (queries shouldn't read the clock). */
+async function passBySession(ctx: QueryCtx, token: string) {
+  if (!/^[0-9a-f]{64}$/.test(token)) return null;
+  const tokenHash = await sha256(token);
+  const session = await ctx.db.query("studioSessions").withIndex("by_tokenHash", (q) => q.eq("tokenHash", tokenHash)).unique();
+  if (!session) return null;
+  const pass = await ctx.db.get(session.passId);
+  return pass?.isActive ? { pass, session } : null;
 }
 
 async function passByCode(ctx: QueryCtx, raw: string) {
@@ -87,22 +123,69 @@ function buildPrompt(a: {
 
 /* ---------------- studio (public, pass required) ---------------- */
 
-/** Validates an access code. Returns null for unknown or switched off codes. */
-export const checkPass = query({
-  args: { code: v.string() },
-  handler: async (ctx, { code }) => {
+/** Exchanges an access code for a session key. Only callable by the website
+    server (/api/studio/session), which adds the shared key and the visitor IP.
+    Failed attempts return instead of throwing, so the attempt counters persist. */
+export const startSession = mutation({
+  args: { serverKey: v.string(), ip: v.string(), code: v.string() },
+  returns: v.union(
+    v.object({ ok: v.literal(true), token: v.string() }),
+    v.object({ ok: v.literal(false), reason: v.union(v.literal("invalid"), v.literal("limited")), retryAfterMs: v.number() }),
+  ),
+  handler: async (ctx, { serverKey, ip, code }) => {
+    const expected = env.STUDIO_SERVER_KEY;
+    if (!expected || !sameSecret(serverKey, expected)) throw new ConvexError("Not allowed");
+
+    const key = ip.trim().slice(0, 64) || "unknown";
+    for (const name of ["studioLoginPerIp", "studioLoginGlobal"] as const) {
+      const r = await rateLimiter.limit(ctx, name, name === "studioLoginPerIp" ? { key } : {});
+      if (!r.ok) return { ok: false as const, reason: "limited" as const, retryAfterMs: r.retryAfter };
+    }
+
     const pass = await passByCode(ctx, code);
-    if (!pass?.isActive) return null;
+    if (!pass?.isActive) return { ok: false as const, reason: "invalid" as const, retryAfterMs: 0 };
+
+    const token = newSessionToken();
+    await ctx.db.insert("studioSessions", {
+      passId: pass._id,
+      tokenHash: await sha256(token),
+      expiresAt: Date.now() + SESSION_DAYS * 86_400_000,
+    });
+    // keep the table tidy: drop this pass's expired sessions
+    const old = await ctx.db.query("studioSessions").withIndex("by_passId", (q) => q.eq("passId", pass._id)).take(50);
+    await Promise.all(old.filter((x) => x.expiresAt < Date.now()).map((x) => ctx.db.delete(x._id)));
+    return { ok: true as const, token };
+  },
+});
+
+/** The signed-in pass for a session key, or null. */
+export const session = query({
+  args: { token: v.string() },
+  handler: async (ctx, { token }) => {
+    const found = await passBySession(ctx, token);
+    if (!found) return null;
+    const { pass } = found;
     return { label: pass.label, used: pass.used, limit: pass.limit, remaining: Math.max(0, pass.limit - pass.used) };
+  },
+});
+
+export const endSession = mutation({
+  args: { token: v.string() },
+  returns: v.null(),
+  handler: async (ctx, { token }) => {
+    const found = await passBySession(ctx, token);
+    if (found) await ctx.db.delete(found.session._id);
+    return null;
   },
 });
 
 /** The mockups made with this pass, newest first. */
 export const passMockups = query({
-  args: { code: v.string() },
-  handler: async (ctx, { code }) => {
-    const pass = await passByCode(ctx, code);
-    if (!pass?.isActive) return [];
+  args: { token: v.string() },
+  handler: async (ctx, { token }) => {
+    const found = await passBySession(ctx, token);
+    if (!found) return [];
+    const { pass } = found;
     const rows = await ctx.db.query("mockups").withIndex("by_passId", (q) => q.eq("passId", pass._id)).order("desc").take(50);
     return await Promise.all(rows.map(async (m) => ({
       _id: m._id,
@@ -118,11 +201,13 @@ export const passMockups = query({
 
 /** Uses one generation from the pass (refunded if the image fails). */
 export const reserve = internalMutation({
-  args: { code: v.string() },
+  args: { token: v.string() },
   returns: v.id("studioPasses"),
-  handler: async (ctx, { code }) => {
-    const pass = await passByCode(ctx, code);
-    if (!pass?.isActive) throw new ConvexError("This access code isn't valid. Please check it, or ask us for a new one.");
+  handler: async (ctx, { token }) => {
+    const found = await passBySession(ctx, token);
+    if (!found || found.session.expiresAt < Date.now())
+      throw new ConvexError("Your studio session has ended. Please enter your access code again.");
+    const { pass } = found;
     if (pass.used >= pass.limit) throw new ConvexError("You've used all your generations. Message us on WhatsApp if you'd like more.");
     const burst = await rateLimiter.limit(ctx, "mockupPerPass", { key: pass._id });
     if (!burst.ok) throw new ConvexError(`Please wait ${Math.ceil(burst.retryAfter / 60000)} min before generating again.`);
@@ -163,7 +248,7 @@ export const record = internalMutation({
 
 export const generate = action({
   args: {
-    code: v.string(),
+    token: v.string(),
     objectImage: v.union(v.bytes(), v.null()),
     objectImageType: v.string(),
     objectText: v.string(),
@@ -187,7 +272,7 @@ export const generate = action({
       if (img && img.byteLength > MAX_INPUT_BYTES) throw new ConvexError("Image is too large. Please use a smaller file.");
     const okType = (t: string) => (["image/png", "image/jpeg", "image/webp"].includes(t) ? t : "image/png");
 
-    const passId: Id<"studioPasses"> = await ctx.runMutation(internal.mockups.reserve, { code: a.code });
+    const passId: Id<"studioPasses"> = await ctx.runMutation(internal.mockups.reserve, { token: a.token });
 
     const model = env.CLOUDFLARE_IMAGE_MODEL || DEFAULT_MODEL;
     // same order as the prompt: logo first, then the product photo
@@ -253,6 +338,11 @@ export const setPassActive = mutation({
   handler: async (ctx, { id, isActive }) => {
     await requireAdmin(ctx);
     await ctx.db.patch(id, { isActive });
+    if (!isActive) {
+      // switching a pass off signs out every device using it
+      const sessions = await ctx.db.query("studioSessions").withIndex("by_passId", (q) => q.eq("passId", id)).take(200);
+      await Promise.all(sessions.map((x) => ctx.db.delete(x._id)));
+    }
     return null;
   },
 });
@@ -268,14 +358,20 @@ export const resetPass = mutation({
   },
 });
 
-/** Deletes the pass and the mockups made with it. */
+/** Deletes the pass, its sessions and the mockups made with it. */
 export const deletePass = mutation({
   args: { id: v.id("studioPasses") },
   returns: v.null(),
   handler: async (ctx, { id }) => {
     await requireAdmin(ctx);
-    const made = await ctx.db.query("mockups").withIndex("by_passId", (q) => q.eq("passId", id)).take(200);
-    await Promise.all(made.flatMap((m) => [ctx.storage.delete(m.storageId), ctx.db.delete(m._id)]));
+    const [made, sessions] = await Promise.all([
+      ctx.db.query("mockups").withIndex("by_passId", (q) => q.eq("passId", id)).take(200),
+      ctx.db.query("studioSessions").withIndex("by_passId", (q) => q.eq("passId", id)).take(200),
+    ]);
+    await Promise.all([
+      ...made.flatMap((m) => [ctx.storage.delete(m.storageId), ctx.db.delete(m._id)]),
+      ...sessions.map((x) => ctx.db.delete(x._id)),
+    ]);
     await ctx.db.delete(id);
     return null;
   },

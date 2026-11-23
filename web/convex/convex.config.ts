@@ -16,6 +16,10 @@ const app = defineApp({
     CLOUDFLARE_API_TOKEN: v.optional(v.string()),
     // optional override, defaults to @cf/black-forest-labs/flux-2-klein-4b
     CLOUDFLARE_IMAGE_MODEL: v.optional(v.string()),
+    // Shared secret between the website server (/api/studio/session) and
+    // Convex: access codes can only be checked through that route, which
+    // supplies the visitor's IP for per-IP attempt limits.
+    STUDIO_SERVER_KEY: v.optional(v.string()),
   },
 });
 

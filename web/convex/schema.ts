@@ -115,6 +115,16 @@ export default defineSchema({
     createdBy: v.id("users"),
   }).index("by_code", ["code"]),
 
+  // Signed-in Mockup Studio devices. Only a SHA-256 hash of the session key is
+  // stored, so the table can't be used to sign in even if it were read.
+  studioSessions: defineTable({
+    passId: v.id("studioPasses"),
+    tokenHash: v.string(),
+    expiresAt: v.number(),
+  })
+    .index("by_tokenHash", ["tokenHash"])
+    .index("by_passId", ["passId"]),
+
   // AI product mockups made in the Mockup Studio
   mockups: defineTable({
     storageId: v.id("_storage"),
