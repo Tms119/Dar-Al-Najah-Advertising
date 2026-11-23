@@ -85,7 +85,7 @@ export default function Header() {
           <Link className="pill" href="/products" onMouseEnter={() => { cancelClose(); setMega(null); }}>All products</Link>
         </nav>
 
-        <div className="header-right">
+        <div className={`header-right ${isStaff ? 'has-dash' : ''}`}>
           <div className="header-hours">
             <span>{COMPANY.hours}</span>
             <a href={telHref}>{COMPANY.phone}</a>
@@ -96,8 +96,8 @@ export default function Header() {
               <span className="btn-dash-label">Dashboard</span>
             </Link>
           )}
-          <a href={waLink('Hi Dar Al Najah! I have a question about printing.')} target="_blank" rel="noopener noreferrer" className="btn btn-ink btn-sm btn-wa">
-            <WhatsAppIcon size={16} /> WhatsApp
+          <a href={waLink('Hi Dar Al Najah! I have a question about printing.')} target="_blank" rel="noopener noreferrer" className="btn btn-ink btn-sm btn-wa" aria-label="WhatsApp">
+            <WhatsAppIcon size={16} /> <span className="btn-wa-label">WhatsApp</span>
           </a>
           <button className="burger" onClick={() => setOpen(true)} aria-label="Open menu">
             <span /><span />

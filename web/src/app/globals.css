@@ -659,9 +659,9 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 /* =========================================================
    Responsive
    ========================================================= */
+@media (max-width: 1280px) { .header-hours { display: none; } } /* below this the hours text wraps into 3 cramped lines */
 @media (max-width: 1180px) {
   .nav-pills .pill:last-child { display: none; }
-  .header-hours { display: none; }
   .p-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .f-cta { grid-template-columns: 1fr; align-items: start; }
   .f-grid { grid-template-columns: 1fr; }
@@ -908,6 +908,19 @@ a.tab { text-decoration: none; color: inherit; }
 @media (max-width: 640px) { .wl-grid { grid-template-columns: 1fr; } }
 
 /* staff only: shortcut to the admin, shown when signed in */
-.btn-dash { gap: 7px; background: #fff; }
+.header-right > .btn, .header-right > .burger { flex-shrink: 0; white-space: nowrap; } /* buttons never get squeezed */
+.btn-dash { gap: 7px; background: #fff; padding: 0 16px; }
+/* staff don't need the opening hours: the header has no room for both at any width */
+.header-right.has-dash .header-hours { display: none; }
+/* narrower laptops (or zoomed in): Dashboard becomes a round icon, like on phones */
+@media (max-width: 1230px) {
+  .header-right.has-dash .btn-dash { width: 44px; padding: 0; justify-content: center; }
+  .header-right.has-dash .btn-dash-label { display: none; }
+}
+/* tightest desktop widths, staff only: WhatsApp also becomes a round icon */
+@media (min-width: 981px) and (max-width: 1040px) {
+  .header-right.has-dash .btn-wa { width: 44px; padding: 0; justify-content: center; }
+  .header-right.has-dash .btn-wa-label { display: none; }
+}
 .btn-dash svg { flex: none; }
 .m-link.m-dash { color: var(--blue); }
