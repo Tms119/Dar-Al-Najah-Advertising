@@ -58,7 +58,7 @@ Customers browse a live product catalogue and talk to the shop on WhatsApp. Staf
 
 ### Mockup Studio (`/studio`, invite only)
 
-- A separate site with its own look: none of the shop's menus. It can be served from its own subdomain (for example `studio.yourdomain.com`), and its home page is then the studio.
+- Part of the main site (same menu, footer and WhatsApp button) but invite only: it asks for an access code before anything else. It can also be served from its own subdomain (for example `studio.daralnajahadv.ae`), whose home page is then the studio.
 - Customers enter their access code (or open the link they were sent). Each pass allows **3 generations**, shown as "2 of 3 generations left".
 - They drop a product photo (or describe one) plus a logo and/or text, choose the placement, scene and shape, add extra instructions, and get a photorealistic print mockup in a few seconds. Failed attempts don't use up a generation.
 - Their mockups stay in a personal gallery for download. When the passes run out, they're invited to message the shop on WhatsApp.
@@ -204,7 +204,7 @@ The full schema, with validators, is in [`web/convex/schema.ts`](web/convex/sche
     ├── src/
     │   ├── app/(site)/        Public pages: home, catalogue, product, contact
     │   ├── app/admin/         Admin dashboard pages
-    │   ├── app/studio/        Mockup Studio (standalone, invite only)
+    │   ├── app/(site)/studio/ Mockup Studio (invite only)
     │   ├── app/auth/          Sign-in session routes
     │   ├── components/        Site components (Header, Hero, Mock illustrations…)
     │   ├── components/admin/  Admin components (editors, invoice PDF, shell)

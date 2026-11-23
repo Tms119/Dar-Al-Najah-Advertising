@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@convex/_generated/api';
@@ -60,26 +59,18 @@ export default function StudioPage() {
   const checking = busy || (token && pass === undefined);
 
   return (
-    <>
-      <header className="st-top">
-        <a href="/studio" className="st-brand">
-          <Image src="/brand/mark-144.webp" alt="" width={40} height={38} priority />
-          <span><b>Mockup Studio</b><small>by Dar Al Najah Advertising</small></span>
-        </a>
-        {signedIn && (
-          <div className="st-who">
-            <span>{pass.label}</span>
-            <button className="a-btn a-btn-sm" onClick={signOut}>Sign out</button>
-          </div>
-        )}
-      </header>
-
-      <main className="st-main">
+    <div className="studio page-pad">
+      <div className="container">
         {signedIn ? (
           <>
-            <div className="st-intro">
-              <h1>See your logo on the product</h1>
-              <p className="a-muted">Drop a product and your logo or text, choose the look, and generate a realistic print mockup.</p>
+            <header className="cat-head st-head" style={{ '--c': '#7B3FE4' }}>
+              <span className="eyebrow">Mockup Studio</span>
+              <h1 className="display xl">See your logo<br />on the product</h1>
+              <p className="muted">Drop a product and your logo or text, choose the look, and generate a realistic print mockup.</p>
+            </header>
+            <div className="st-who">
+              <span>Signed in as <b>{pass.label}</b></span>
+              <button className="a-btn a-btn-sm" onClick={signOut}>Sign out</button>
             </div>
             <MockupStudio token={token} pass={pass} />
           </>
@@ -99,11 +90,7 @@ export default function StudioPage() {
             </a>
           </form>
         )}
-      </main>
-
-      <footer className="st-foot">
-        <span>© {new Date().getFullYear()} Dar Al Najah Advertising</span>
-      </footer>
-    </>
+      </div>
+    </div>
   );
 }
