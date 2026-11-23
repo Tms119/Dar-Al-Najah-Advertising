@@ -42,6 +42,19 @@ export default function Header() {
   const closeMegaSoon = () => { cancelClose(); closeTimer.current = setTimeout(() => setMega(null), 220); };
   useEffect(() => () => clearTimeout(closeTimer.current), []);
 
+  // Any link clicked in a menu closes it. A link to the page you're already on
+  // doesn't navigate (so the pathname check above never fires): scroll to top instead.
+  const onMenuLinkClick = (e) => {
+    const a = e.target.closest('a[href]');
+    if (!a) return;
+    cancelClose(); setMega(null); setOpen(false);
+    const url = new URL(a.href, window.location.href);
+    if (url.origin === window.location.origin && url.pathname === window.location.pathname && url.search === window.location.search && !url.hash) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
     <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`} onMouseLeave={closeMegaSoon} onMouseEnter={cancelClose}>
       <div className="header-bar">
@@ -80,7 +93,7 @@ export default function Header() {
 
       {/* Desktop mega menu. The wrapper's top padding bridges the gap under the
           bar so the pointer never "leaves" the menu on the way down. */}
-      <div className={`mega-wrap ${active ? 'is-open' : ''}`} onMouseEnter={cancelClose}>
+      <div className={`mega-wrap ${active ? 'is-open' : ''}`} onMouseEnter={cancelClose} onClick={onMenuLinkClick}>
       <div className={`mega ${active ? 'is-open' : ''}`} aria-hidden={!active}>
         {active && (
           <div className="mega-inner" key={active.id}>
@@ -117,7 +130,7 @@ export default function Header() {
       </div>
 
       {/* Mobile overlay */}
-      <div className={`mobile-menu ${open ? 'is-open' : ''}`} aria-hidden={!open}>
+      <div className={`mobile-menu ${open ? 'is-open' : ''}`} aria-hidden={!open} onClick={onMenuLinkClick}>
         <div className="mobile-top">
           <Logo onClick={() => setOpen(false)} />
           <button className="pill" onClick={() => setOpen(false)}>Close ✕</button>
