@@ -1,4 +1,4 @@
-/*! Dar Al Najah Advertising · Designed & built by PEERBROS x Themeszoo */
+/*! Dar Al Najah Advertising · Designed & built by PEERBROS x Themeszoo · https://www.peerbros.com · https://www.themeszoo.com */
 /* =========================================================
    Dar Al Najah Advertising — design system
    Light, warm "paper" base · CMYK accent palette · chunky display type
@@ -884,5 +884,3 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 .pdp-ask p { margin: 0; color: var(--ink-2); }
 .contact-wa { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; align-self: start; }
 .contact-wa .sent-ic { color: #fff; background: #25D366; }
-.f-credit { opacity: 0.75; }
-.f-credit b { font-weight: 700; letter-spacing: 0.02em; }

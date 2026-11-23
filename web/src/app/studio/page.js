@@ -84,7 +84,6 @@ export default function StudioPage() {
 
       <footer className="st-foot">
         <span>© {new Date().getFullYear()} Dar Al Najah Advertising</span>
-        <span className="f-credit">Designed &amp; built by <b>PEERBROS</b> x <b>Themeszoo</b></span>
       </footer>
     </>
   );

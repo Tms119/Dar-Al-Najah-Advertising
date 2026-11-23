@@ -1,0 +1,8 @@
+/* TEAM */
+Design & development: PEERBROS x Themeszoo
+PEERBROS: https://www.peerbros.com
+Themeszoo: https://www.themeszoo.com
+
+/* SITE */
+Client: Dar Al Najah Advertising, Dubai
+Built with: Next.js, React, Convex, Vercel

@@ -91,7 +91,6 @@ export default function Footer() {
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} {COMPANY.full}. All rights reserved.</span>
           <span>Printed with care in Dubai</span>
-          <span className="f-credit">Designed &amp; built by <b>PEERBROS</b> x <b>Themeszoo</b></span>
           <button type="button" className="f-top" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             Back to top ↑
           </button>

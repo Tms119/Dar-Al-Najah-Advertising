@@ -276,4 +276,4 @@ Run these from `web/`:
 
 ## Credits
 
-Designed & built by **PEERBROS x Themeszoo**.
+Designed & built by **[PEERBROS](https://www.peerbros.com) x [Themeszoo](https://www.themeszoo.com)**.

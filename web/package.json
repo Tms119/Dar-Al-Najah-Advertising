@@ -2,7 +2,7 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
-  "author": "PEERBROS x Themeszoo",
+  "author": "PEERBROS x Themeszoo (https://www.peerbros.com, https://www.themeszoo.com)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
