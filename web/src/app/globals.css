@@ -689,6 +689,11 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 @media (max-width: 760px) {
   .page-pad { padding-top: 100px; }
   .header-right .btn { display: none; }
+  /* staff keep their shortcut on phones, as a round icon the size of the menu button */
+  .header-right .btn.btn-dash { display: inline-flex; width: 46px; height: 46px; padding: 0; justify-content: center; }
+  .btn-dash-label { display: none; }
+  .btn-dash svg { width: 19px; height: 19px; }
+  .header-right { gap: 8px; }
   .header-bar { padding: 8px 8px 8px 14px; }
   .site-header .header-bar { background: rgba(255, 255, 255, 0.78); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 1px 0 var(--line); }
   .logo-text b { font-size: 17px; }
@@ -901,3 +906,8 @@ a.tab { text-decoration: none; color: inherit; }
 @media (max-width: 1180px) { .wl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 760px) { .wl-tools { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .wl-grid { grid-template-columns: 1fr; } }
+
+/* staff only: shortcut to the admin, shown when signed in */
+.btn-dash { gap: 7px; background: #fff; }
+.btn-dash svg { flex: none; }
+.m-link.m-dash { color: var(--blue); }

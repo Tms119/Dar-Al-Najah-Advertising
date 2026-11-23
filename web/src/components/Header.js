@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { useConvexAuth, useQuery } from 'convex/react';
+import { api } from '@convex/_generated/api';
 import { COMPANY, categoryHref, telHref, waLink } from '@/data/site';
 import { WhatsAppIcon } from './icons';
 import { useCatalog } from './CatalogProvider';
@@ -19,6 +21,12 @@ export default function Header() {
   const [mobileCat, setMobileCat] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+
+  // Signed-in staff get a Dashboard button. Visitors who aren't signed in
+  // never trigger the check, so this costs customers nothing.
+  const { isAuthenticated } = useConvexAuth();
+  const me = useQuery(api.users.me, isAuthenticated ? {} : 'skip');
+  const isStaff = me?.isAdmin === true;
 
   // close menus on navigation (reset during render, not in an effect: no extra paint)
   const [shownPath, setShownPath] = useState(pathname);
@@ -82,6 +90,12 @@ export default function Header() {
             <span>{COMPANY.hours}</span>
             <a href={telHref}>{COMPANY.phone}</a>
           </div>
+          {isStaff && (
+            <Link href="/admin" className="btn btn-ghost btn-sm btn-dash" aria-label="Dashboard" title="Dashboard">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="2" /><rect x="13.5" y="3" width="7.5" height="7.5" rx="2" /><rect x="3" y="13.5" width="7.5" height="7.5" rx="2" /><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2" /></svg>
+              <span className="btn-dash-label">Dashboard</span>
+            </Link>
+          )}
           <a href={waLink('Hi Dar Al Najah! I have a question about printing.')} target="_blank" rel="noopener noreferrer" className="btn btn-ink btn-sm btn-wa">
             <WhatsAppIcon size={16} /> WhatsApp
           </a>
@@ -158,6 +172,7 @@ export default function Header() {
               </div>
             </div>
           ))}
+          {isStaff && <Link href="/admin" className="m-link m-dash" style={{ '--i': 0 }}>Dashboard ↗</Link>}
           <Link href="/products" className="m-link" style={{ '--i': CATALOG.length }}>All products</Link>
           <Link href="/contact" className="m-link" style={{ '--i': CATALOG.length + 1 }}>Contact</Link>
         </div>
