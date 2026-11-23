@@ -29,9 +29,6 @@ export default function Footer() {
             <a href={telHref} className="f-quick-btn">
               <small>Call</small><b>{COMPANY.phone}</b><span aria-hidden="true">↗</span>
             </a>
-            <a href={`mailto:${COMPANY.email}`} className="f-quick-btn">
-              <small>Email</small><b>{COMPANY.email}</b><span aria-hidden="true">↗</span>
-            </a>
             <Link href="/products" className="f-quick-btn is-accent">
               <small>Catalogue</small><b>Browse products</b><span aria-hidden="true">→</span>
             </Link>

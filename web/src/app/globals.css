@@ -523,6 +523,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .f-quick-btn b { font-size: 15px; font-weight: 600; word-break: break-word; margin-top: auto; }
 .f-quick-btn > span { position: absolute; top: 14px; right: 16px; font-size: 16px; }
 .f-quick-btn.is-wa::before { background: #25D366; }
+.f-quick-btn.is-wa { grid-column: 1 / -1; } /* full width on top, Call + Browse below */
 .f-quick-btn.is-accent { background: var(--blue); box-shadow: none; }
 .f-quick-btn.is-accent::before { background: var(--yellow); }
 

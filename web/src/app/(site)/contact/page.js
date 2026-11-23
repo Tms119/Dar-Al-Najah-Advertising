@@ -1,7 +1,7 @@
 import { COMPANY, telHref, waLink } from '@/data/site';
 import { WhatsAppIcon } from '@/components/icons';
 
-export const metadata = { title: 'Contact', description: 'Talk to Dar Al Najah Advertising in Dubai on WhatsApp, by phone or email, or visit our studio.' };
+export const metadata = { title: 'Contact', description: 'Talk to Dar Al Najah Advertising in Dubai on WhatsApp or by phone, or visit our studio.' };
 
 export default function ContactPage() {
   return (
@@ -15,9 +15,6 @@ export default function ContactPage() {
           <div className="contact-cards">
             <a href={telHref} className="c-card" style={{ '--c': '#2B3BFF' }}>
               <small>Call</small><b>{COMPANY.phone}</b><span>↗</span>
-            </a>
-            <a href={`mailto:${COMPANY.email}`} className="c-card" style={{ '--c': '#FF3D7F' }}>
-              <small>Email</small><b>{COMPANY.email}</b><span>↗</span>
             </a>
             <div className="c-card" style={{ '--c': '#FFB800' }}>
               <small>Visit</small><b>{COMPANY.address}</b><span>{COMPANY.hours}</span>
