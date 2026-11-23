@@ -54,11 +54,18 @@ const nextConfig = {
       { source: '/studio/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
     ];
   },
-  // one canonical address: www.daralnajahadv.ae → daralnajahadv.ae
+  // one public address: www and the project's Vercel addresses all go to
+  // https://daralnajahadv.ae, keeping the page path
   async redirects() {
+    const hosts = [
+      'www\\.daralnajahadv\\.ae',
+      'daralnajah\\.vercel\\.app',
+      'daralnajah-daralnajahadvofficial-2373\\.vercel\\.app',
+      'daralnajah-git-main-daralnajahadvofficial-2373\\.vercel\\.app',
+    ];
     return [{
       source: '/:path*',
-      has: [{ type: 'host', value: 'www.daralnajahadv.ae' }],
+      has: [{ type: 'host', value: `(${hosts.join('|')})` }],
       destination: 'https://daralnajahadv.ae/:path*',
       permanent: true,
     }];
