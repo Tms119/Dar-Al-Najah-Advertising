@@ -114,6 +114,9 @@ function Guarded({ pathname, children }) {
       <a href="/" target="_blank" rel="noreferrer" className="a-nav a-nav-quiet" title="View website">
         <Icon name="external" /><span className="a-nav-label">View website</span><span className="a-nav-short">Site</span>
       </a>
+      <a href="/studio" target="_blank" rel="noreferrer" className="a-nav a-nav-quiet" title="Open the Mockup Studio">
+        <Icon name="mockups" /><span className="a-nav-label">Open Mockup Studio</span><span className="a-nav-short">Studio</span>
+      </a>
       <div className="a-user">
         <span className="a-avatar" aria-hidden="true">{me.username?.[0]?.toUpperCase()}</span>
         <span className="a-user-name">{me.username}</span>

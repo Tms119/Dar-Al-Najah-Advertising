@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@convex/_generated/api';
 import Toggle from '@/components/admin/Toggle';
@@ -25,6 +25,10 @@ export default function StudioAccess() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState(null);
   const [copied, setCopied] = useState(null);
+
+  // full address of the studio, shown once the page is in the browser
+  const [studioHome, setStudioHome] = useState('');
+  useEffect(() => { setStudioHome(`${window.location.origin}/studio`); }, []); // eslint-disable-line react-hooks/set-state-in-effect -- browser-only value
 
   const studioUrl = (code) => `${window.location.origin}/studio?code=${encodeURIComponent(code)}`;
   const run = async (fn) => { setMsg(null); try { await fn(); } catch (e) { setMsg({ err: true, text: errorMessage(e) }); } };
@@ -58,8 +62,19 @@ export default function StudioAccess() {
           <h1>Studio access</h1>
           <p className="a-muted">The Mockup Studio is a separate site. Give a customer a pass and they get 3 mockup generations.</p>
         </div>
-        <a href="/studio" target="_blank" rel="noreferrer" className="a-btn">Open studio ↗</a>
       </header>
+
+      <section className="a-card sa-link">
+        <div>
+          <span className="sa-link-label">Studio website</span>
+          <a href="/studio" target="_blank" rel="noreferrer" className="sa-link-url">{studioHome || '/studio'}</a>
+          <p className="a-muted a-small">Customers open this and enter their access code, or use the personal link from Copy link below.</p>
+        </div>
+        <div className="a-actions">
+          <button type="button" className="a-btn" onClick={() => copy('studio-home', studioHome)}>{copied === 'studio-home' ? 'Copied ✓' : 'Copy'}</button>
+          <a href="/studio" target="_blank" rel="noreferrer" className="a-btn a-btn-primary">Open studio ↗</a>
+        </div>
+      </section>
 
       {status && !status.connected && (
         <div className="a-card mk-setup">
