@@ -5,13 +5,17 @@ import { requireAdmin } from "./lib/admin";
 import { round2, text } from "./lib/validate";
 
 /* Simple invoicing for the admin dashboard. Every function is admin-only.
-   Totals are always computed here (never trusted from the browser). */
+   Totals are always computed here (never trusted from the browser).
+   Numbering: drafts have no number. The next number is taken only when an
+   invoice is issued (or marked paid straight from draft), and a numbered
+   invoice can never return to draft or be deleted, only voided, so the
+   sequence of issued invoices never has gaps. */
 
 const DEFAULT_SETTINGS = {
   companyName: "Dar Al Najah Advertising",
   address: "Dubai, United Arab Emirates",
   phone: "+971 4 000 0000",
-  email: "hello@daralnajahadv.com",
+  email: "",
   trn: "",
   bankDetails: "",
   terms: "Payment due within 7 days. Thank you for your business.",
@@ -23,6 +27,12 @@ function computeTotals(items: { quantity: number; unitPrice: number }[], discoun
   const taxable = Math.max(0, round2(subtotal - discount));
   const vat = round2((taxable * vatRate) / 100);
   return { subtotal, vat, total: round2(taxable + vat) };
+}
+
+/** Takes the next number in the year of the invoice's issue date. */
+async function assignNumber(ctx: MutationCtx, issueDate: number) {
+  const year = new Date(issueDate).getUTCFullYear();
+  return { number: await nextNumber(ctx, year), year };
 }
 
 async function nextNumber(ctx: MutationCtx, year: number) {
@@ -122,7 +132,7 @@ export const save = mutation({
     vatRate: v.number(),
     notes: v.string(),
   },
-  returns: v.object({ id: v.id("invoices"), number: v.string() }),
+  returns: v.object({ id: v.id("invoices"), number: v.union(v.string(), v.null()) }),
   handler: async (ctx, a) => {
     const userId = await requireAdmin(ctx);
 
@@ -167,17 +177,21 @@ export const save = mutation({
       ...totals,
     };
 
+    if (a.status === "void") throw new ConvexError("Use Void on a saved invoice instead");
+
     if (a.id) {
       const before = await ctx.db.get(a.id);
       if (!before) throw new ConvexError("Invoice not found");
       if (before.status === "void") throw new ConvexError("A void invoice can't be edited");
-      await ctx.db.patch(a.id, fields);
-      return { id: a.id, number: before.number };
+      if (before.status !== "draft" && a.status === "draft") throw new ConvexError("An issued invoice can't go back to draft");
+      // issuing a draft takes the next number
+      const numbering = !before.number && a.status !== "draft" ? await assignNumber(ctx, a.issueDate) : null;
+      await ctx.db.patch(a.id, { ...fields, ...numbering });
+      return { id: a.id, number: numbering?.number ?? before.number };
     }
-    const year = new Date(a.issueDate).getUTCFullYear();
-    const number = await nextNumber(ctx, year);
-    const id = await ctx.db.insert("invoices", { ...fields, number, year, createdBy: userId });
-    return { id, number };
+    const numbering = a.status === "draft" ? { number: null, year: null } : await assignNumber(ctx, a.issueDate);
+    const id = await ctx.db.insert("invoices", { ...fields, ...numbering, createdBy: userId });
+    return { id, number: numbering.number };
   },
 });
 
@@ -189,12 +203,16 @@ export const setStatus = mutation({
     const inv = await ctx.db.get(id);
     if (!inv) throw new ConvexError("Invoice not found");
     if (inv.status === "void" && status !== "void") throw new ConvexError("A void invoice can't be reopened");
-    await ctx.db.patch(id, { status });
+    if (status === "draft" && inv.status !== "draft") throw new ConvexError("An issued invoice can't go back to draft");
+    if (inv.status === "draft" && status === "void") throw new ConvexError("A draft has no number yet: delete it instead");
+    // issuing or paying a draft takes the next number
+    const numbering = inv.status === "draft" && !inv.number && status !== "draft" ? await assignNumber(ctx, inv.issueDate) : {};
+    await ctx.db.patch(id, { status, ...numbering });
     return null;
   },
 });
 
-/** Only drafts can be deleted; issued invoices are voided instead, so numbers stay in sequence. */
+/** Only drafts (which have no number) can be deleted; issued invoices are voided instead. */
 export const remove = mutation({
   args: { id: v.id("invoices") },
   returns: v.null(),

@@ -12,7 +12,7 @@ export default function InvoicePreview({ invoice, settings }) {
         <img src="/brand/logo-1200.webp" alt={settings.companyName} className="inv-doc-logo" />
         <div className="inv-doc-title">
           <h2>{invoice.vatRate > 0 && settings.trn ? 'Tax invoice' : 'Invoice'}</h2>
-          <span className="inv-doc-pill">{invoice.number || 'Number on save'}</span>
+          <span className="inv-doc-pill">{invoice.number || 'Draft · numbered on issue'}</span>
           <span className="a-muted">Date {fmtDate(invoice.issueDate)}{invoice.dueDate ? ` · Due ${fmtDate(invoice.dueDate)}` : ''}</span>
           {(invoice.status === 'paid' || invoice.status === 'void') && <b className={`inv-stamp st-${invoice.status}`}>{invoice.status.toUpperCase()}</b>}
         </div>

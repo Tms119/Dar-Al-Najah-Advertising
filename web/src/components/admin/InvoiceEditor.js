@@ -137,7 +137,7 @@ export default function InvoiceEditor({ invoice, settings }) {
   };
 
   const onDelete = async () => {
-    if (!window.confirm(`Delete draft ${saved.number}? This can't be undone.`)) return;
+    if (!window.confirm("Delete this draft? This can't be undone.")) return;
     try { await remove({ id: saved.id }); router.push('/admin/invoices'); } catch (e) { setError(errorMessage(e)); }
   };
 
@@ -146,7 +146,7 @@ export default function InvoiceEditor({ invoice, settings }) {
       <header className="a-head a-head-sticky inv-head">
         <div>
           <Link href="/admin/invoices" className="a-link">← Invoices</Link>
-          <h1>{saved ? saved.number : 'New invoice'}<span className={`inv-badge st-${f.status}`}>{STATUS_LABEL[f.status]}</span></h1>
+          <h1>{saved ? saved.number ?? 'Invoice' : 'New invoice'}<span className={`inv-badge st-${f.status}`}>{STATUS_LABEL[f.status]}</span></h1>
         </div>
         <div className="a-head-actions inv-actions">
           {saved && !dirty && <button className="a-btn inv-print" onClick={() => window.print()}>Print</button>}

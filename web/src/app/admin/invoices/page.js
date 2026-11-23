@@ -22,6 +22,8 @@ const COLS = [
   { key: 'status', label: 'Status' },
 ];
 const STATUS_ORDER = { overdue: 0, issued: 1, draft: 2, paid: 3, void: 4 };
+/** Drafts have no number until they are issued. */
+const label = (i) => i.number ?? 'Draft';
 const custKey = (i) => (i.customerName || '').trim().toLowerCase();
 
 const Ic = ({ d }) => (
@@ -53,10 +55,10 @@ export default function AdminInvoices() {
     const rows = (all ?? [])
       .filter((i) => !customer || custKey(i) === customer)
       .filter((i) => !status || (status === 'overdue' ? isLate(i) : i.status === status))
-      .filter((i) => !q || `${i.number} ${i.customerName}`.toLowerCase().includes(q.toLowerCase()));
+      .filter((i) => !q || `${label(i)} ${i.customerName}`.toLowerCase().includes(q.toLowerCase()));
     if (!sort.key) return rows;
     const val = {
-      number: (i) => i.number,
+      number: (i) => i.number ?? '',
       customer: (i) => custKey(i),
       issueDate: (i) => i.issueDate,
       dueDate: (i) => i.dueDate ?? i.issueDate,
@@ -113,7 +115,7 @@ export default function AdminInvoices() {
   };
   const onPaid = (row) => run(row, 'paid', async () => {
     await setInvoiceStatus({ id: row._id, status: 'paid' });
-    setMsg({ text: `${row.number} marked as paid.`, undo: row._id });
+    setMsg({ text: `${label(row)} marked as paid.`, undo: row._id });
   });
   const undoPaid = (id) => run({ _id: id }, 'undo', async () => {
     await setInvoiceStatus({ id, status: 'issued' });
@@ -230,7 +232,7 @@ export default function AdminInvoices() {
                 return (
                   <tr key={i._id} className={`inv-row-link ${i.status === 'void' ? 'is-off' : ''} ${late ? 'is-late' : ''}`}>
                     {/* the link stretches over the whole row (see .inv-num-link::after) */}
-                    <td><Link href={`/admin/invoices/${i._id}`} className="inv-num-link" aria-label={`Open invoice ${i.number}, ${i.customerName || 'no name'}, ${aed(i.total)}`}>{i.number}</Link></td>
+                    <td><Link href={`/admin/invoices/${i._id}`} className="inv-num-link" aria-label={`Open invoice ${label(i)}, ${i.customerName || 'no name'}, ${aed(i.total)}`}>{i.number ?? <em className="inv-draft-num">Draft</em>}</Link></td>
                     <td>
                       {i.customerName
                         ? <button className="inv-cust-link" onClick={() => { setCustomer(custKey(i)); setStatus(null); setQ(''); }} title={`All invoices for ${i.customerName}`}>{i.customerName}</button>
@@ -242,17 +244,17 @@ export default function AdminInvoices() {
                     <td><span className={`inv-badge st-${st}`}>{TAB_LABEL[st]}</span></td>
                     <td className="inv-qa">
                       <div className="inv-qa-btns">
-                        <button className="inv-qa-btn" onClick={() => onDownload(i)} disabled={!settings || b('pdf')} title="Download PDF" aria-label={`Download ${i.number} as PDF`}>
+                        <button className="inv-qa-btn" onClick={() => onDownload(i)} disabled={!settings || b('pdf')} title="Download PDF" aria-label={`Download ${label(i)} as PDF`}>
                           {b('pdf') ? <span className="inv-spin" /> : <DownloadIcon />}
                         </button>
                         {i.status !== 'void' && (
                           <button className="inv-qa-btn is-wa" onClick={() => onWhatsApp(i)} disabled={!settings || !hasWa || b('wa')}
-                            title={hasWa ? `Send on WhatsApp to ${i.phone}` : 'No phone number on this invoice'} aria-label={`Send ${i.number} on WhatsApp`}>
+                            title={hasWa ? `Send on WhatsApp to ${i.phone}` : 'No phone number on this invoice'} aria-label={`Send ${label(i)} on WhatsApp`}>
                             {b('wa') ? <span className="inv-spin" /> : <Ic d={IC.wa} />}
                           </button>
                         )}
                         {i.status === 'issued' && (
-                          <button className="inv-qa-btn is-paid" onClick={() => onPaid(i)} disabled={b('paid')} title="Mark as paid" aria-label={`Mark ${i.number} as paid`}>
+                          <button className="inv-qa-btn is-paid" onClick={() => onPaid(i)} disabled={b('paid')} title="Mark as paid" aria-label={`Mark ${label(i)} as paid`}>
                             {b('paid') ? <span className="inv-spin" /> : <Ic d={IC.paid} />}<span className="inv-qa-txt">Paid</span>
                           </button>
                         )}

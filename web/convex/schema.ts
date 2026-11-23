@@ -83,8 +83,10 @@ export default defineSchema({
     .index("by_productId", ["productId"]),
 
   invoices: defineTable({
-    number: v.string(), // INV-2026-0001
-    year: v.number(),
+    // INV-2026-0001, assigned when the invoice is issued (drafts have none), so
+    // issued invoice numbers never have gaps
+    number: v.union(v.string(), v.null()),
+    year: v.union(v.number(), v.null()),
     status: invoiceStatus,
     issueDate: v.number(), // ms
     dueDate: v.union(v.number(), v.null()),

@@ -19,7 +19,7 @@ export async function buildInvoicePdf(invoice, settings) {
 
 export function invoiceFileName(invoice) {
   const who = invoice.customer.company || invoice.customer.name;
-  return `${invoice.number}${who ? ' ' + who : ''}.pdf`.replace(/[\\/:*?"<>|]/g, '');
+  return `${invoice.number || 'Draft invoice'}${who ? ' ' + who : ''}.pdf`.replace(/[\\/:*?"<>|]/g, '');
 }
 
 /* ---------- WhatsApp ---------- */

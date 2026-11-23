@@ -43,14 +43,14 @@ export default function InvoicePdf({ invoice, settings, logoSrc }) {
   const c = invoice.customer;
   const contact = [settings.phone, settings.email].filter(Boolean).join('  ·  ');
   return (
-    <Document title={invoice.number} author={settings.companyName} subject="Invoice">
+    <Document title={invoice.number || 'Draft invoice'} author={settings.companyName} subject="Invoice">
       <Page size="A4" style={s.page}>
         <View style={s.head}>
           {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image src={logoSrc} style={s.logo} />
           <View style={s.right}>
             <Text style={s.title}>{invoice.vatRate > 0 && settings.trn ? 'Tax invoice' : 'Invoice'}</Text>
-            <Text style={s.pill}>{invoice.number}</Text>
+            <Text style={s.pill}>{invoice.number || 'DRAFT'}</Text>
             <Text style={s.dates}>Date {fmtDate(invoice.issueDate)}{invoice.dueDate ? `   ·   Due ${fmtDate(invoice.dueDate)}` : ''}</Text>
             {invoice.status === 'paid' && <Text style={[s.stamp, { backgroundColor: '#00A86B' }]}>PAID</Text>}
             {invoice.status === 'void' && <Text style={[s.stamp, { backgroundColor: '#C4163F' }]}>VOID</Text>}

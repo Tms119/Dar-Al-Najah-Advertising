@@ -575,3 +575,4 @@ label.a-btn { cursor: pointer; }
 .sa-link-url { display: inline-block; margin: 4px 0 2px; font: 700 18px var(--f-body); color: var(--ink); text-decoration: none; word-break: break-all; }
 .sa-link-url:hover { color: #7B3FE4; }
 .sa-link p { margin: 0; }
+.inv-draft-num { font-style: normal; color: var(--muted); font-weight: 600; }
