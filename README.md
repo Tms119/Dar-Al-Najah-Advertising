@@ -34,7 +34,7 @@ Customers browse a live product catalogue and talk to the shop on WhatsApp. Staf
 ### Public website
 
 - **Live catalogue**: around 95 products across Printing, Fabric, Gifts and Photo. The mega menu, footer, home page and catalogue all come from the database, so a change in the admin shows up everywhere straight away, with no redeploy.
-- **Woven Labels page** (`/woven-labels`): a landing page in the home page's style with 21 label styles in four groups (label types, folds and finishes, labels by product, manufacturing and supply), each with a photo, description and WhatsApp button. The content lives in the catalogue, so it's edited in the admin. Product photos were generated with Cloudflare Workers AI (`convex/wovenLabels.ts`).
+- **Woven Labels page** (`/woven-labels`): laid out like the other category pages (tabs, search, group chips), with 21 label styles in four groups (label types, folds and finishes, labels by product, manufacturing and supply), each with a photo, description and WhatsApp button. The content lives in the catalogue, so it's edited in the admin. Product photos were generated with Cloudflare Workers AI (`convex/wovenLabels.ts`).
 - **Product pages**: photos (or illustrations), name and description. There are no prices online: every product has an "Ask on WhatsApp" button with a pre-filled message.
 - **WhatsApp first**: the header, hero, product pages, contact page and a floating button all open a WhatsApp chat with the shop.
 - **Photos or illustrations**: every product and category shows uploaded photos when they exist, and falls back to built-in SVG illustrations otherwise.
