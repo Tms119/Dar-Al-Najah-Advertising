@@ -1,6 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { categoryHref } from '@/data/site';
 import ProductCard from '@/components/ProductCard';
 import { useCatalog } from '@/components/CatalogProvider';
 
@@ -18,7 +20,11 @@ export default function Catalog({ initialCat = 'all' }) {
     return m;
   }, [PRODUCTS]);
 
+  const router = useRouter();
   const setCat = (id) => {
+    // categories with their own page (e.g. woven labels) open it instead of filtering here
+    const href = id === 'all' ? '/products' : categoryHref(id);
+    if (!href.startsWith('/products')) { router.push(href); return; }
     setGroup('all');
     setCatState(id);
     window.history.replaceState(null, '', id === 'all' ? '/products' : `/products?cat=${id}`);

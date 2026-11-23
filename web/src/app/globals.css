@@ -885,9 +885,10 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 .contact-wa { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; align-self: start; }
 .contact-wa .sent-ic { color: #fff; background: #25D366; }
 
-/* Woven Labels landing page (reuses the home page building blocks) */
-.wl-group { padding-top: clamp(48px, 7vw, 96px); padding-bottom: 0; }
-.wl-group + .process { padding-top: clamp(72px, 10vw, 140px); }
+/* Woven Labels: catalogue layout, label cards with descriptions */
+.wl-section { margin-bottom: clamp(40px, 5vw, 64px); }
+.wl-section-title { display: flex; align-items: center; gap: 10px; margin: 8px 0 18px; font-family: var(--f-display); font-size: clamp(22px, 2.4vw, 30px); font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; }
+.wl-section-title span { font-family: var(--f-body); font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--bg-2); color: var(--muted); }
 .wl-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .wl-card { display: flex; flex-direction: column; }
 .wl-card .p-card-body h3 a { color: inherit; text-decoration: none; }
@@ -895,5 +896,7 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 .wl-desc { margin: 4px 0 0; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
 .wl-ask { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 13.5px; font-weight: 700; color: #128C4A; text-decoration: none; }
 .wl-ask:hover { text-decoration: underline; }
+a.tab { text-decoration: none; color: inherit; }
 @media (max-width: 1180px) { .wl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .wl-tools { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .wl-grid { grid-template-columns: 1fr; } }
