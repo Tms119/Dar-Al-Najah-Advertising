@@ -54,8 +54,17 @@ const nextConfig = {
       { source: '/studio/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
     ];
   },
+  // one canonical address: www.daralnajahadv.ae → daralnajahadv.ae
+  async redirects() {
+    return [{
+      source: '/:path*',
+      has: [{ type: 'host', value: 'www.daralnajahadv.ae' }],
+      destination: 'https://daralnajahadv.ae/:path*',
+      permanent: true,
+    }];
+  },
   // The Mockup Studio is its own site: point a subdomain such as
-  // studio.daralnajahadv.com at this project and its home page is the studio.
+  // studio.daralnajahadv.ae at this project and its home page is the studio.
   async rewrites() {
     return {
       beforeFiles: [{ source: '/', has: [{ type: 'host', value: 'studio\\..+' }], destination: '/studio' }],
