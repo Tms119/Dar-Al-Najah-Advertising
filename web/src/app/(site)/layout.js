@@ -16,7 +16,7 @@ const jsonLd = {
   url: SITE_URL,
   image: `${SITE_URL}/opengraph-image`,
   telephone: COMPANY.phone,
-  address: { '@type': 'PostalAddress', addressLocality: 'Dubai', addressCountry: 'AE' },
+  areaServed: 'United Arab Emirates',
   openingHoursSpecification: [{
     '@type': 'OpeningHoursSpecification',
     dayOfWeek: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'],

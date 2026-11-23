@@ -13,8 +13,8 @@ import { round2, text } from "./lib/validate";
 
 const DEFAULT_SETTINGS = {
   companyName: "Dar Al Najah Advertising",
-  address: "Dubai, United Arab Emirates",
-  phone: "+971 4 000 0000",
+  address: "",
+  phone: "+971 50 676 2586",
   email: "",
   trn: "",
   bankDetails: "",

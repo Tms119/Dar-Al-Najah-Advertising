@@ -45,7 +45,6 @@ export default function Footer() {
               Printing, embroidery, gifting and a photo studio in Dubai. Everything is designed, printed and finished in our own studio.
             </p>
             <dl className="f-info">
-              <div><dt>Visit</dt><dd>{COMPANY.address}</dd></div>
               <div><dt>Hours</dt><dd>{COMPANY.hours}</dd></div>
             </dl>
             <div className="socials">

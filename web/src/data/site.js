@@ -1,10 +1,10 @@
-/* Business details shown across the site. Placeholder values: confirm with the client. */
+/* Business details shown across the site. The shop's phone is its WhatsApp
+   number. The address is left out until the client confirms it. */
 export const COMPANY = {
   name: 'Dar Al Najah',
   full: 'Dar Al Najah Advertising',
-  phone: '+971 4 000 0000',
-  whatsapp: '971506762586', // +971 50 676 2586
-  address: 'Dubai, United Arab Emirates',
+  phone: '+971 50 676 2586',
+  whatsapp: '971506762586',
   hours: 'Saturday to Thursday, 9am to 10pm',
 };
 
