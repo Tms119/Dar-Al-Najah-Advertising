@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { COMPANY, telHref, waLink } from '@/data/site';
+import { COMPANY, categoryHref, telHref, waLink } from '@/data/site';
 import { useCatalog } from './CatalogProvider';
 
 const SOCIALS = ['Instagram', 'TikTok', 'LinkedIn', 'Facebook'];
@@ -64,7 +64,7 @@ export default function Footer() {
                   {c.groups.flatMap((g) => g.items).slice(0, 6).map((it) => (
                     <li key={it.slug}><Link href={`/products/${it.slug}`}>{it.name}</Link></li>
                   ))}
-                  <li><Link href={`/products?cat=${c.id}`} className="more">All {c.count} →</Link></li>
+                  <li><Link href={categoryHref(c.id)} className="more">All {c.count} →</Link></li>
                 </ul>
               </div>
             ))}

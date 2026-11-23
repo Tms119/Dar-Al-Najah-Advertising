@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { COMPANY, telHref, waLink } from '@/data/site';
+import { COMPANY, categoryHref, telHref, waLink } from '@/data/site';
 import { WhatsAppIcon } from './icons';
 import { useCatalog } from './CatalogProvider';
 import Logo from './Logo';
@@ -92,7 +92,7 @@ export default function Header() {
               ) : (
                 <Mock shape={active.hero} color={active.color} className="mega-mock" />
               )}
-              <Link href={`/products?cat=${active.id}`} className="btn btn-ink btn-sm">
+              <Link href={categoryHref(active.id)} className="btn btn-ink btn-sm">
                 View all {active.short.toLowerCase()} <span className="btn-arrow">→</span>
               </Link>
             </div>
@@ -105,7 +105,7 @@ export default function Header() {
                       <li key={it.slug}><Link href={`/products/${it.slug}`}>{it.name}</Link></li>
                     ))}
                     {g.items.length > MEGA_LIMIT && (
-                      <li><Link href={`/products?cat=${active.id}`} className="mega-more">See all {g.items.length} →</Link></li>
+                      <li><Link href={categoryHref(active.id)} className="mega-more">See all {g.items.length} →</Link></li>
                     )}
                   </ul>
                 </div>

@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Mock from './Mock';
+import { categoryHref } from '@/data/site';
 import ProductCard from './ProductCard';
 import { useCatalog } from './CatalogProvider';
 
@@ -30,7 +31,7 @@ export function ServicesStack() {
                   <Link key={it.slug} href={`/products/${it.slug}`} className="chip chip-white">{it.name}</Link>
                 ))}
               </div>
-              <Link href={`/products?cat=${c.id}`} className="btn btn-ink">
+              <Link href={categoryHref(c.id)} className="btn btn-ink">
                 Explore {c.short.toLowerCase()} <span className="btn-arrow">→</span>
               </Link>
             </div>

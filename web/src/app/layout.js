@@ -47,7 +47,8 @@ export const viewport = { themeColor: '#F6F2EC', width: 'device-width', initialS
 const bootScript = `/* Designed & built by PEERBROS x Themeszoo · https://www.peerbros.com · https://www.themeszoo.com */
 (function(){var d=document.documentElement;try{var n=navigator,rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(rm||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||(n.deviceMemory&&n.deviceMemory<=4)||(n.connection&&n.connection.saveData))d.setAttribute('data-lite','');
-if(rm||/^\/(admin|studio)/.test(location.pathname)||sessionStorage.getItem('dn-intro'))d.setAttribute('data-no-intro','');else sessionStorage.setItem('dn-intro','1');
+var p=location.pathname;
+if(rm||p.indexOf('/admin')===0||p.indexOf('/studio')===0||sessionStorage.getItem('dn-intro'))d.setAttribute('data-no-intro','');else sessionStorage.setItem('dn-intro','1');
 }catch(e){d.setAttribute('data-no-intro','')}})();`;
 
 const WORD = 'Dar Al Najah';

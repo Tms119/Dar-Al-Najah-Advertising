@@ -9,6 +9,7 @@ export default async function sitemap() {
   return [
     { url: `${base}/`, priority: 1 },
     { url: `${base}/products`, priority: 0.9 },
+    { url: `${base}/woven-labels`, priority: 0.9 },
     { url: `${base}/contact`, priority: 0.6 },
     ...categories.map((c) => ({ url: `${base}/products?cat=${c.id}`, priority: 0.8 })),
     ...products.map((p) => ({ url: `${base}/products/${p.id}`, priority: 0.7 })),

@@ -159,3 +159,45 @@ export const getProduct = query({
     };
   },
 });
+
+/** Landing page for one category (e.g. /woven-labels): every live product
+ *  with its description and photo, grouped in menu order. */
+export const getCategoryPage = query({
+  args: { slug: v.string() },
+  handler: async (ctx, { slug }) => {
+    const cat = await ctx.db.query("categories").withIndex("by_slug", (q) => q.eq("slug", slug)).unique();
+    if (!cat?.isActive) return null;
+    const groups = await ctx.db
+      .query("groups")
+      .withIndex("by_categoryId_and_sortOrder", (q) => q.eq("categoryId", cat._id))
+      .take(MAX_GROUPS);
+    const sections = await Promise.all(groups.map(async (g) => {
+      const links = await ctx.db
+        .query("productGroups")
+        .withIndex("by_groupId_and_sortOrder", (q) => q.eq("groupId", g._id))
+        .take(MAX_ITEMS_PER_GROUP);
+      const products = await Promise.all(links.map((l) => ctx.db.get(l.productId)));
+      const items = await Promise.all(products
+        .filter((p): p is Doc<"products"> => p?.isActive === true)
+        .map(async (p) => ({
+          slug: p.slug,
+          name: p.name,
+          desc: p.description,
+          badge: p.badge,
+          shape: p.mockupShape,
+          image: await firstImage(ctx, p),
+        })));
+      return { name: g.name, items };
+    }));
+    return {
+      slug: cat.slug,
+      name: cat.name,
+      tagline: cat.tagline,
+      color: cat.color,
+      tint: cat.tint,
+      hero: cat.heroShape,
+      image: cat.imageId ? await ctx.storage.getUrl(cat.imageId) : null,
+      sections: sections.filter((s) => s.items.length),
+    };
+  },
+});
