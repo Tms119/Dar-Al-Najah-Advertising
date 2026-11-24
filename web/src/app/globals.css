@@ -924,3 +924,7 @@ a.tab { text-decoration: none; color: inherit; }
 }
 .btn-dash svg { flex: none; }
 .m-link.m-dash { color: var(--blue); }
+.f-info dd a { color: inherit; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, 0.3); text-underline-offset: 3px; }
+.f-info dd a:hover { text-decoration-color: currentColor; }
+.c-card .c-sub { font-style: normal; font-size: 13px; color: var(--muted); margin-top: 6px; }
+a.c-card:hover .c-sub { color: inherit; opacity: 0.85; }

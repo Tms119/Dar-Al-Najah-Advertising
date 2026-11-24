@@ -1,12 +1,21 @@
-/* Business details shown across the site. The shop's phone is its WhatsApp
-   number. The address is left out until the client confirms it. */
+/* Business details shown across the site. The shop's phone is its WhatsApp number. */
 export const COMPANY = {
   name: 'Dar Al Najah',
   full: 'Dar Al Najah Advertising',
   phone: '+971 50 676 2586',
   whatsapp: '971506762586',
+  address: 'Shop No. 10, Nakheel Plaza, Deira, Dubai, United Arab Emirates',
   hours: 'Saturday to Thursday, 9am to 10pm',
 };
+
+/** Official social profiles (footer links and structured data). */
+export const SOCIALS = [
+  { name: 'Instagram', url: 'https://www.instagram.com/daralnajahadvertisinguae/' },
+  { name: 'Facebook', url: 'https://www.facebook.com/DarAlNajahAdvertising' },
+];
+
+/** Google Maps directions to the shop. */
+export const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(COMPANY.address)}`;
 
 /** Canonical site origin, used for metadata, sitemap and structured data. */
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';

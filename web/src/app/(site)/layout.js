@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import RevealObserver from '@/components/RevealObserver';
 import WhatsAppFab from '@/components/WhatsAppFab';
 import PerfObserver from '@/components/PerfObserver';
-import { COMPANY, SITE_URL } from '@/data/site';
+import { COMPANY, SITE_URL, SOCIALS } from '@/data/site';
 
 // structured data so search engines show the business card (name, phone, hours)
 const jsonLd = {
@@ -16,7 +16,15 @@ const jsonLd = {
   url: SITE_URL,
   image: `${SITE_URL}/opengraph-image`,
   telephone: COMPANY.phone,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Shop No. 10, Nakheel Plaza',
+    addressLocality: 'Deira, Dubai',
+    addressRegion: 'Dubai',
+    addressCountry: 'AE',
+  },
   areaServed: 'United Arab Emirates',
+  sameAs: SOCIALS.map((s) => s.url),
   openingHoursSpecification: [{
     '@type': 'OpeningHoursSpecification',
     dayOfWeek: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'],

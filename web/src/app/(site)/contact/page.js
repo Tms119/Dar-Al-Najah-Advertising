@@ -1,7 +1,7 @@
-import { COMPANY, telHref, waLink } from '@/data/site';
+import { COMPANY, mapsLink, telHref, waLink } from '@/data/site';
 import { WhatsAppIcon } from '@/components/icons';
 
-export const metadata = { title: 'Contact', description: 'Talk to Dar Al Najah Advertising in Dubai on WhatsApp or by phone.' };
+export const metadata = { title: 'Contact', description: 'Talk to Dar Al Najah Advertising on WhatsApp or by phone, or visit our shop at Nakheel Plaza, Deira, Dubai.' };
 
 export default function ContactPage() {
   return (
@@ -16,9 +16,9 @@ export default function ContactPage() {
             <a href={telHref} className="c-card" style={{ '--c': '#2B3BFF' }}>
               <small>Call</small><b>{COMPANY.phone}</b><span>↗</span>
             </a>
-            <div className="c-card" style={{ '--c': '#FFB800' }}>
-              <small>Hours</small><b>{COMPANY.hours}</b>
-            </div>
+            <a href={mapsLink} target="_blank" rel="noopener noreferrer" className="c-card" style={{ '--c': '#FFB800' }}>
+              <small>Visit</small><b>{COMPANY.address}</b><em className="c-sub">{COMPANY.hours}</em><span>↗</span>
+            </a>
           </div>
         </div>
 

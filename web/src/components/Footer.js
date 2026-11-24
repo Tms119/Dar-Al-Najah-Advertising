@@ -2,10 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { COMPANY, categoryHref, telHref, waLink } from '@/data/site';
+import { COMPANY, SOCIALS, categoryHref, mapsLink, telHref, waLink } from '@/data/site';
 import { useCatalog } from './CatalogProvider';
 
-const SOCIALS = ['Instagram', 'TikTok', 'LinkedIn', 'Facebook'];
 
 export default function Footer() {
   const { categories } = useCatalog();
@@ -45,10 +44,11 @@ export default function Footer() {
               Printing, embroidery, gifting and a photo studio in Dubai. Everything is designed, printed and finished in our own studio.
             </p>
             <dl className="f-info">
+              <div><dt>Visit</dt><dd><a href={mapsLink} target="_blank" rel="noopener noreferrer">{COMPANY.address}</a></dd></div>
               <div><dt>Hours</dt><dd>{COMPANY.hours}</dd></div>
             </dl>
             <div className="socials">
-              {SOCIALS.map((s) => <a key={s} href="#" className="pill">{s}</a>)}
+              {SOCIALS.map((s) => <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="pill">{s.name}</a>)}
             </div>
           </div>
 
