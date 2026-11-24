@@ -63,7 +63,7 @@ export const stickers: CategorySeed = {
         {
           name: "Roll Labels",
           desc: "Product labels supplied on rolls for fast hand or machine application. Any shape, with room for logo, ingredients, barcodes and QR codes.",
-          photo: "rolls of blank glossy colourful product labels on a packing table beside jars and bottles, no words or letters",
+          photo: "two rolls of round glossy printed product labels with a simple orange and green fruit illustration, labels peeling off the roll onto a glass jar, packing table, no words or letters",
         },
       ],
     },
@@ -78,12 +78,12 @@ export const stickers: CategorySeed = {
         {
           name: "Foil Stickers",
           desc: "Gold, silver or rose gold foil for a luxury finish on packaging, invitations, certificates and gift boxes.",
-          photo: "shiny gold foil round seal stickers with an ornate floral pattern on black and white gift boxes, no words or letters",
+          photo: "a single black gift box with one shiny gold foil round sticker with an ornate floral pattern on the lid, close up, soft light, no words or letters",
         },
         {
           name: "Metal Stickers",
           desc: "Thin metallic stickers with a brushed or polished look, used as nameplates and brand marks on products, electronics and furniture.",
-          photo: "thin brushed silver metal stickers with an abstract emblem on a black speaker and a wooden box, close up, no words or letters",
+          photo: "one thin brushed silver metal nameplate sticker with a simple geometric emblem stuck on the front of a dark wooden box, close up, no words or letters",
         },
         {
           name: "Embossed Seal Stickers",
@@ -98,12 +98,12 @@ export const stickers: CategorySeed = {
         {
           name: "Stencil Stickers",
           desc: "Cut vinyl stencils for painting logos and markings on walls, floors, vehicles and products, and for etching glass.",
-          photo: "a cut vinyl stencil of a simple leaf shape on a wall with fresh blue spray paint around it, no words or letters",
+          photo: "a hand peeling a white vinyl stencil off a concrete wall, revealing a crisp painted blue leaf shape, spray paint can beside it, no words or letters",
         },
         {
           name: "Windshield Stickers",
           desc: "Stickers for the inside or outside of car windscreens, for parking permits, branding and fleet identification.",
-          photo: "a small round colourful sticker on the corner of a car windscreen, seen from outside, sunny Dubai street, no words or letters",
+          photo: "a plain round sticker with a simple green and blue abstract circle pattern on the inside top corner of a car front windscreen, view from the driver seat looking out through the windscreen, dashboard visible, sunny street, no words or letters",
         },
         {
           name: "Helmet Stickers",
