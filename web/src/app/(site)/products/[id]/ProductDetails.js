@@ -77,14 +77,16 @@ export default function ProductDetails({ p }) {
           ))}
         </ul>
 
-        <div className="pdp-how">
+        <div className="pdp-how" style={{ '--c': p.color }}>
           <h2>How it works</h2>
           <ol>
             {STEPS.map(([t, d], i) => (
               <li key={t}>
-                <span className="pdp-step" style={{ background: p.color }}>{i + 1}</span>
-                <strong>{t}</strong>
-                <p>{d}</p>
+                <span className="pdp-step">{i + 1}</span>
+                <div>
+                  <strong>{t}</strong>
+                  <p>{d}</p>
+                </div>
               </li>
             ))}
           </ol>

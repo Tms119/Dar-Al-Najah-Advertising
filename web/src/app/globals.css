@@ -897,13 +897,14 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 .pdp-perk-ic { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; }
 .pdp-perks strong { display: block; font-size: 16px; }
 .pdp-perks p, .pdp-how p { margin: 2px 0 0; color: var(--muted); font-size: 15px; line-height: 1.45; }
-.pdp-how { margin-top: 30px; padding-top: 24px; border-top: 1px solid var(--line); }
-.pdp-how h2 { margin: 0 0 16px; font-family: var(--f-display); font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; }
-.pdp-how ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.pdp-how li { padding: 16px; border-radius: var(--r-sm); background: var(--bg-2); }
-.pdp-how strong { display: block; margin-top: 10px; font-size: 15px; }
-.pdp-step { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; color: #fff; font-weight: 700; font-size: 14px; }
-@media (max-width: 560px) { .pdp-how ol { grid-template-columns: 1fr; } }
+/* how it works: a vertical timeline, so it reads differently from the cards below */
+.pdp-how { margin-top: 30px; padding: 24px 24px 8px; border-radius: var(--r); background: var(--paper); box-shadow: inset 0 0 0 1px var(--line-2); }
+.pdp-how h2 { margin: 0 0 20px; font-family: var(--f-display); font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; }
+.pdp-how ol { list-style: none; margin: 0; padding: 0; }
+.pdp-how li { position: relative; display: flex; gap: 16px; padding-bottom: 20px; }
+.pdp-how li:not(:last-child)::before { content: ''; position: absolute; left: 17px; top: 40px; bottom: 4px; border-left: 2px dashed color-mix(in srgb, var(--c) 35%, transparent); }
+.pdp-how strong { display: block; font-size: 16px; padding-top: 7px; }
+.pdp-step { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; color: #fff; font-weight: 700; font-size: 15px; background: var(--c); box-shadow: 0 0 0 5px color-mix(in srgb, var(--c) 14%, #fff); }
 .contact-wa { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; align-self: start; }
 .contact-wa .sent-ic { color: #fff; background: #25D366; }
 
