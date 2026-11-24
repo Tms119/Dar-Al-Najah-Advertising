@@ -4,7 +4,19 @@ import Image from 'next/image';
 import { useState } from 'react';
 import Mock from '@/components/Mock';
 import { WhatsAppIcon } from '@/components/icons';
-import { waLink } from '@/data/site';
+import { COMPANY, waLink } from '@/data/site';
+
+const PERKS = [
+  { title: 'High-quality print', text: 'Bright, durable prints that make your brand stand out.', path: 'M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z' },
+  { title: 'Fast turnaround', text: `Urgent jobs ready same or next day. Open ${COMPANY.hours}.`, path: 'M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z' },
+  { title: 'Made for your brand', text: 'We suggest the right material and finish for the job.', path: 'M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10zM13.5 7.5l3 3' },
+];
+
+const STEPS = [
+  ['Send your idea', 'Share your design, logo or just an idea on WhatsApp.'],
+  ['Get a quote and proof', 'We reply with options, a price and a proof to approve.'],
+  ['Pick up or delivery', 'Collect from our Deira shop or get it delivered.'],
+];
 
 /* Product photos (or illustrations) with the name and description.
    No prices online: customers ask on WhatsApp and get a tailored quote. */
@@ -52,6 +64,30 @@ export default function ProductDetails({ p }) {
           <a className="btn btn-ink btn-wa" href={waLink(`Hi Dar Al Najah! I'm interested in ${p.name}.`)} target="_blank" rel="noopener noreferrer">
             <WhatsAppIcon size={18} /> Ask on WhatsApp
           </a>
+        </div>
+
+        <ul className="pdp-perks">
+          {PERKS.map((k) => (
+            <li key={k.title}>
+              <span className="pdp-perk-ic" style={{ color: p.color, background: `color-mix(in srgb, ${p.color} 12%, #fff)` }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={k.path} /></svg>
+              </span>
+              <div><strong>{k.title}</strong><p>{k.text}</p></div>
+            </li>
+          ))}
+        </ul>
+
+        <div className="pdp-how">
+          <h2>How it works</h2>
+          <ol>
+            {STEPS.map(([t, d], i) => (
+              <li key={t}>
+                <span className="pdp-step" style={{ background: p.color }}>{i + 1}</span>
+                <strong>{t}</strong>
+                <p>{d}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>
