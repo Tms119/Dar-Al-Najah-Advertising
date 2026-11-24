@@ -35,6 +35,7 @@ const FORGET_AFTER_MS = 24 * 60 * 60_000;
 
 // bindMethod is how sign-in methods are built; it's typed only in the
 // library's internal types, so this declares the small part we use.
+/* eslint-disable no-unused-vars -- parameter names in type signatures */
 type GuardedCtx = MutationCtx & {
   convexAuth: { completeSignIn(a: { userId: string; profile: Record<string, never>; authenticatedBy: unknown }): Promise<unknown> };
 };
@@ -44,6 +45,7 @@ type BindMethod = (o: { name: string; createUser: unknown }) => {
     handler: (ctx: GuardedCtx, args: ObjectType<A>) => Promise<R>;
   }) => RegisteredMutation<"public", ObjectType<A>, Promise<R>>;
 };
+/* eslint-enable no-unused-vars */
 const { authMutation } = (auth as unknown as { bindMethod: BindMethod }).bindMethod({
   name: "usernamePasswordGuarded",
   createUser: internal.users.createUser,
