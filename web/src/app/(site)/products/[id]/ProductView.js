@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePreloadedQuery } from 'convex/react';
 import ProductDetails from './ProductDetails';
 import ProductCard from '@/components/ProductCard';
+import { highlightsFor } from '@/data/categoryHighlights';
 
 export default function ProductView({ preloaded }) {
   const result = usePreloadedQuery(preloaded);
@@ -33,15 +34,16 @@ export default function ProductView({ preloaded }) {
 
         <ProductDetails p={p} key={p.id} />
 
-        <section className="pdp-info">
-          {[
-            ['Free proof', 'We send a digital proof before anything is printed.', '✓'],
-            ['Design help', 'No artwork? Our designers can create it for you.', '✎'],
-            ['UAE delivery', 'Express in Dubai, and delivery to every emirate.', '→'],
-          ].map(([t, d, ic], i) => (
+        <section className="pdp-info" style={{ '--c': p.color, '--t': p.tint }}>
+          {highlightsFor(p.category).map(([t, d, path], i) => (
             <div key={t} className="info-card" data-reveal style={{ '--d': `${i * 80}ms` }}>
-              <span className="info-ic">{ic}</span>
-              <h4>{t}</h4>
+              <div className="info-top">
+                <span className="info-ic">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={path} /></svg>
+                </span>
+                <span className="info-n">0{i + 1}</span>
+              </div>
+              <h3>{t}</h3>
               <p>{d}</p>
             </div>
           ))}
