@@ -37,7 +37,7 @@ export default function AdminSignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const passwordRef = useRef(null);
+  const usernameRef = useRef(null);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -46,8 +46,10 @@ export default function AdminSignIn() {
     const result = await signIn({ username: username.trim().toLowerCase(), password });
     if (result.status === 'complete') { router.replace('/admin'); router.refresh(); return; }
     setError(describe(result.userError));
-    // ready to retype: Enter sends again without clicking back into the field
-    requestAnimationFrame(() => passwordRef.current?.select());
+    // clear both fields after every failed try, ready to type again
+    setUsername('');
+    setPassword('');
+    requestAnimationFrame(() => usernameRef.current?.focus());
   };
 
   return (
@@ -58,11 +60,11 @@ export default function AdminSignIn() {
         <p className="a-muted">Internal dashboard. Accounts are created by an administrator.</p>
         <label className="a-field">
           <span>Username</span>
-          <input className="a-input" id="username" name="username" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoCapitalize="none" spellCheck={false} required readOnly={pending} />
+          <input className="a-input" id="username" name="username" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoCapitalize="none" spellCheck={false} required readOnly={pending} ref={usernameRef} />
         </label>
         <label className="a-field">
           <span>Password</span>
-          <input className="a-input" id="password" name="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required readOnly={pending} ref={passwordRef} />
+          <input className="a-input" id="password" name="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required readOnly={pending} />
         </label>
         {error && <p className="a-error" role="alert">{error}</p>}
         <button className="a-btn a-btn-primary a-btn-block" disabled={pending}>
