@@ -5,7 +5,7 @@ import { getAdminStatus } from "./lib/admin";
 
 export const createUser = internalMutation({
   args: {
-    method: v.object({ name: v.literal("usernamePassword"), profile: v.object({}) }),
+    method: v.object({ name: v.union(v.literal("usernamePassword"), v.literal("usernamePasswordGuarded")), profile: v.object({}) }),
   },
   returns: v.id("users"),
   handler: async (ctx) => {

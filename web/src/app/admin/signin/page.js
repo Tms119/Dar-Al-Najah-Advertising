@@ -11,7 +11,10 @@ function describe(userError) {
     // same message for unknown user and wrong password: don't reveal which usernames exist
     case 'USER_NOT_FOUND':
     case 'INVALID_CREDENTIALS': return 'Incorrect username or password.';
-    case 'RATE_LIMITED': return `Too many attempts. Try again in ${Math.ceil(userError.retryAfterMs / 1000)} seconds.`;
+    case 'RATE_LIMITED': {
+      const s = Math.ceil(userError.retryAfterMs / 1000);
+      return `Too many wrong attempts. Try again in ${s < 60 ? `${s} seconds` : `${Math.ceil(s / 60)} minute${s > 60 ? 's' : ''}`}.`;
+    }
     case 'PASSWORD_TOO_SHORT':
     case 'PASSWORD_TOO_LONG':
     case 'PASSWORD_HAS_SURROUNDING_WHITESPACE': return 'Incorrect username or password.';
