@@ -581,8 +581,8 @@ input, select, textarea { font: inherit; color: inherit; }
 .cat-head .display { color: var(--c); }
 .cat-head .muted { font-size: 18px; max-width: 520px; margin: 18px 0 0; }
 .cat-toolbar {
-  position: sticky; top: 84px; z-index: 20; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
-  padding: 10px; margin: 0 -10px; border-radius: 999px; background: rgba(246, 242, 236, 0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  /* scrolls with the page: a second sticky bar under the header read as two menus */
+  display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
 }
 .tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
 .tabs::-webkit-scrollbar { display: none; }
@@ -852,9 +852,9 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
   .footer-bottom { padding-bottom: 76px; }
 }
 
-/* catalogue toolbar on phones: not sticky (too tall), search gets the space */
+/* catalogue toolbar on phones: search gets the space */
 @media (max-width: 760px) {
-  .cat-toolbar { position: static; padding: 0; margin: 0; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; border-radius: 0; gap: 10px; }
+  .cat-toolbar { gap: 10px; }
   .cat-tools { width: 100%; display: grid; grid-template-columns: 1fr 118px; gap: 8px; }
   .cat-tools select { width: 100%; padding: 0 10px; font-size: 14px; }
   .search { flex: 1; min-width: 0; }
