@@ -5,12 +5,14 @@ import type { Id } from "./_generated/dataModel";
 import { slugify } from "./seedData";
 import { DEFAULT_MODEL, runModel, sniffType } from "./lib/imageModel";
 import { SEEDS } from "./lib/seeds";
+import type { SeedItem } from "./lib/seeds/types";
 
 /* Category setup from starter content (convex/lib/seeds). After setup,
    everything is edited in the admin like any other category. CLI only:
      npx convex run catalogSeeds:setup '{"slug":"stickers"}'
      npx convex run catalogSeeds:generateImages '{"slug":"stickers"}'
      npx convex run catalogSeeds:generateImages '{"slug":"stickers","redo":["car-stickers"]}'
+     npx convex run catalogSeeds:syncGroups '{"slug":"stickers"}'   (add new starter groups)
      npx convex run catalogSeeds:removeCategory '{"slug":"photo"}' */
 
 const PHOTO_STYLE =
@@ -24,6 +26,29 @@ function seedFor(slug: string) {
 
 const categoryBySlug = (ctx: MutationCtx, slug: string) =>
   ctx.db.query("categories").withIndex("by_slug", (q) => q.eq("slug", slug)).unique();
+
+/** Adds the items to a group (reusing a product that already exists by slug). */
+async function addProducts(ctx: MutationCtx, groupId: Id<"groups">, items: SeedItem[], shape: string) {
+  const [lastProduct] = await ctx.db.query("products").order("desc").take(1);
+  let productOrder = (lastProduct?.sortOrder ?? -1) + 1;
+  for (const [pi, item] of items.entries()) {
+    const productSlug = slugify(item.name);
+    const found = await ctx.db.query("products").withIndex("by_slug", (q) => q.eq("slug", productSlug)).unique();
+    const productId: Id<"products"> = found?._id ?? await ctx.db.insert("products", {
+      slug: productSlug,
+      name: item.name,
+      description: item.desc,
+      badge: item.badge ?? null,
+      mockupShape: shape,
+      imageIds: [],
+      isFeatured: false,
+      isActive: true,
+      sortOrder: productOrder++,
+    });
+    await ctx.db.insert("productGroups", { productId, groupId, isPrimary: !found, sortOrder: pi });
+  }
+  return items.length;
+}
 
 /** Creates the category, its groups and products. Does nothing if it already exists. */
 export const setup = internalMutation({
@@ -40,31 +65,43 @@ export const setup = internalMutation({
       isActive: true,
       sortOrder: cats.reduce((m, c) => Math.max(m, c.sortOrder), -1) + 1,
     });
-    const [lastProduct] = await ctx.db.query("products").order("desc").take(1);
-    let productOrder = (lastProduct?.sortOrder ?? -1) + 1;
     let count = 0;
-
     for (const [gi, group] of seed.groups.entries()) {
       const groupId = await ctx.db.insert("groups", { categoryId, name: group.name, sortOrder: gi });
-      for (const [pi, item] of group.items.entries()) {
-        const productSlug = slugify(item.name);
-        const found = await ctx.db.query("products").withIndex("by_slug", (q) => q.eq("slug", productSlug)).unique();
-        const productId: Id<"products"> = found?._id ?? await ctx.db.insert("products", {
-          slug: productSlug,
-          name: item.name,
-          description: item.desc,
-          badge: item.badge ?? null,
-          mockupShape: seed.shape,
-          imageIds: [],
-          isFeatured: false,
-          isActive: true,
-          sortOrder: productOrder++,
-        });
-        await ctx.db.insert("productGroups", { productId, groupId, isPrimary: !found, sortOrder: pi });
-        count++;
-      }
+      count += await addProducts(ctx, groupId, group.items, seed.shape);
     }
     return { skipped: false, products: count };
+  },
+});
+
+/** For a category that already exists: adds starter groups it doesn't have yet
+    (with their products) and puts all starter groups in starter order, so new
+    groups can be placed at the top. Groups added in the admin go after them. */
+export const syncGroups = internalMutation({
+  args: { slug: v.string() },
+  returns: v.object({ groupsAdded: v.array(v.string()), products: v.number() }),
+  handler: async (ctx, { slug }) => {
+    const seed = seedFor(slug);
+    const cat = await categoryBySlug(ctx, slug);
+    if (!cat) throw new Error(`Run catalogSeeds:setup for "${slug}" first`);
+    const existing = await ctx.db.query("groups").withIndex("by_categoryId_and_sortOrder", (q) => q.eq("categoryId", cat._id)).take(100);
+    const byName = new Map(existing.map((g) => [g.name, g]));
+    const groupsAdded: string[] = [];
+    let products = 0;
+    for (const [gi, group] of seed.groups.entries()) {
+      const found = byName.get(group.name);
+      if (found) {
+        await ctx.db.patch(found._id, { sortOrder: gi });
+        continue;
+      }
+      const groupId = await ctx.db.insert("groups", { categoryId: cat._id, name: group.name, sortOrder: gi });
+      products += await addProducts(ctx, groupId, group.items, seed.shape);
+      groupsAdded.push(group.name);
+    }
+    // groups made in the admin keep their order, after the starter ones
+    const extra = existing.filter((g) => !seed.groups.some((sg) => sg.name === g.name));
+    for (const [i, g] of extra.entries()) await ctx.db.patch(g._id, { sortOrder: seed.groups.length + i });
+    return { groupsAdded, products };
   },
 });
 

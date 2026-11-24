@@ -7,7 +7,7 @@ export const stickers: CategorySeed = {
     slug: "stickers",
     name: "Stickers & Graphics",
     shortName: "Stickers",
-    tagline: "Floor, window, wall and vehicle stickers for offices, shops and fleets, printed and installed across Dubai.",
+    tagline: "Custom printed stickers and labels, plus floor, window, wall and vehicle graphics for brands, shops and offices in Dubai.",
     color: "#FF6B1A",
     tint: "#FFEADB",
     heroShape: "sticker",
@@ -16,6 +16,102 @@ export const stickers: CategorySeed = {
   heroPhoto:
     "a bright modern Dubai retail shop front decorated with colourful window stickers, a frosted glass door band and a printed floor graphic at the entrance, daylight",
   groups: [
+    {
+      name: "Custom stickers",
+      items: [
+        {
+          name: "Die Cut Stickers",
+          badge: "Popular",
+          desc: "Stickers cut right around the outline of your logo or artwork, on durable vinyl. Ideal for branding, packaging, laptops and giveaways.",
+          photo: "a pile of glossy die cut vinyl stickers in bright abstract shapes, a star, a leaf and a lightning bolt, on a white desk, no words or letters",
+        },
+        {
+          name: "Print & Cut Stickers",
+          desc: "Full colour stickers printed and contour cut on sheets or singles, in any shape and size you need, from a short run to bulk.",
+          photo: "a sheet of colourful kiss cut stickers with round, heart and star shapes partly peeled off, on a light table, no words or letters",
+        },
+        {
+          name: "UV DTF Stickers",
+          desc: "Rub-on transfers with raised, glossy print and no background film. They stick to glass, metal, plastic and wood for a premium finish.",
+          photo: "a glossy raised colourful floral transfer sticker applied on a glass bottle and a metal tumbler, close up, no words or letters",
+        },
+        {
+          name: "Paper Stickers",
+          desc: "Economical paper stickers in gloss or matte for packaging, seals and promotions. Easy to write on with a matte finish.",
+          photo: "round matte and gloss paper stickers in pastel colours sealing small kraft boxes and paper bags, no words or letters",
+        },
+        {
+          name: "Kraft Paper Stickers",
+          desc: "Natural brown kraft stickers with a handmade, eco look. A favourite for bakeries, coffee, candles and gift packaging.",
+          photo: "round brown kraft paper stickers with simple black leaf illustrations on white gift boxes and jars, no words or letters",
+        },
+        {
+          name: "Transparent PVC Stickers",
+          desc: "Clear stickers that let the surface show through, so your design looks printed directly on glass, bottles and jars.",
+          photo: "a clear transparent sticker with a colourful flower illustration on a glass jar, the glass visible through it, no words or letters",
+        },
+        {
+          name: "White PVC Stickers",
+          desc: "Bright white, waterproof vinyl stickers for products, bottles and outdoor use. Colours stay vivid and the vinyl resists tearing.",
+          photo: "white vinyl stickers with simple bold colourful geometric shapes on water bottles and a cardboard box, no words or letters",
+        },
+        {
+          name: "White Ink Stickers",
+          desc: "Printed with a white ink layer so colours stay bright on clear stickers and dark surfaces, perfect for glass and black packaging.",
+          photo: "a clear sticker with a bright white and gold mandala design on a dark glass bottle, no words or letters",
+        },
+        {
+          name: "Roll Labels",
+          desc: "Product labels supplied on rolls for fast hand or machine application. Any shape, with room for logo, ingredients, barcodes and QR codes.",
+          photo: "rolls of blank glossy colourful product labels on a packing table beside jars and bottles, no words or letters",
+        },
+      ],
+    },
+    {
+      name: "Specialty stickers",
+      items: [
+        {
+          name: "Epoxy Stickers",
+          desc: "Domed stickers with a clear raised resin coat that looks premium and protects the print. Popular for nameplates, keychains and products.",
+          photo: "glossy domed epoxy stickers with colourful abstract circle designs catching the light on a white surface, no words or letters",
+        },
+        {
+          name: "Foil Stickers",
+          desc: "Gold, silver or rose gold foil for a luxury finish on packaging, invitations, certificates and gift boxes.",
+          photo: "shiny gold foil round seal stickers with an ornate floral pattern on black and white gift boxes, no words or letters",
+        },
+        {
+          name: "Metal Stickers",
+          desc: "Thin metallic stickers with a brushed or polished look, used as nameplates and brand marks on products, electronics and furniture.",
+          photo: "thin brushed silver metal stickers with an abstract emblem on a black speaker and a wooden box, close up, no words or letters",
+        },
+        {
+          name: "Embossed Seal Stickers",
+          desc: "Stickers with a raised embossed pattern for certificates, invitations and premium packaging. A classic, elegant seal.",
+          photo: "red and gold embossed round seal stickers with a raised wreath pattern on cream envelopes and a certificate corner, no words or letters",
+        },
+        {
+          name: "Hologram Stickers",
+          desc: "Holographic stickers that shimmer with rainbow colours. Eye-catching for products, and used as tamper-evident security seals.",
+          photo: "shimmering rainbow holographic stickers in round and square shapes on a dark surface, no words or letters",
+        },
+        {
+          name: "Stencil Stickers",
+          desc: "Cut vinyl stencils for painting logos and markings on walls, floors, vehicles and products, and for etching glass.",
+          photo: "a cut vinyl stencil of a simple leaf shape on a wall with fresh blue spray paint around it, no words or letters",
+        },
+        {
+          name: "Windshield Stickers",
+          desc: "Stickers for the inside or outside of car windscreens, for parking permits, branding and fleet identification.",
+          photo: "a small round colourful sticker on the corner of a car windscreen, seen from outside, sunny Dubai street, no words or letters",
+        },
+        {
+          name: "Helmet Stickers",
+          desc: "Tough, weatherproof vinyl stickers made to curve around helmets for teams, delivery riders, sites and safety marking.",
+          photo: "a white motorcycle helmet with sleek orange and black stripe vinyl stickers, studio light, no words or letters",
+        },
+      ],
+    },
     {
       name: "Floor stickers",
       items: [
