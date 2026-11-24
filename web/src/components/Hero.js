@@ -22,7 +22,7 @@ const QUICK = [
   ['T shirts', 't-shirt-printing'],
   ['Stickers', 'sticker'],
   ['Boxes', 'box'],
-  ['Passport photos', 'passport-size-photo'],
+  ['Frosted glass', 'frosted-glass-stickers'],
 ];
 
 export default function Hero() {

@@ -81,3 +81,8 @@ export function ProductCount() {
   const { products } = useCatalog();
   return <>{products.length}+</>;
 }
+
+export function CategoryCount() {
+  const { categories } = useCatalog();
+  return <>{categories.length}</>;
+}

@@ -1,6 +1,6 @@
 # Dar Al Najah Advertising
 
-The website and internal dashboard for **Dar Al Najah Advertising**, a printing, embroidery, gifting and photo studio business in Dubai.
+The website and internal dashboard for **Dar Al Najah Advertising**, a printing, embroidery, gifting, sticker and woven label business in Dubai.
 
 Customers browse a live product catalogue and talk to the shop on WhatsApp. Staff run the business from a private admin dashboard: products and menus, invoices with PDF and WhatsApp sending, and access passes for the **Mockup Studio**, a separate invite-only site where customers generate AI mockups of their logo on a product.
 
@@ -33,8 +33,9 @@ Customers browse a live product catalogue and talk to the shop on WhatsApp. Staf
 
 ### Public website
 
-- **Live catalogue**: around 95 products across Printing, Fabric, Gifts and Photo. The mega menu, footer, home page and catalogue all come from the database, so a change in the admin shows up everywhere straight away, with no redeploy.
-- **Woven Labels page** (`/woven-labels`): laid out like the other category pages (tabs, search, group chips), with 21 label styles in four groups (label types, folds and finishes, labels by product, manufacturing and supply), each with a photo, description and WhatsApp button. The content lives in the catalogue, so it's edited in the admin. Product photos were generated with Cloudflare Workers AI (`convex/wovenLabels.ts`).
+- **Live catalogue**: over 120 products across Printing, Fabric, Gifts, Stickers & Graphics and Woven Labels. The mega menu, footer, home page and catalogue all come from the database, so a change in the admin shows up everywhere straight away, with no redeploy.
+- **Woven Labels page** (`/woven-labels`): laid out like the other category pages (tabs, search, group chips), with 21 label styles in four groups (label types, folds and finishes, labels by product, manufacturing and supply), each with a photo, description and WhatsApp button. The content lives in the catalogue, so it's edited in the admin. Product photos were generated with Cloudflare Workers AI.
+- **Stickers & Graphics**: floor, glass and window, wall and pillar, and vehicle and magnetic stickers (21 products with generated photos).
 - **Product pages**: photos (or illustrations), name and description. There are no prices online: every product has an "Ask on WhatsApp" button with a pre-filled message.
 - **WhatsApp first**: the header, hero, product pages, contact page and a floating button all open a WhatsApp chat with the shop.
 - **Photos or illustrations**: every product and category shows uploaded photos when they exist, and falls back to built-in SVG illustrations otherwise.

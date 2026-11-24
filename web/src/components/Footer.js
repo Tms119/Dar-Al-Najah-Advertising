@@ -41,7 +41,7 @@ export default function Footer() {
               <Image src="/brand/logo-1200.webp" alt="Dar Al Najah Advertising. All Kinds of Printing Solution" width={1200} height={602} sizes="300px" />
             </Link>
             <p className="f-about-text">
-              Printing, embroidery, gifting and a photo studio in Dubai. Everything is designed, printed and finished in our own studio.
+              Printing, embroidery, gifts, stickers and woven labels in Dubai. Everything is designed, printed and finished in our own studio.
             </p>
             <dl className="f-info">
               <div><dt>Visit</dt><dd><a href={mapsLink} target="_blank" rel="noopener noreferrer">{COMPANY.address}</a></dd></div>

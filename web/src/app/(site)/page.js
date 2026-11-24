@@ -3,7 +3,7 @@ import Marquee from '@/components/Marquee';
 import ScrollText from '@/components/ScrollText';
 import Faq from '@/components/Faq';
 import Mock from '@/components/Mock';
-import { Bestsellers, ProductCount, ServicesStack } from '@/components/HomeLive';
+import { Bestsellers, CategoryCount, ProductCount, ServicesStack } from '@/components/HomeLive';
 
 const STEPS = [
   { n: '01', t: 'Pick a product', d: 'Choose from our print, fabric, gift and photo products, or tell us your idea.', shape: 'card', c: '#2B3BFF' },
@@ -15,12 +15,12 @@ const STEPS = [
 const REVIEWS = [
   { q: 'Our roll up banners and 2,000 flyers were ready overnight for GITEX. Colours were spot on.', n: 'Sara M.', r: 'Marketing Lead, Tech startup', c: '#2B3BFF' },
   { q: 'Embroidered caps and polos for the whole team. Stitching quality is honestly better than retail.', n: 'Omar K.', r: 'Operations, F&B group', c: '#FF3D7F' },
-  { q: 'Got passport photos in ten minutes and they restored my grandparents’ wedding photo. Magic.', n: 'Priya S.', r: 'Studio customer', c: '#00A86B' },
+  { q: 'Frosted glass stickers for our whole office were fitted in a day. It looks like real etched glass.', n: 'Hassan R.', r: 'Office Manager, Consulting firm', c: '#00A86B' },
   { q: 'Corporate welcome kits for 120 new joiners, boxed and delivered. Zero stress on our side.', n: 'James L.', r: 'HR Manager, Logistics', c: '#FFB800' },
 ];
 
 const FAQS = [
-  { q: 'Do you offer same day printing?', a: 'Yes. Business cards, flyers, stickers, mugs and passport photos can be ready the same day when artwork is approved before noon. Larger jobs usually take 24 to 72 hours.' },
+  { q: 'Do you offer same day printing?', a: 'Yes. Business cards, flyers, stickers and mugs can be ready the same day when artwork is approved before noon. Larger jobs usually take 24 to 72 hours.' },
   { q: 'Can you design my artwork?', a: 'Absolutely. Our own designers can create logos, layouts and print ready files. Just share your brief and brand assets.' },
   { q: 'What file formats do you accept?', a: 'A print ready PDF is best. We also accept AI, PSD, EPS, high resolution PNG or JPG files and even Canva links, and we check every file before printing.' },
   { q: 'Is there a minimum order quantity?', a: 'Most products start from very small runs, even a single mug or roll up banner. Bulk pricing kicks in automatically as quantity grows.' },
@@ -33,7 +33,7 @@ export default function Home() {
       <Hero />
 
       <div className="marquee-wrap">
-        <Marquee tilt={-2} items={['Business cards', 'Roll up stands', 'Embroidery', 'Packaging', 'Corporate gifts', 'Stickers', 'Photo studio', 'Signage']} />
+        <Marquee tilt={-2} items={['Business cards', 'Roll up stands', 'Embroidery', 'Packaging', 'Corporate gifts', 'Stickers', 'Woven labels', 'Signage']} />
       </div>
 
       {/* About */}
@@ -56,7 +56,7 @@ export default function Home() {
         <div className="container">
           <div className="section-head" data-reveal>
             <span className="eyebrow">What we do</span>
-            <h2 className="display">Four studios.<br />One print partner.</h2>
+            <h2 className="display">Everything you print.<br />One partner.</h2>
           </div>
           <ServicesStack />
         </div>
@@ -90,7 +90,7 @@ export default function Home() {
           {[
             [<ProductCount key="n" />, 'Products & services'],
             ['Same day', 'Express printing'],
-            ['4', 'Studios under one roof'],
+            [<CategoryCount key="c" />, 'Product ranges under one roof'],
             ['7', 'Emirates we deliver to'],
           ].map(([v, l], i) => (
             <div key={l} className="stat" data-reveal style={{ '--d': `${i * 80}ms` }}>

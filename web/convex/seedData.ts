@@ -79,25 +79,7 @@ export const CATALOG: SeedCategory[] = [
         ['USB', 'usb'], ['Corporate Kit', 'box'], ['Name Badge', 'badge'], ['Mug Printing', 'mug'],
         ['Notebook Printing', 'notebook'], ['Puzzles Printing', 'puzzle']] },
     ],
-  },
-  {
-    id: 'photo',
-    name: 'Photo Studio',
-    short: 'Photo',
-    tagline: 'Passport, visa and portrait shoots — plus restoration magic.',
-    color: '#00A86B',
-    tint: '#D9F5E9',
-    hero: 'camera',
-    groups: [
-      { name: 'Studio Services', items: [
-        ['Passport Size Photo', 'photo'], ['International Visa', 'photo'], ['Schengen Visa', 'photo'],
-        ['Baby Infant ID', 'photo'], ['Profile Shoot', 'camera'], ['Family Photoshoot', 'camera']] },
-      { name: 'Retouching', items: [
-        ['Retouching', 'photo'], ['Colorization', 'photo'], ['Photo Restoration', 'photo'], ['Photo Enhanced', 'photo'],
-        ['Digitizing', 'camera'], ['Photo Album Color', 'booklet'], ['Photo Restoration Album', 'booklet']] },
-      { name: 'Film Printing', items: [['Film to Digital Printing', 'film']] },
-    ],
-  },
+  }
 ];
 
 /* Descriptions (and badges) for the featured demo products. */
@@ -136,11 +118,5 @@ export const DETAILS: Record<string, SeedDetail> = {
   'corporate-kit': {
     badge: 'Corporate',
     desc: 'Welcome kits with notebook, pen, bottle, lanyard and more — all branded and packed in a custom box.',
-  },
-  'passport-size-photo': {
-    desc: 'ICAO-compliant passport and ID photos for any country, shot and printed while you wait. Digital copy included.',
-  },
-  'photo-restoration': {
-    desc: 'Torn, faded or water-damaged photos brought back to life by our retouch artists. Optional colourisation.',
   },
 };

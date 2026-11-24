@@ -1,0 +1,147 @@
+import type { CategorySeed } from "./types";
+
+/* Stickers category: floor, glass, wall and vehicle graphics for offices,
+   shops and fleets. Original copy. */
+export const stickers: CategorySeed = {
+  category: {
+    slug: "stickers",
+    name: "Stickers & Graphics",
+    shortName: "Stickers",
+    tagline: "Floor, window, wall and vehicle stickers for offices, shops and fleets, printed and installed across Dubai.",
+    color: "#FF6B1A",
+    tint: "#FFEADB",
+    heroShape: "sticker",
+  },
+  shape: "sticker",
+  heroPhoto:
+    "a bright modern Dubai retail shop front decorated with colourful window stickers, a frosted glass door band and a printed floor graphic at the entrance, daylight",
+  groups: [
+    {
+      name: "Floor stickers",
+      items: [
+        {
+          name: "Floor Graphics",
+          badge: "Popular",
+          desc: "Printed floor stickers on tough vinyl with an anti slip laminate, made to take heavy foot traffic. Great for promotions, logos and store branding, cut to any shape you like.",
+          photo: "a large round printed floor sticker with a bold orange and white sale graphic on a polished grey retail floor, anti slip matte finish",
+        },
+        {
+          name: "Floor Direction Stickers",
+          desc: "Arrows, queue lines and wayfinding graphics that guide people where to go in shops, clinics, offices and events. Anti slip and easy to clean.",
+          photo: "a row of printed yellow arrow floor stickers guiding the way along a clean corridor floor in a modern clinic",
+        },
+        {
+          name: "Glow in the Dark Floor Signs",
+          desc: "Photoluminescent floor markings and letters that charge in normal light and glow during a power cut, ideal for exit routes and evacuation paths.",
+          photo: "a glowing green photoluminescent exit arrow floor sign shining on a dark corridor floor, soft glow",
+        },
+        {
+          name: "Reflective Floor Stickers",
+          desc: "High visibility reflective vinyl for parking areas, loading bays and warehouses, easy to see in low light and built for wear.",
+          photo: "reflective yellow and black diagonal hazard stripe floor tape on a concrete car park floor catching headlight glare, plain stripes only with no words or letters",
+        },
+      ],
+    },
+    {
+      name: "Glass and window",
+      items: [
+        {
+          name: "Frosted Glass Stickers",
+          badge: "Office favourite",
+          desc: "An etched glass look for office partitions, doors and windows. Adds privacy while letting the light through, plain, printed or with your logo cut out.",
+          photo: "a frosted glass office partition with a clear cut out band and a simple geometric logo shape, modern bright office interior",
+        },
+        {
+          name: "Window Vinyl Lettering",
+          desc: "Your name, opening hours or offers cut from coloured vinyl with no background, for a crisp, professional shop window.",
+          photo: "white cut vinyl lettering on a shop glass door reading OPEN in a clean sans serif, with small opening hours lines below, street reflection",
+        },
+        {
+          name: "Clear Window Decals",
+          desc: "Full colour prints on clear vinyl so the glass shows through around your design. Ideal for logos and promotions on shop windows.",
+          photo: "a colourful printed logo decal on clear vinyl applied to a cafe window, glass visible around the design, daylight",
+        },
+        {
+          name: "Opaque Window Decals",
+          desc: "Full colour prints on white vinyl for bold, solid graphics that stand out on glass from both near and far.",
+          photo: "a bold full colour opaque window decal showing only the single word SALE in big white letters on a bright orange background, on a retail shop window, no other text",
+        },
+        {
+          name: "One Way Vision Stickers",
+          desc: "Perforated window film that shows a full graphic outside while staff inside can still see out. Perfect for shop fronts and vehicle windows.",
+          photo: "a shop window covered with perforated one way vision film printed with a large colourful abstract wave pattern, seen from the street, no words or letters anywhere",
+        },
+        {
+          name: "Static Cling Stickers",
+          desc: "Removable window graphics with no glue that leave no residue. Reposition and reuse them for seasonal offers and short campaigns.",
+          photo: "a hand peeling a colourful static cling window sticker shaped like a big orange star off clean glass, bright light, no words or letters",
+        },
+      ],
+    },
+    {
+      name: "Wall and pillar",
+      items: [
+        {
+          name: "Wall Vinyl Lettering",
+          desc: "Cut vinyl words, logos and values for reception areas and meeting rooms. Clean lettering that looks painted on.",
+          photo: "large black cut vinyl wall lettering reading CREATE on a white office reception wall, modern furniture, soft light",
+        },
+        {
+          name: "Wall Stickers",
+          desc: "Full colour printed wall graphics on opaque vinyl for offices, shops, cafes and classrooms, from a single panel to a whole wall.",
+          photo: "a large colourful printed wall sticker with an abstract city skyline graphic in a modern cafe interior",
+        },
+        {
+          name: "Wall Decals",
+          desc: "Printed and cut to the shape of your design with no background, for logos and illustrations that blend into the wall.",
+          photo: "a cut to shape decorative wall decal of a large branch of green leaves on a light grey office wall, no words or letters",
+        },
+        {
+          name: "Pillar Branding",
+          desc: "Wrap columns and pillars with printed graphics, as a full wrap or cut outs, to turn structural features into eye catching branding.",
+          photo: "a square pillar in a shopping mall wrapped in a bold printed orange and white geometric wave pattern, polished floor, no words or letters",
+        },
+        {
+          name: "Printed Wallpaper",
+          desc: "Custom printed wallpaper for offices, reception areas, homes and kids' rooms, printed to the exact size of your wall.",
+          photo: "a custom printed mural wallpaper of a soft mountain landscape covering a full wall behind a modern reception desk",
+        },
+      ],
+    },
+    {
+      name: "Vehicle and magnetic",
+      items: [
+        {
+          name: "Car Stickers",
+          desc: "Logos, contact details and graphics for cars, printed on durable outdoor vinyl that handles the UAE sun.",
+          photo: "a white car with a neat orange logo sticker and contact text on the side door, parked on a sunny street",
+        },
+        {
+          name: "Van Branding",
+          desc: "Partial or full branding for delivery vans and fleets that turns every trip into advertising for your business.",
+          photo: "a white delivery van with bold orange and dark blue swoosh stripe graphics on its side, clean modern design, daylight, no words, letters or numbers anywhere",
+        },
+        {
+          name: "Boat and Yacht Stickers",
+          desc: "Marine grade vinyl names, numbers and graphics for boats and yachts, made to resist salt water and sun.",
+          photo: "elegant navy vinyl lettering of a boat name on the white hull of a yacht in a sunny marina, calm water",
+        },
+        {
+          name: "Golf Cart Branding",
+          desc: "Branded wraps and stickers for golf carts and buggies at hotels, resorts, malls and events.",
+          photo: "a white golf cart with colourful branded stickers on the front and sides at a resort, palm trees",
+        },
+        {
+          name: "Magnetic Car Signs",
+          desc: "Removable printed magnetic panels for cars, so you can show your branding on work days and take it off after.",
+          photo: "a printed magnetic sign with a simple orange circle and star icon being placed on the door of a silver car, close up, no words or letters",
+        },
+        {
+          name: "Fridge Magnets",
+          desc: "Custom printed fridge magnets for promotions, events and giveaways, in any shape you like.",
+          photo: "a set of colourful custom shaped printed fridge magnets on a white fridge door: a star, a heart, a house, a sun and a circle, simple bright patterns, no words or letters",
+        },
+      ],
+    },
+  ],
+};

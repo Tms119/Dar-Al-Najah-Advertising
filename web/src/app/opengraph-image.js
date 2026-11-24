@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { ImageResponse } from 'next/og';
 
-export const alt = 'Dar Al Najah Advertising. Printing, embroidery, gifts and photo studio in Dubai';
+export const alt = 'Dar Al Najah Advertising. Printing, embroidery, gifts, stickers and woven labels in Dubai';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -17,7 +17,7 @@ export default async function OgImage() {
           <span>Printing</span><span style={{ color: '#21AAE1' }}>·</span>
           <span>Embroidery</span><span style={{ color: '#21AAE1' }}>·</span>
           <span>Gifts</span><span style={{ color: '#21AAE1' }}>·</span>
-          <span>Photo Studio</span><span style={{ color: '#21AAE1' }}>·</span>
+          <span>Stickers</span><span style={{ color: '#21AAE1' }}>·</span>
           <span>Dubai</span>
         </div>
       </div>
