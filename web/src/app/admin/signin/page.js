@@ -6,11 +6,17 @@ import { useSignInWithUsernamePassword } from '@convex-dev/auth/methods/username
 import { api } from '@convex/_generated/api';
 import Logo from '@/components/Logo';
 
+function triesLeftNote(n) {
+  if (n === 1) return ' One more wrong try locks sign-in for 5 minutes.';
+  if (n > 1) return ` ${n} tries left before sign-in is locked.`;
+  return '';
+}
+
 function describe(userError) {
   switch (userError.error) {
     // same message for unknown user and wrong password: don't reveal which usernames exist
     case 'USER_NOT_FOUND':
-    case 'INVALID_CREDENTIALS': return 'Incorrect username or password.';
+    case 'INVALID_CREDENTIALS': return 'Incorrect username or password.' + triesLeftNote(userError.triesLeft);
     case 'RATE_LIMITED': {
       const s = Math.ceil(userError.retryAfterMs / 1000);
       return `Too many wrong attempts. Try again in ${s < 60 ? `${s} seconds` : `${Math.ceil(s / 60)} minute${s > 60 ? 's' : ''}`}.`;

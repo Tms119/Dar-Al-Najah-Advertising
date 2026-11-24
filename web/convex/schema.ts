@@ -106,11 +106,11 @@ export default defineSchema({
 
   // admin sign-in lockout: wrong passwords per account (see convex/auth.ts)
   signInGuards: defineTable({
-    userId: v.string(),
+    key: v.string(), // the username as typed, lowercased
     failures: v.number(),
     lastFailureAt: v.number(),
     lockedUntil: v.number(),
-  }).index("by_userId", ["userId"]),
+  }).index("by_key", ["key"]),
 
   // sequential invoice numbers per year, incremented inside the same transaction
   counters: defineTable({ name: v.string(), value: v.number() }).index("by_name", ["name"]),

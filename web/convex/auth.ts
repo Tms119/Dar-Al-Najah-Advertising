@@ -27,7 +27,7 @@ export const { changePassword } = setupUsernamePassword(auth, {
    3 wrong tries → locked 5 minutes, and every wrong try after that adds
    5 more minutes (10, 15, 20…). A correct password clears it; a day with
    no wrong tries starts the count again. Unknown usernames get the same
-   message as a wrong password and aren't tracked. The library's own limit
+   message as a wrong password and are locked the same way. The library's own limit
    (5 tries, then 1 per minute) still applies underneath. */
 const FREE_TRIES = 3;
 const STEP_MS = 5 * 60_000;
@@ -51,37 +51,61 @@ const { authMutation } = (auth as unknown as { bindMethod: BindMethod }).bindMet
   createUser: internal.users.createUser,
 });
 
+const lockKey = (username: string) => username.trim().toLowerCase().slice(0, 100);
+const guardFor = (ctx: MutationCtx, key: string) =>
+  ctx.db.query("signInGuards").withIndex("by_key", (q) => q.eq("key", key)).unique();
+
 export const signInWithUsernamePassword = authMutation({
   args: { username: v.string(), password: v.string() },
   handler: async (ctx, { username, password }) => {
-    const userId = await ctx.runQuery(components.authUsername.public.getUserIdByUsername, { username });
-    if (userId === null) return { status: "error" as const, userError: { error: "USER_NOT_FOUND" as const } };
-
+    // Tracked by the username typed, whether or not the account exists, so
+    // the lock behaves the same either way and doesn't reveal real usernames.
+    const key = lockKey(username);
     const now = Date.now();
-    const guard = await ctx.db.query("signInGuards").withIndex("by_userId", (q) => q.eq("userId", userId)).unique();
+    const guard = await guardFor(ctx, key);
     if (guard && guard.lockedUntil > now) {
       return { status: "error" as const, userError: { error: "RATE_LIMITED" as const, retryAfterMs: guard.lockedUntil - now } };
     }
+
+    const wrong = async () => {
+      const before = guard && now - guard.lastFailureAt < FORGET_AFTER_MS ? guard.failures : 0;
+      const failures = before + 1;
+      const lockMs = failures >= FREE_TRIES ? (failures - FREE_TRIES + 1) * STEP_MS : 0;
+      const fields = { failures, lastFailureAt: now, lockedUntil: now + lockMs };
+      if (guard) await ctx.db.patch(guard._id, fields);
+      else await ctx.db.insert("signInGuards", { key, ...fields });
+      return lockMs
+        ? { status: "error" as const, userError: { error: "RATE_LIMITED" as const, retryAfterMs: lockMs } }
+        : { status: "error" as const, userError: { error: "INVALID_CREDENTIALS" as const, triesLeft: FREE_TRIES - failures } };
+    };
+
+    const userId = await ctx.runQuery(components.authUsername.public.getUserIdByUsername, { username: key });
+    if (userId === null) return await wrong();
 
     const verify = await ctx.runMutation(components.authPassword.public.verifyPassword, { userId, password });
     if (!verify.success) {
       // the library's own limit: pass it on without counting. Every other
       // failure (wrong, too short, too long…) counts as a wrong password.
       if (verify.userError.error === "RATE_LIMITED") return { status: "error" as const, userError: verify.userError };
-      const before = guard && now - guard.lastFailureAt < FORGET_AFTER_MS ? guard.failures : 0;
-      const failures = before + 1;
-      const lockMs = failures >= FREE_TRIES ? (failures - FREE_TRIES + 1) * STEP_MS : 0;
-      const fields = { failures, lastFailureAt: now, lockedUntil: now + lockMs };
-      if (guard) await ctx.db.patch(guard._id, fields);
-      else await ctx.db.insert("signInGuards", { userId, ...fields });
-      return lockMs
-        ? { status: "error" as const, userError: { error: "RATE_LIMITED" as const, retryAfterMs: lockMs } }
-        : { status: "error" as const, userError: verify.userError };
+      return await wrong();
     }
 
     if (guard) await ctx.db.delete(guard._id);
     const tokens = await ctx.convexAuth.completeSignIn({ userId, profile: {}, authenticatedBy: components.authPassword });
     return { status: "complete" as const, tokens };
+  },
+});
+
+/** Daily: forgets counts with no wrong tries for a day and no lock running. */
+export const cleanSignInGuards = internalMutation({
+  args: {},
+  returns: v.number(),
+  handler: async (ctx) => {
+    const now = Date.now();
+    const rows = await ctx.db.query("signInGuards").take(1000);
+    const stale = rows.filter((g) => g.lockedUntil < now && now - g.lastFailureAt > FORGET_AFTER_MS);
+    await Promise.all(stale.map((g) => ctx.db.delete(g._id)));
+    return stale.length;
   },
 });
 
@@ -91,9 +115,7 @@ export const unlockSignIn = internalMutation({
   args: { username: v.string() },
   returns: v.boolean(),
   handler: async (ctx, { username }) => {
-    const userId = await ctx.runQuery(components.authUsername.public.getUserIdByUsername, { username: username.toLowerCase() });
-    if (userId === null) return false;
-    const guard = await ctx.db.query("signInGuards").withIndex("by_userId", (q) => q.eq("userId", userId)).unique();
+    const guard = await guardFor(ctx, lockKey(username));
     if (guard) await ctx.db.delete(guard._id);
     return guard !== null;
   },

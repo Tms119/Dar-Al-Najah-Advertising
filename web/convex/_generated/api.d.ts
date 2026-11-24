@@ -12,6 +12,7 @@ import type * as admin from "../admin.js";
 import type * as auth from "../auth.js";
 import type * as catalog from "../catalog.js";
 import type * as catalogSeeds from "../catalogSeeds.js";
+import type * as crons from "../crons.js";
 import type * as invoices from "../invoices.js";
 import type * as lib_admin from "../lib/admin.js";
 import type * as lib_copy from "../lib/copy.js";
@@ -39,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   catalog: typeof catalog;
   catalogSeeds: typeof catalogSeeds;
+  crons: typeof crons;
   invoices: typeof invoices;
   "lib/admin": typeof lib_admin;
   "lib/copy": typeof lib_copy;
