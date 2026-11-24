@@ -54,7 +54,7 @@ export const stickers: CategorySeed = {
         {
           name: "Window Vinyl Lettering",
           desc: "Your name, opening hours or offers cut from coloured vinyl with no background, for a crisp, professional shop window.",
-          photo: "white cut vinyl lettering on a shop glass door reading OPEN in a clean sans serif, with small opening hours lines below, street reflection",
+          photo: "white cut vinyl lettering on a shop glass door reading only the word OPEN in a clean sans serif, no other words or letters, street reflection",
         },
         {
           name: "Clear Window Decals",
@@ -124,12 +124,12 @@ export const stickers: CategorySeed = {
         {
           name: "Boat and Yacht Stickers",
           desc: "Marine grade vinyl names, numbers and graphics for boats and yachts, made to resist salt water and sun.",
-          photo: "elegant navy vinyl lettering of a boat name on the white hull of a yacht in a sunny marina, calm water",
+          photo: "a navy blue vinyl wave stripe graphic on the white hull of a yacht in a sunny marina, calm water, no words or letters",
         },
         {
           name: "Golf Cart Branding",
           desc: "Branded wraps and stickers for golf carts and buggies at hotels, resorts, malls and events.",
-          photo: "a white golf cart with colourful branded stickers on the front and sides at a resort, palm trees",
+          photo: "a white golf cart wrapped with colourful abstract stripe graphics on the front and sides at a resort, palm trees, no words or letters",
         },
         {
           name: "Magnetic Car Signs",
