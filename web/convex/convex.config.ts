@@ -14,6 +14,9 @@ const app = defineApp({
     // Set with the Convex dashboard or `npx convex env set`, never in code.
     CLOUDFLARE_ACCOUNT_ID: v.optional(v.string()),
     CLOUDFLARE_API_TOKEN: v.optional(v.string()),
+    // optional second Cloudflare account just for catalogue product photos
+    CLOUDFLARE_PHOTOS_ACCOUNT_ID: v.optional(v.string()),
+    CLOUDFLARE_PHOTOS_API_TOKEN: v.optional(v.string()),
     // optional override, defaults to @cf/black-forest-labs/flux-2-klein-4b
     CLOUDFLARE_IMAGE_MODEL: v.optional(v.string()),
     // Shared secret between the website server (/api/studio/session) and

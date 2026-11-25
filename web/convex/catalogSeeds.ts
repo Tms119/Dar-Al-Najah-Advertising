@@ -3,7 +3,7 @@ import { internalAction, internalMutation, internalQuery, type MutationCtx } fro
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { slugify } from "./seedData";
-import { DEFAULT_MODEL, runModel, sniffType } from "./lib/imageModel";
+import { DEFAULT_MODEL, photoCreds, runModel, sniffType } from "./lib/imageModel";
 import { SEEDS } from "./lib/seeds";
 import type { SeedItem } from "./lib/seeds/types";
 
@@ -14,6 +14,11 @@ import type { SeedItem } from "./lib/seeds/types";
      npx convex run catalogSeeds:generateImages '{"slug":"stickers","redo":["car-stickers"]}'
      npx convex run catalogSeeds:syncGroups '{"slug":"stickers"}'   (add new starter groups)
      npx convex run catalogSeeds:removeCategory '{"slug":"photo"}' */
+
+/* For products without written photo prompts. Asks for no text at all,
+   because image models garble any words they try to print. */
+const GENERIC_STYLE =
+  "Professional photorealistic product photography on a clean light studio background, soft natural light, sharp focus, high detail, no people. Absolutely no text, no letters, no numbers, no logos, no writing of any kind anywhere in the image.";
 
 const PHOTO_STYLE =
   "Professional photorealistic product photography, sharp focus, soft natural studio light, high detail, no watermark, no people. Any lettering is spelled exactly as given and no other words appear anywhere.";
@@ -228,7 +233,7 @@ export const generateImages = internalAction({
     const failed: string[] = [];
     for (const job of jobs) {
       try {
-        const bytes = await runModel(DEFAULT_MODEL, `${PHOTO_STYLE} ${job.photo}.`, [], 1024, 1024);
+        const bytes = await runModel(DEFAULT_MODEL, `${PHOTO_STYLE} ${job.photo}.`, [], 1024, 1024, photoCreds());
         const storageId = await ctx.storage.store(new Blob([bytes], { type: sniffType(bytes) }));
         await ctx.runMutation(internal.catalogSeeds.attachImage, { storageId, productId: job.productId, categoryId: job.categoryId });
         made++;
@@ -244,15 +249,15 @@ export const generateImages = internalAction({
 
 /** Active products with no photo, with their primary category and group names. */
 export const productsWithoutPhotos = internalQuery({
-  args: {},
+  args: { redo: v.optional(v.array(v.string())) },
   returns: v.array(v.object({
     id: v.id("products"), slug: v.string(), name: v.string(), description: v.string(), group: v.string(), category: v.string(),
   })),
-  handler: async (ctx) => {
+  handler: async (ctx, { redo = [] }) => {
     const products = await ctx.db.query("products").take(1000);
     const out = [];
     for (const p of products) {
-      if (p.imageIds.length || !p.isActive) continue;
+      if (!p.isActive || (p.imageIds.length && !redo.includes(p.slug))) continue;
       const links = await ctx.db.query("productGroups").withIndex("by_productId", (q) => q.eq("productId", p._id)).take(10);
       const link = links.find((l) => l.isPrimary) ?? links[0];
       const group = link ? await ctx.db.get(link.groupId) : null;
@@ -266,19 +271,21 @@ export const productsWithoutPhotos = internalQuery({
 /** Generates a photo for up to `limit` products that have none, built from the
     product's name and description. Re-run until `remaining` is 0. */
 export const generateMissingPhotos = internalAction({
-  args: { limit: v.optional(v.number()) },
+  args: { limit: v.optional(v.number()), redo: v.optional(v.array(v.string())) },
   returns: v.object({ made: v.array(v.string()), failed: v.array(v.string()), remaining: v.number() }),
-  handler: async (ctx, { limit }): Promise<{ made: string[]; failed: string[]; remaining: number }> => {
+  handler: async (ctx, { limit, redo }): Promise<{ made: string[]; failed: string[]; remaining: number }> => {
     const todo: { id: Id<"products">; slug: string; name: string; description: string; group: string; category: string }[] =
-      await ctx.runQuery(internal.catalogSeeds.productsWithoutPhotos, {});
+      await ctx.runQuery(internal.catalogSeeds.productsWithoutPhotos, { redo });
     const batch = todo.slice(0, limit ?? 15);
     const made: string[] = [];
     const failed: string[] = [];
     for (const p of batch) {
       if (failed.some(isQuota)) break; // no point trying more today
-      const prompt = `${PHOTO_STYLE} A ${p.name.toLowerCase()} (${p.group}, ${p.category}) for a Dubai print shop: ${p.description} Shown as a clean product shot on a light studio background. Any printed artwork is a simple colourful abstract or geometric design with no words or letters.`;
+      // Only the product's name: descriptions and category names get painted
+      // onto the prints as garbled text, so they stay out of the prompt.
+      const prompt = `${GENERIC_STYLE} Subject: ${p.name.toLowerCase()}, as made by a print and branding shop. Any printed surface shows only bold colourful abstract shapes and blank space.`;
       try {
-        const bytes = await runModel(DEFAULT_MODEL, prompt, [], 1024, 1024);
+        const bytes = await runModel(DEFAULT_MODEL, prompt, [], 1024, 1024, photoCreds());
         const storageId = await ctx.storage.store(new Blob([bytes], { type: sniffType(bytes) }));
         await ctx.runMutation(internal.catalogSeeds.attachImage, { storageId, productId: p.id, categoryId: null });
         made.push(p.slug);

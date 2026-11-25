@@ -34,6 +34,8 @@ type Env = {
   readonly CLOUDFLARE_ACCOUNT_ID: string | undefined;
   readonly CLOUDFLARE_API_TOKEN: string | undefined;
   readonly CLOUDFLARE_IMAGE_MODEL: string | undefined;
+  readonly CLOUDFLARE_PHOTOS_ACCOUNT_ID: string | undefined;
+  readonly CLOUDFLARE_PHOTOS_API_TOKEN: string | undefined;
   readonly STUDIO_SERVER_KEY: string | undefined;
 };
 

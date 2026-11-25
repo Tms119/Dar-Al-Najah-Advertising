@@ -24,10 +24,10 @@ class Flagged extends Error {}
 
 /** The model's safety filter sometimes flags harmless mockups at random.
     Each attempt comes out different, so retry a couple of times first. */
-export async function runModel(model: string, prompt: string, images: Blob[], width: number, height: number) {
+export async function runModel(model: string, prompt: string, images: Blob[], width: number, height: number, creds: Creds = studioCreds()) {
   for (let attempt = 1; ; attempt++) {
     try {
-      return await runModelOnce(model, prompt, images, width, height);
+      return await runModelOnce(model, prompt, images, width, height, creds);
     } catch (e) {
       if (!(e instanceof Flagged)) throw e;
       if (attempt >= 3) throw new ConvexError("The image service's safety filter blocked this mockup. Try again, or change the wording or image.");
@@ -35,10 +35,21 @@ export async function runModel(model: string, prompt: string, images: Blob[], wi
   }
 }
 
+type Creds = { accountId?: string; token?: string };
+
+/** The Cloudflare account the Mockup Studio uses. */
+const studioCreds = (): Creds => ({ accountId: env.CLOUDFLARE_ACCOUNT_ID, token: env.CLOUDFLARE_API_TOKEN });
+
+/** Catalogue product photos can use a separate Cloudflare account (its own
+    daily allowance), so they never eat into the studio's. Falls back to the
+    studio account when the CLOUDFLARE_PHOTOS_* keys aren't set. */
+export const photoCreds = (): Creds =>
+  env.CLOUDFLARE_PHOTOS_ACCOUNT_ID && env.CLOUDFLARE_PHOTOS_API_TOKEN
+    ? { accountId: env.CLOUDFLARE_PHOTOS_ACCOUNT_ID, token: env.CLOUDFLARE_PHOTOS_API_TOKEN }
+    : studioCreds();
+
 /** Calls Cloudflare Workers AI and returns the image bytes. */
-async function runModelOnce(model: string, prompt: string, images: Blob[], width: number, height: number) {
-  const accountId = env.CLOUDFLARE_ACCOUNT_ID;
-  const token = env.CLOUDFLARE_API_TOKEN;
+async function runModelOnce(model: string, prompt: string, images: Blob[], width: number, height: number, { accountId, token }: Creds) {
   if (!accountId || !token) throw new ConvexError("The image service isn't connected yet. Add the Cloudflare keys in Convex settings.");
 
   const form = new FormData();
