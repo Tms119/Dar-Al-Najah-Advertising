@@ -6,6 +6,7 @@ import { slugify } from "./seedData";
 import { DEFAULT_MODEL, photoCreds, runModel, sniffType } from "./lib/imageModel";
 import { SEEDS } from "./lib/seeds";
 import type { SeedItem } from "./lib/seeds/types";
+import { PHOTO_PROMPTS } from "./lib/seeds/photoPrompts";
 
 /* Category setup from starter content (convex/lib/seeds). After setup,
    everything is edited in the admin like any other category. CLI only:
@@ -19,6 +20,9 @@ import type { SeedItem } from "./lib/seeds/types";
    because image models garble any words they try to print. */
 const GENERIC_STYLE =
   "Professional photorealistic product photography on a clean light studio background, soft natural light, sharp focus, high detail, no people. Absolutely no text, no letters, no numbers, no logos, no writing of any kind anywhere in the image.";
+
+const SCENE_STYLE =
+  "Professional photorealistic product photography, natural light, shallow depth of field, sharp focus on the product, high detail, no faces. No words, letters or writing anywhere; designs are logo marks, patterns or illustrations only.";
 
 const PHOTO_STYLE =
   "Professional photorealistic product photography, sharp focus, soft natural studio light, high detail, no watermark, no people. Any lettering is spelled exactly as given and no other words appear anywhere.";
@@ -281,9 +285,12 @@ export const generateMissingPhotos = internalAction({
     const failed: string[] = [];
     for (const p of batch) {
       if (failed.some(isQuota)) break; // no point trying more today
-      // Only the product's name: descriptions and category names get painted
-      // onto the prints as garbled text, so they stay out of the prompt.
-      const prompt = `${GENERIC_STYLE} Subject: ${p.name.toLowerCase()}, as made by a print and branding shop. Any printed surface shows only bold colourful abstract shapes and blank space.`;
+      // A written scene when there is one; otherwise only the product's name
+      // (descriptions get painted onto prints as garbled text).
+      const scene = PHOTO_PROMPTS[p.name];
+      const prompt = scene
+        ? `${SCENE_STYLE} ${scene}.`
+        : `${GENERIC_STYLE} Subject: ${p.name.toLowerCase()}, as made by a print and branding shop. Any printed surface shows only bold colourful abstract shapes and blank space.`;
       try {
         const bytes = await runModel(DEFAULT_MODEL, prompt, [], 1024, 1024, photoCreds());
         const storageId = await ctx.storage.store(new Blob([bytes], { type: sniffType(bytes) }));
@@ -324,5 +331,40 @@ export const photosUntilDone = internalAction({
     // more to do and allowance left: carry on in a fresh run
     await ctx.scheduler.runAfter(0, internal.catalogSeeds.photosUntilDone, { day });
     return `${made} made, continuing.`;
+  },
+});
+
+/** Stops the photosUntilDone chain (pending and running runs). */
+export const stopPhotoJob = internalMutation({
+  args: {},
+  returns: v.number(),
+  handler: async (ctx) => {
+    const jobs = await ctx.db.system.query("_scheduled_functions").order("desc").take(200);
+    let n = 0;
+    for (const j of jobs) {
+      if (j.name.includes("photosUntilDone") && (j.state.kind === "pending" || j.state.kind === "inProgress")) {
+        await ctx.scheduler.cancel(j._id);
+        n++;
+      }
+    }
+    return n;
+  },
+});
+
+/** Removes the photos of the given products (by name) so photosUntilDone
+    makes new ones, e.g. after their scenes in photoPrompts.ts change. */
+export const clearPhotos = internalMutation({
+  args: { names: v.array(v.string()) },
+  returns: v.number(),
+  handler: async (ctx, { names }) => {
+    let n = 0;
+    for (const name of names) {
+      const p = await ctx.db.query("products").withIndex("by_slug", (q) => q.eq("slug", slugify(name))).unique();
+      if (!p?.imageIds.length) continue;
+      await Promise.all(p.imageIds.map((id) => ctx.storage.delete(id)));
+      await ctx.db.patch(p._id, { imageIds: [] });
+      n++;
+    }
+    return n;
   },
 });

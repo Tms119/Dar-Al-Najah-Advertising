@@ -18,6 +18,7 @@ import type * as lib_admin from "../lib/admin.js";
 import type * as lib_copy from "../lib/copy.js";
 import type * as lib_imageModel from "../lib/imageModel.js";
 import type * as lib_seeds_index from "../lib/seeds/index.js";
+import type * as lib_seeds_photoPrompts from "../lib/seeds/photoPrompts.js";
 import type * as lib_seeds_stickers from "../lib/seeds/stickers.js";
 import type * as lib_seeds_types from "../lib/seeds/types.js";
 import type * as lib_seeds_wovenLabels from "../lib/seeds/wovenLabels.js";
@@ -46,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   "lib/copy": typeof lib_copy;
   "lib/imageModel": typeof lib_imageModel;
   "lib/seeds/index": typeof lib_seeds_index;
+  "lib/seeds/photoPrompts": typeof lib_seeds_photoPrompts;
   "lib/seeds/stickers": typeof lib_seeds_stickers;
   "lib/seeds/types": typeof lib_seeds_types;
   "lib/seeds/wovenLabels": typeof lib_seeds_wovenLabels;
