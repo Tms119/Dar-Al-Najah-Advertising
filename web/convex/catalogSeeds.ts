@@ -165,6 +165,12 @@ export const removeCategory = internalMutation({
 
 export const missingImages = internalQuery({
   args: { slug: v.string(), redo: v.array(v.string()) },
+  returns: v.union(v.null(), v.object({
+    categoryId: v.id("categories"),
+    categoryNeedsImage: v.boolean(),
+    heroPhoto: v.string(),
+    products: v.array(v.object({ id: v.id("products"), photo: v.string() })),
+  })),
   handler: async (ctx, { slug, redo }) => {
     const seed = seedFor(slug);
     const cat = await ctx.db.query("categories").withIndex("by_slug", (q) => q.eq("slug", slug)).unique();
@@ -207,8 +213,11 @@ export const attachImage = internalMutation({
 export const generateImages = internalAction({
   args: { slug: v.string(), limit: v.optional(v.number()), redo: v.optional(v.array(v.string())) },
   returns: v.object({ made: v.number(), failed: v.array(v.string()) }),
-  handler: async (ctx, { slug, limit, redo }) => {
-    const todo = await ctx.runQuery(internal.catalogSeeds.missingImages, { slug, redo: redo ?? [] });
+  handler: async (ctx, { slug, limit, redo }): Promise<{ made: number; failed: string[] }> => {
+    const todo: {
+      categoryId: Id<"categories">; categoryNeedsImage: boolean; heroPhoto: string;
+      products: { id: Id<"products">; photo: string }[];
+    } | null = await ctx.runQuery(internal.catalogSeeds.missingImages, { slug, redo: redo ?? [] });
     if (!todo) throw new Error(`Run catalogSeeds:setup for "${slug}" first`);
     const jobs: { photo: string; productId: Id<"products"> | null; categoryId: Id<"categories"> | null }[] = [
       ...(todo.categoryNeedsImage ? [{ photo: todo.heroPhoto, productId: null, categoryId: todo.categoryId }] : []),
@@ -228,5 +237,85 @@ export const generateImages = internalAction({
       }
     }
     return { made, failed };
+  },
+});
+
+/* ---------- photos for any product without one ---------- */
+
+/** Active products with no photo, with their primary category and group names. */
+export const productsWithoutPhotos = internalQuery({
+  args: {},
+  returns: v.array(v.object({
+    id: v.id("products"), slug: v.string(), name: v.string(), description: v.string(), group: v.string(), category: v.string(),
+  })),
+  handler: async (ctx) => {
+    const products = await ctx.db.query("products").take(1000);
+    const out = [];
+    for (const p of products) {
+      if (p.imageIds.length || !p.isActive) continue;
+      const links = await ctx.db.query("productGroups").withIndex("by_productId", (q) => q.eq("productId", p._id)).take(10);
+      const link = links.find((l) => l.isPrimary) ?? links[0];
+      const group = link ? await ctx.db.get(link.groupId) : null;
+      const cat = group ? await ctx.db.get(group.categoryId) : null;
+      out.push({ id: p._id, slug: p.slug, name: p.name, description: p.description, group: group?.name ?? "", category: cat?.name ?? "" });
+    }
+    return out;
+  },
+});
+
+/** Generates a photo for up to `limit` products that have none, built from the
+    product's name and description. Re-run until `remaining` is 0. */
+export const generateMissingPhotos = internalAction({
+  args: { limit: v.optional(v.number()) },
+  returns: v.object({ made: v.array(v.string()), failed: v.array(v.string()), remaining: v.number() }),
+  handler: async (ctx, { limit }): Promise<{ made: string[]; failed: string[]; remaining: number }> => {
+    const todo: { id: Id<"products">; slug: string; name: string; description: string; group: string; category: string }[] =
+      await ctx.runQuery(internal.catalogSeeds.productsWithoutPhotos, {});
+    const batch = todo.slice(0, limit ?? 15);
+    const made: string[] = [];
+    const failed: string[] = [];
+    for (const p of batch) {
+      if (failed.some(isQuota)) break; // no point trying more today
+      const prompt = `${PHOTO_STYLE} A ${p.name.toLowerCase()} (${p.group}, ${p.category}) for a Dubai print shop: ${p.description} Shown as a clean product shot on a light studio background. Any printed artwork is a simple colourful abstract or geometric design with no words or letters.`;
+      try {
+        const bytes = await runModel(DEFAULT_MODEL, prompt, [], 1024, 1024);
+        const storageId = await ctx.storage.store(new Blob([bytes], { type: sniffType(bytes) }));
+        await ctx.runMutation(internal.catalogSeeds.attachImage, { storageId, productId: p.id, categoryId: null });
+        made.push(p.slug);
+      } catch (e) {
+        failed.push(`${p.slug}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+    return { made, failed, remaining: todo.length - made.length };
+  },
+});
+
+const isQuota = (msg: string) => msg.includes("allowance is used up");
+
+/** Runs generateMissingPhotos in batches until every product has a photo. When the
+    daily free allowance runs out it schedules itself for just after the reset
+    (4am Dubai = 00:00 UTC) and carries on the next day. Start it with:
+      npx convex run --prod catalogSeeds:photosUntilDone */
+export const photosUntilDone = internalAction({
+  args: { day: v.optional(v.number()) },
+  returns: v.string(),
+  handler: async (ctx, { day = 1 }): Promise<string> => {
+    let made = 0;
+    for (let i = 0; i < 3; i++) { // stays well inside the 10-minute action limit
+      const r: { made: string[]; failed: string[]; remaining: number } =
+        await ctx.runAction(internal.catalogSeeds.generateMissingPhotos, { limit: 10 });
+      made += r.made.length;
+      if (r.remaining === 0) return `Done: ${made} photos made, none left.`;
+      if (r.failed.some(isQuota) || (r.made.length === 0 && r.failed.length > 0)) {
+        if (day >= 7) return `Stopped after 7 days with ${r.remaining} left.`;
+        const reset = new Date();
+        reset.setUTCHours(24, 10, 0, 0); // 00:10 UTC tomorrow
+        await ctx.scheduler.runAt(reset, internal.catalogSeeds.photosUntilDone, { day: day + 1 });
+        return `${made} made today, ${r.remaining} left. Continues ${reset.toISOString()}.`;
+      }
+    }
+    // more to do and allowance left: carry on in a fresh run
+    await ctx.scheduler.runAfter(0, internal.catalogSeeds.photosUntilDone, { day });
+    return `${made} made, continuing.`;
   },
 });
