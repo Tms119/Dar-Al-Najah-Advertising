@@ -945,3 +945,19 @@ a.tab { text-decoration: none; color: inherit; }
 .f-info dd a:hover { text-decoration-color: currentColor; }
 .c-card .c-sub { font-style: normal; font-size: 13px; color: var(--muted); margin-top: 6px; }
 a.c-card:hover .c-sub { color: inherit; opacity: 0.85; }
+
+/* Photos (components/Photo.js): a shimmering skeleton until the photo has
+   loaded, then a soft fade in. */
+.ph-skel {
+  position: absolute; inset: 0; z-index: 0; border-radius: inherit;
+  background: linear-gradient(100deg, rgba(18, 18, 18, 0.05) 30%, rgba(255, 255, 255, 0.55) 50%, rgba(18, 18, 18, 0.05) 70%) var(--t, var(--bg-2));
+  background-size: 220% 100%;
+  animation: phShimmer 1.3s linear infinite;
+}
+@keyframes phShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+.ph-img { opacity: 0; transition: opacity 0.5s ease, transform 0.7s var(--ease); }
+.ph-img.is-loaded { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .ph-skel { animation: none; }
+  .ph-img { transition: none; }
+}

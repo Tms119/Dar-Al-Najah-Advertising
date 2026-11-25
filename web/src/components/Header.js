@@ -9,7 +9,7 @@ import { COMPANY, categoryHref, telHref, waLink } from '@/data/site';
 import { WhatsAppIcon } from './icons';
 import { useCatalog } from './CatalogProvider';
 import Logo from './Logo';
-import Image from 'next/image';
+import Photo from './Photo';
 import Mock from './Mock';
 
 const MEGA_LIMIT = 12;
@@ -115,7 +115,7 @@ export default function Header() {
               <span className="eyebrow">{active.name}</span>
               <p>{active.tagline}</p>
               {active.image ? (
-                <div className="mega-photo"><Image src={active.image} alt={active.name} fill sizes="260px" /></div>
+                <div className="mega-photo"><Photo src={active.image} alt={active.name} fill sizes="260px" /></div>
               ) : (
                 <Mock shape={active.hero} color={active.color} className="mega-mock" />
               )}

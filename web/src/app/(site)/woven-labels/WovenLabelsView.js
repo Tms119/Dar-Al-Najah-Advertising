@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import Photo from '@/components/Photo';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePreloadedQuery } from 'convex/react';
@@ -13,13 +13,13 @@ import { categoryHref, waLink } from '@/data/site';
    tabs, search, group chips), with each label shown with its description.
    Products come live from the catalogue, so admin edits show instantly. */
 
-function LabelCard({ p, i, color, tint }) {
+function LabelCard({ p, i, color, tint, eager = false }) {
   return (
     <article className="p-card wl-card" data-reveal style={{ '--d': `${(i % 3) * 70}ms`, '--c': color, '--t': tint }}>
       <Link href={`/products/${p.slug}`} className={`p-card-media ${p.image ? 'has-photo' : ''}`}>
         {p.badge && <span className="p-badge">{p.badge}</span>}
         {p.image ? (
-          <Image src={p.image} alt={p.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1180px) 50vw, 33vw" className="p-photo" />
+          <Photo src={p.image} alt={p.name} fill eager={eager} sizes="(max-width: 640px) 100vw, (max-width: 1180px) 50vw, 33vw" className="p-photo" />
         ) : (
           <Mock shape={p.shape} color={color} className="p-mock" title={p.name} />
         )}
@@ -99,11 +99,11 @@ export default function WovenLabelsView({ preloaded }) {
 
         <p className="result-count">{shown} label{shown === 1 ? '' : 's'}</p>
 
-        {sections.length ? sections.map((s) => (
+        {sections.length ? sections.map((s, si) => (
           <section key={s.name} className="wl-section">
             <h2 className="wl-section-title">{s.name}<span>{s.items.length}</span></h2>
             <div className="p-grid wl-grid">
-              {s.items.map((p, i) => <LabelCard key={p.slug} p={p} i={i} color={page.color} tint={page.tint} />)}
+              {s.items.map((p, i) => <LabelCard key={p.slug} p={p} i={i} color={page.color} tint={page.tint} eager={si === 0 && i < 3} />)}
             </div>
           </section>
         )) : (

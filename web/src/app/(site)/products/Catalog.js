@@ -88,7 +88,7 @@ export default function Catalog({ initialCat = 'all' }) {
 
         {list.length ? (
           <div className="p-grid" key={`${cat}-${group}-${sort}`}>
-            {list.map((p, i) => <ProductCard key={p.id} p={p} i={i} />)}
+            {list.map((p, i) => <ProductCard key={p.id} p={p} i={i} eager={i < 4} />)}
           </div>
         ) : (
           <div className="empty">

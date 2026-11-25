@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import Photo from './Photo';
 import Link from 'next/link';
 import Mock from './Mock';
 import { categoryHref } from '@/data/site';
@@ -37,7 +37,7 @@ export function ServicesStack() {
             </div>
             {c.image ? (
               <div className="stack-art stack-art-photo">
-                <Image src={c.image} alt={c.name} fill sizes="(max-width: 980px) 100vw, 45vw" />
+                <Photo src={c.image} alt={c.name} fill sizes="(max-width: 980px) 100vw, 45vw" />
               </div>
             ) : (
               <div className="stack-art">

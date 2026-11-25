@@ -7,7 +7,7 @@ import Link from 'next/link';
 export default function Logo({ onClick }) {
   return (
     <Link href="/" className="logo" onClick={onClick} aria-label="Dar Al Najah Advertising, home">
-      <Image src="/brand/mark-144.webp" alt="" width={46} height={43} className="logo-mark" priority />
+      <Image src="/brand/mark-144.webp" alt="" width={46} height={43} className="logo-mark" preload />
       <span className="logo-text">
         <b>Dar Al Najah</b>
         <small>Advertising · Printing</small>

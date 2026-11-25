@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import Photo from '@/components/Photo';
 import { useState } from 'react';
 import Mock from '@/components/Mock';
 import { WhatsAppIcon } from '@/components/icons';
@@ -35,7 +35,7 @@ export default function ProductDetails({ p }) {
         <div className="pdp-stage" style={{ background: cur.url ? '#fff' : cur.bg }}>
           {p.badge && <span className="p-badge">{p.badge}</span>}
           {cur.url ? (
-            <Image src={cur.url} alt={p.name} fill priority sizes="(max-width: 980px) 100vw, 50vw" className="pdp-photo" key={cur.url} />
+            <Photo src={cur.url} alt={p.name} fill eager sizes="(max-width: 980px) 100vw, 50vw" className="pdp-photo" key={cur.url} />
           ) : (
             <>
               <Mock shape={p.shape} color={p.color} className="pdp-mock" title={p.name} key={view} />
@@ -47,7 +47,7 @@ export default function ProductDetails({ p }) {
           <div className="pdp-thumbs">
             {views.map((v, i) => (
               <button key={i} className={`thumb ${view === i ? 'is-active' : ''}`} style={{ background: v.url ? '#fff' : v.bg }} onClick={() => setView(i)} aria-label={`View ${i + 1}`}>
-                {v.url ? <Image src={v.url} alt="" fill sizes="160px" className="thumb-photo" /> : <Mock shape={p.shape} color={p.color} />}
+                {v.url ? <Photo src={v.url} alt="" fill sizes="160px" className="thumb-photo" /> : <Mock shape={p.shape} color={p.color} />}
               </button>
             ))}
           </div>
