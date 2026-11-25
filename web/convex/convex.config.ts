@@ -17,6 +17,9 @@ const app = defineApp({
     // optional second Cloudflare account just for catalogue product photos
     CLOUDFLARE_PHOTOS_ACCOUNT_ID: v.optional(v.string()),
     CLOUDFLARE_PHOTOS_API_TOKEN: v.optional(v.string()),
+    // optional backup account, used when the first one's daily allowance runs out
+    CLOUDFLARE_PHOTOS2_ACCOUNT_ID: v.optional(v.string()),
+    CLOUDFLARE_PHOTOS2_API_TOKEN: v.optional(v.string()),
     // optional override, defaults to @cf/black-forest-labs/flux-2-klein-4b
     CLOUDFLARE_IMAGE_MODEL: v.optional(v.string()),
     // Shared secret between the website server (/api/studio/session) and

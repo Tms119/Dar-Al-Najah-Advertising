@@ -40,13 +40,33 @@ type Creds = { accountId?: string; token?: string };
 /** The Cloudflare account the Mockup Studio uses. */
 const studioCreds = (): Creds => ({ accountId: env.CLOUDFLARE_ACCOUNT_ID, token: env.CLOUDFLARE_API_TOKEN });
 
-/** Catalogue product photos can use a separate Cloudflare account (its own
-    daily allowance), so they never eat into the studio's. Falls back to the
-    studio account when the CLOUDFLARE_PHOTOS_* keys aren't set. */
-export const photoCreds = (): Creds =>
-  env.CLOUDFLARE_PHOTOS_ACCOUNT_ID && env.CLOUDFLARE_PHOTOS_API_TOKEN
-    ? { accountId: env.CLOUDFLARE_PHOTOS_ACCOUNT_ID, token: env.CLOUDFLARE_PHOTOS_API_TOKEN }
-    : studioCreds();
+/** Catalogue product photos use their own Cloudflare accounts (each with its
+    own daily allowance) so they never eat into the studio's: the
+    CLOUDFLARE_PHOTOS_* account first, then CLOUDFLARE_PHOTOS2_* when the first
+    is used up. Falls back to the studio account when neither is set. */
+export function photoCredsList(): Creds[] {
+  const list: Creds[] = [];
+  if (env.CLOUDFLARE_PHOTOS_ACCOUNT_ID && env.CLOUDFLARE_PHOTOS_API_TOKEN)
+    list.push({ accountId: env.CLOUDFLARE_PHOTOS_ACCOUNT_ID, token: env.CLOUDFLARE_PHOTOS_API_TOKEN });
+  if (env.CLOUDFLARE_PHOTOS2_ACCOUNT_ID && env.CLOUDFLARE_PHOTOS2_API_TOKEN)
+    list.push({ accountId: env.CLOUDFLARE_PHOTOS2_ACCOUNT_ID, token: env.CLOUDFLARE_PHOTOS2_API_TOKEN });
+  return list.length ? list : [studioCreds()];
+}
+
+export const isQuotaError = (e: unknown) => e instanceof Error && e.message.includes("allowance is used up");
+
+/** A catalogue photo: tries each photo account in turn while they're out of allowance. */
+export async function runPhotoModel(prompt: string) {
+  const list = photoCredsList();
+  for (const [i, creds] of list.entries()) {
+    try {
+      return await runModel(DEFAULT_MODEL, prompt, [], 1024, 1024, creds);
+    } catch (e) {
+      if (!isQuotaError(e) || i === list.length - 1) throw e;
+    }
+  }
+  throw new Error("unreachable");
+}
 
 /** Calls Cloudflare Workers AI and returns the image bytes. */
 async function runModelOnce(model: string, prompt: string, images: Blob[], width: number, height: number, { accountId, token }: Creds) {

@@ -3,7 +3,7 @@ import { internalAction, internalMutation, internalQuery, type MutationCtx } fro
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { slugify } from "./seedData";
-import { DEFAULT_MODEL, photoCreds, runModel, sniffType } from "./lib/imageModel";
+import { runPhotoModel, sniffType } from "./lib/imageModel";
 import { SEEDS } from "./lib/seeds";
 import type { SeedItem } from "./lib/seeds/types";
 import { PHOTO_PROMPTS } from "./lib/seeds/photoPrompts";
@@ -237,7 +237,7 @@ export const generateImages = internalAction({
     const failed: string[] = [];
     for (const job of jobs) {
       try {
-        const bytes = await runModel(DEFAULT_MODEL, `${PHOTO_STYLE} ${job.photo}.`, [], 1024, 1024, photoCreds());
+        const bytes = await runPhotoModel(`${PHOTO_STYLE} ${job.photo}.`);
         const storageId = await ctx.storage.store(new Blob([bytes], { type: sniffType(bytes) }));
         await ctx.runMutation(internal.catalogSeeds.attachImage, { storageId, productId: job.productId, categoryId: job.categoryId });
         made++;
@@ -292,7 +292,7 @@ export const generateMissingPhotos = internalAction({
         ? `${SCENE_STYLE} ${scene}.`
         : `${GENERIC_STYLE} Subject: ${p.name.toLowerCase()}, as made by a print and branding shop. Any printed surface shows only bold colourful abstract shapes and blank space.`;
       try {
-        const bytes = await runModel(DEFAULT_MODEL, prompt, [], 1024, 1024, photoCreds());
+        const bytes = await runPhotoModel(prompt);
         const storageId = await ctx.storage.store(new Blob([bytes], { type: sniffType(bytes) }));
         await ctx.runMutation(internal.catalogSeeds.attachImage, { storageId, productId: p.id, categoryId: null });
         made.push(p.slug);
