@@ -6,6 +6,7 @@ import Mock from './Mock';
 import { categoryHref } from '@/data/site';
 import ProductCard from './ProductCard';
 import { useCatalog } from './CatalogProvider';
+import { EXHIBITION, EXHIBITION_GROUPS, EXHIBITION_PHOTOS } from '@/data/exhibitions';
 
 /* Home-page sections driven by the live catalogue. */
 
@@ -50,7 +51,37 @@ export function ServicesStack() {
           </article>
         );
       })}
+      <ExhibitionCard i={categories.length} />
     </div>
+  );
+}
+
+/* Exhibitions isn't a product category (it's a gallery page), but it sits in
+   the same stack so visitors see the shop takes on stands and event displays. */
+function ExhibitionCard({ i }) {
+  const cover = EXHIBITION_PHOTOS[0];
+  return (
+    <article className="stack-card" style={{ '--c': EXHIBITION.color, '--t': EXHIBITION.tint, '--i': i }}>
+      <div className="stack-text">
+        <div className="stack-top">
+          <span className="stack-num">{String(i + 1).padStart(2, '0')}</span>
+          <span className="pill pill-solid">{EXHIBITION_PHOTOS.length} examples</span>
+        </div>
+        <h3>Exhibition Stands</h3>
+        <p>Booths, pop-up backdrops and event signage for trade shows, malls and launches across Dubai.</p>
+        <div className="stack-chips">
+          {EXHIBITION_GROUPS.map((g) => (
+            <Link key={g.id} href="/exhibitions" className="chip chip-white">{g.name}</Link>
+          ))}
+        </div>
+        <Link href="/exhibitions" className="btn btn-ink">
+          Explore exhibitions <span className="btn-arrow">→</span>
+        </Link>
+      </div>
+      <div className="stack-art stack-art-photo">
+        <Photo src={cover.src} alt={cover.title} fill sizes="(max-width: 980px) 100vw, 45vw" />
+      </div>
+    </article>
   );
 }
 

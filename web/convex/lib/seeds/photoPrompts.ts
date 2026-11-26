@@ -92,3 +92,10 @@ export const PHOTO_PROMPTS: Record<string, string> = {
   "Notebook Printing": "three A5 notebooks with printed covers in different patterns, terrazzo, stripes and waves, stacked on a desk with a plant",
   "Puzzles Printing": "a partly finished jigsaw puzzle of a colourful Dubai Creek dhow scene with loose pieces around it on a table",
 };
+
+/* Section cover photos (home page cards and the menu), keyed by category slug. */
+export const CATEGORY_PROMPTS: Record<string, string> = {
+  printing: "an overhead flat lay of freshly printed work on a light wooden print shop table: a stack of navy business cards with a small gold logo mark, a fan of colourful flyers with fruit illustrations, a folded tri-fold leaflet, a spiral booklet and a rolled poster, soft daylight",
+  fabric: "a neat flat lay of custom apparel on a light grey surface: a folded white polo shirt with a small embroidered anchor, a heather grey hoodie with a colourful embroidered tiger, a navy cap with a white embroidered wave, embroidered patches and spools of coloured thread, soft daylight",
+  gifts: "an elegant corporate gift set on a white marble table: an open black gift box with a navy notebook, engraved metal pen, matte black water bottle, white mug with hot air balloon illustration and a leather key chain, wrapped presents with gold ribbon in the background, warm soft light",
+};

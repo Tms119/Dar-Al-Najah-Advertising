@@ -6,7 +6,7 @@ import { slugify } from "./seedData";
 import { runPhotoModel, sniffType } from "./lib/imageModel";
 import { SEEDS } from "./lib/seeds";
 import type { SeedItem } from "./lib/seeds/types";
-import { PHOTO_PROMPTS } from "./lib/seeds/photoPrompts";
+import { CATEGORY_PROMPTS, PHOTO_PROMPTS } from "./lib/seeds/photoPrompts";
 
 /* Category setup from starter content (convex/lib/seeds). After setup,
    everything is edited in the admin like any other category. CLI only:
@@ -366,5 +366,43 @@ export const clearPhotos = internalMutation({
       n++;
     }
     return n;
+  },
+});
+
+/* ---------- section cover photos ---------- */
+
+export const categoriesWithoutCover = internalQuery({
+  args: { redo: v.optional(v.array(v.string())) },
+  returns: v.array(v.object({ id: v.id("categories"), slug: v.string() })),
+  handler: async (ctx, { redo = [] }) => {
+    const cats = await ctx.db.query("categories").take(50);
+    return cats.filter((c) => !c.imageId || redo.includes(c.slug)).map((c) => ({ id: c._id, slug: c.slug }));
+  },
+});
+
+/** Cover photo for every category that has none (or is listed in `redo`)
+    and has a scene in CATEGORY_PROMPTS:
+      npx convex run --prod catalogSeeds:generateCategoryCovers '{}' */
+export const generateCategoryCovers = internalAction({
+  args: { redo: v.optional(v.array(v.string())) },
+  returns: v.object({ made: v.array(v.string()), skipped: v.array(v.string()), failed: v.array(v.string()) }),
+  handler: async (ctx, { redo }): Promise<{ made: string[]; skipped: string[]; failed: string[] }> => {
+    const todo: { id: Id<"categories">; slug: string }[] = await ctx.runQuery(internal.catalogSeeds.categoriesWithoutCover, { redo });
+    const made: string[] = [];
+    const skipped: string[] = [];
+    const failed: string[] = [];
+    for (const c of todo) {
+      const scene = CATEGORY_PROMPTS[c.slug];
+      if (!scene) { skipped.push(c.slug); continue; }
+      try {
+        const bytes = await runPhotoModel(`${SCENE_STYLE} ${scene}.`);
+        const storageId = await ctx.storage.store(new Blob([bytes], { type: sniffType(bytes) }));
+        await ctx.runMutation(internal.catalogSeeds.attachImage, { storageId, productId: null, categoryId: c.id });
+        made.push(c.slug);
+      } catch (e) {
+        failed.push(`${c.slug}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+    return { made, skipped, failed };
   },
 });

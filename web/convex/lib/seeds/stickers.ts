@@ -14,7 +14,7 @@ export const stickers: CategorySeed = {
   },
   shape: "sticker",
   heroPhoto:
-    "a bright modern Dubai retail shop front decorated with colourful window stickers, a frosted glass door band and a printed floor graphic at the entrance, daylight",
+    "a bright modern Dubai retail shop front decorated with colourful abstract window stickers, a frosted glass door band and a round floor graphic of colourful circles at the entrance, no words or letters anywhere, daylight",
   groups: [
     {
       name: "Custom stickers",
