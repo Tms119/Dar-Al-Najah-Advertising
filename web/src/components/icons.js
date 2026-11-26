@@ -11,3 +11,26 @@ export const DownloadIcon = ({ size = 17 }) => (
     <path d="M12 4v11M7 10.5l5 5 5-5" /><path d="M5 19.5h14" />
   </svg>
 );
+
+/* Social icons, drawn for this site: same weight as the other icons and
+   coloured by currentColor, so they follow the pill they sit in. */
+export const InstagramIcon = ({ size = 16 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="3" y="3" width="18" height="18" rx="5.5" /><circle cx="12" cy="12" r="4.2" /><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+export const FacebookIcon = ({ size = 16 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
+    <path fill="currentColor" d="M13.6 21.5v-7.7h2.6l.4-3.1h-3V8.8c0-.9.3-1.5 1.5-1.5h1.6V4.6a21 21 0 0 0-2.3-.1c-2.3 0-3.9 1.4-3.9 4v2.2H7.9v3.1h2.6v7.7h3.1z" />
+  </svg>
+);
+
+export const TikTokIcon = ({ size = 16 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
+    <path fill="currentColor" d="M16.6 3h-3.2v12.3a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.5a5.8 5.8 0 1 0 5 5.8V9.1a7.5 7.5 0 0 0 4.4 1.4V7.3c-2.4 0-4.2-1.9-4.4-4.3z" />
+  </svg>
+);
+
+/** Icon for a social profile by name (see SOCIALS in data/site.js). */
+export const SOCIAL_ICONS = { Instagram: InstagramIcon, Facebook: FacebookIcon, TikTok: TikTokIcon };

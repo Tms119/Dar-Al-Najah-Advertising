@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { COMPANY, SOCIALS, categoryHref, mapsLink, telHref, waLink } from '@/data/site';
 import { useCatalog } from './CatalogProvider';
+import { SOCIAL_ICONS } from './icons';
 
 
 export default function Footer() {
@@ -48,7 +49,14 @@ export default function Footer() {
               <div><dt>Hours</dt><dd>{COMPANY.hours}</dd></div>
             </dl>
             <div className="socials">
-              {SOCIALS.map((s) => <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="pill">{s.name}</a>)}
+              {SOCIALS.map((s) => {
+                const Icon = SOCIAL_ICONS[s.name];
+                return (
+                  <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="pill social-pill">
+                    {Icon && <Icon size={16} />}{s.name}
+                  </a>
+                );
+              })}
             </div>
           </div>
 
