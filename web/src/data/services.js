@@ -1,0 +1,26 @@
+/* The shop's service list (from its flyer), each linked to the matching
+   product or category. */
+export const SERVICES = [
+  { label: 'Offset Printing', href: '/products/offset-printing' },
+  { label: 'Digital Printing', href: '/products/digital-printing' },
+  { label: 'Screen Printing', href: '/products/screen-printing' },
+  { label: 'Business Cards', href: '/products/business-cards' },
+  { label: 'Invoice Books', href: '/products/invoice-book' },
+  { label: 'T-Shirt, Cap & Pen Printing', href: '/products/t-shirt-printing' },
+  { label: 'Diary & Calendar', href: '/products/diary' },
+  { label: 'Promotional Gifts', href: '/products?cat=gifts' },
+  { label: 'Letterhead', href: '/products/letterhead' },
+  { label: 'Catalogues', href: '/products/catalog' },
+  { label: 'Flyers & Brochures', href: '/products/brochures' },
+  { label: 'Box Making', href: '/products/box' },
+  { label: 'Shopping Bags', href: '/products/paper-bag' },
+  { label: 'Embroidery Labels', href: '/woven-labels' },
+  { label: 'Stickers & Logos', href: '/products?cat=stickers' },
+  { label: 'Sign Boards', href: '/products/sign-board' },
+  { label: 'LED & Letter Signs', href: '/products/led-sign-board' },
+  { label: 'Posters & Stickers', href: '/products/poster' },
+  { label: 'Roll-up Stands', href: '/products/roll-up-stands' },
+  { label: 'Pop-up Stands', href: '/products/pop-up-stands' },
+  { label: 'Exhibition Stands', href: '/exhibitions' },
+  { label: 'Banner, Sticker & Flex', href: '/products/flex-banner-printing' },
+];

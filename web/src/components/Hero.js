@@ -6,6 +6,7 @@ import Mock from './Mock';
 import { useCatalog } from './CatalogProvider';
 import { WhatsAppIcon } from './icons';
 import { waLink } from '@/data/site';
+import { SERVICES } from '@/data/services';
 
 const FLOATERS = [
   { shape: 'card', color: '#2B3BFF', cls: 'f1', depth: 30 },
@@ -16,14 +17,6 @@ const FLOATERS = [
   { shape: 'cap', color: '#2B3BFF', cls: 'f6', depth: -16 },
 ];
 
-const QUICK = [
-  ['Business cards', 'business-cards'],
-  ['Roll ups', 'roll-up-stands'],
-  ['T shirts', 't-shirt-printing'],
-  ['Stickers', 'sticker'],
-  ['Boxes', 'box'],
-  ['Frosted glass', 'frosted-glass-stickers'],
-];
 
 export default function Hero() {
   const ref = useRef(null);
@@ -90,12 +83,12 @@ export default function Hero() {
           <a href={waLink('Hi Dar Al Najah! I would like to discuss a print job.')} target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><WhatsAppIcon size={18} /> Chat on WhatsApp</a>
         </div>
 
-        <div className="hero-quick">
-          <span>Popular:</span>
-          {QUICK.map(([label, id]) => (
-            <Link key={id} href={`/products/${id}`} className="chip">{label}</Link>
+        <nav className="hero-quick" aria-label="Our services">
+          <span>Our services:</span>
+          {SERVICES.map((sv) => (
+            <Link key={sv.label} href={sv.href} className="chip">{sv.label}</Link>
           ))}
-        </div>
+        </nav>
       </div>
     </section>
   );

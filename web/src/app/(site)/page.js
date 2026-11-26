@@ -5,6 +5,7 @@ import Faq from '@/components/Faq';
 import Mock from '@/components/Mock';
 import { Bestsellers, CategoryCount, ProductCount, ServicesStack } from '@/components/HomeLive';
 import { JsonLd, faqSchema } from '@/lib/structuredData';
+import { SERVICES } from '@/data/services';
 
 const STEPS = [
   { n: '01', t: 'Pick a product', d: 'Choose from our print, fabric, gift and photo products, or tell us your idea.', shape: 'card', c: '#2B3BFF' },
@@ -22,32 +23,6 @@ const REVIEWS = [
   { q: 'Exceeded my expectations from start to finish. Clear communication, great attention to detail, and impressive results. I will definitely work with them again.', n: 'Salman S.', c: '#FFB800' },
 ];
 
-/* The shop's service list (from its flyer), each linked to the matching
-   product or category. */
-const SERVICES = [
-  { label: 'Offset Printing', href: '/products/offset-printing' },
-  { label: 'Digital Printing', href: '/products/digital-printing' },
-  { label: 'Screen Printing', href: '/products/screen-printing' },
-  { label: 'Business Cards', href: '/products/business-cards' },
-  { label: 'Invoice Books', href: '/products/invoice-book' },
-  { label: 'T-Shirt, Cap & Pen Printing', href: '/products/t-shirt-printing' },
-  { label: 'Diary & Calendar', href: '/products/diary' },
-  { label: 'Promotional Gifts', href: '/products?cat=gifts' },
-  { label: 'Letterhead', href: '/products/letterhead' },
-  { label: 'Catalogues', href: '/products/catalog' },
-  { label: 'Flyers & Brochures', href: '/products/brochures' },
-  { label: 'Box Making', href: '/products/box' },
-  { label: 'Shopping Bags', href: '/products/paper-bag' },
-  { label: 'Embroidery Labels', href: '/woven-labels' },
-  { label: 'Stickers & Logos', href: '/products?cat=stickers' },
-  { label: 'Sign Boards', href: '/products/sign-board' },
-  { label: 'LED & Letter Signs', href: '/products/led-sign-board' },
-  { label: 'Posters & Stickers', href: '/products/poster' },
-  { label: 'Roll-up Stands', href: '/products/roll-up-stands' },
-  { label: 'Pop-up Stands', href: '/products/pop-up-stands' },
-  { label: 'Exhibition Stands', href: '/exhibitions' },
-  { label: 'Banner, Sticker & Flex', href: '/products/flex-banner-printing' },
-];
 
 const FAQS = [
   { q: 'Do you offer same day printing?', a: 'Yes. Business cards, flyers, stickers and mugs can be ready the same day when artwork is approved before noon. Larger jobs usually take 24 to 72 hours.' },

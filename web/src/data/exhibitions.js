@@ -42,7 +42,6 @@ const RAW = [
   [22, 640, 360, 'signage', 'Roll-up banners'],
   [1, 900, 700, 'signage', 'Feather flags'],
   [25, 576, 321, 'signage', 'Lightbox displays'],
-  [4, 751, 751, 'signage', 'Branded podium counter'],
 ];
 
 export const EXHIBITION_PHOTOS = RAW.map(([n, w, h, group, title]) => ({
