@@ -21,7 +21,7 @@ export const metadata = {
     default: 'Dar Al Najah Advertising | Printing, Embroidery & Gifts in Dubai',
     template: '%s | Dar Al Najah Advertising',
   },
-  description: 'Business cards, flyers, roll up banners, packaging, embroidery, corporate gifts, stickers and woven labels in Dubai. Same day printing available.',
+  description: 'Printing shop in Deira, Dubai: business cards, flyers, roll up banners, packaging, embroidery, corporate gifts, stickers, woven labels and exhibition stands. Same day printing available.',
   applicationName: 'Dar Al Najah Advertising',
   authors: [
     { name: 'PEERBROS', url: 'https://www.peerbros.com' },

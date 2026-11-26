@@ -55,7 +55,7 @@ export default function Footer() {
           <nav className="f-cols" aria-label="Footer">
             {categories.map((c) => (
               <div key={c.id} className="footer-col">
-                <h4><i className="dot" style={{ background: c.color }} />{c.short}</h4>
+                <h3><i className="dot" style={{ background: c.color }} />{c.short}</h3>
                 <ul>
                   {c.groups.flatMap((g) => g.items).slice(0, 6).map((it) => (
                     <li key={it.slug}><Link href={`/products/${it.slug}`}>{it.name}</Link></li>
@@ -65,7 +65,7 @@ export default function Footer() {
               </div>
             ))}
             <div className="footer-col">
-              <h4>Company</h4>
+              <h3>Company</h3>
               <ul>
                 <li><Link href="/">Home</Link></li>
                 <li><Link href="/products">All products</Link></li>

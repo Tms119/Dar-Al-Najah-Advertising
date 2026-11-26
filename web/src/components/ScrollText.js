@@ -55,7 +55,9 @@ export default function ScrollText({ text, pills = [] }) {
 
   return (
     <div className="scroll-text" ref={ref}>
-      <p>
+      {/* screen readers get the plain sentence; the word-by-word reveal is visual only */}
+      <p className="sr-only">{words.join(' ').replace(/\*/g, '')}</p>
+      <p aria-hidden="true">
         {words.map((w, i) => (
           <span key={i} className={`sw ${w.startsWith('*') ? 'accent' : ''}`}>{w.replace(/\*/g, '')} </span>
         ))}
@@ -63,6 +65,7 @@ export default function ScrollText({ text, pills = [] }) {
       {pills.map((pl) => (
         <span
           key={pl.label}
+          aria-hidden="true"
           className="float-pill"
           style={{ top: pl.top, left: pl.left, background: pl.bg, color: pl.color || '#fff', '--r': `${pl.rot || 0}deg` }}
         >

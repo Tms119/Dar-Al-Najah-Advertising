@@ -127,7 +127,7 @@ export default function Header() {
             <div className="mega-cols">
               {active.groups.map((g) => (
                 <div key={g.name} className="mega-col">
-                  <h4>{g.name}</h4>
+                  <p className="mega-h">{g.name}</p>
                   <ul>
                     {g.items.slice(0, MEGA_LIMIT).map((it) => (
                       <li key={it.slug}><Link href={`/products/${it.slug}`}>{it.name}</Link></li>

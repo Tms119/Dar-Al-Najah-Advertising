@@ -7,9 +7,10 @@ import { useState } from 'react';
    photo until it has loaded, then the photo fades in. Use it inside a
    positioned box with `fill`, like the plain Image it wraps. Off-screen
    photos lazy-load (the default); pass `eager` for photos that are on screen
-   at first paint, so the browser fetches them first. */
+   at first paint: they load first and show as soon as they arrive, without
+   waiting for JavaScript to fade them in (better Largest Contentful Paint). */
 export default function Photo({ alt, className = '', eager = false, onLoad, ...props }) {
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(eager);
   return (
     <>
       {!loaded && <span className="ph-skel" aria-hidden="true" />}

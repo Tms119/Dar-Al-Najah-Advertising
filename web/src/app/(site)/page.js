@@ -4,6 +4,7 @@ import ScrollText from '@/components/ScrollText';
 import Faq from '@/components/Faq';
 import Mock from '@/components/Mock';
 import { Bestsellers, CategoryCount, ProductCount, ServicesStack } from '@/components/HomeLive';
+import { JsonLd, faqSchema } from '@/lib/structuredData';
 
 const STEPS = [
   { n: '01', t: 'Pick a product', d: 'Choose from our print, fabric, gift and photo products, or tell us your idea.', shape: 'card', c: '#2B3BFF' },
@@ -27,9 +28,12 @@ const FAQS = [
   { q: 'Do you deliver across the UAE?', a: 'Yes, we deliver to Dubai, Abu Dhabi, Sharjah and all emirates. Express delivery is available within Dubai.' },
 ];
 
+export const metadata = { alternates: { canonical: '/' } };
+
 export default function Home() {
   return (
     <>
+      <JsonLd data={faqSchema(FAQS)} />
       <Hero />
 
       <div className="marquee-wrap">
@@ -41,7 +45,7 @@ export default function Home() {
         <div className="container">
           <span className="eyebrow center" data-reveal>A bit about us</span>
           <ScrollText
-            text="We’re the print partner Dubai calls when it has to *look *right and *land *on *time. Cards, boxes, banners, embroidery, gifts and photos, all designed, printed and finished under one roof, so you only ever need one number."
+            text="We’re the print partner Dubai calls when it has to *look *right and *land *on *time. Cards, boxes, banners, embroidery, gifts and stickers, all designed, printed and finished under one roof, so you only ever need one number."
             pills={[
               { label: 'Made in our studio', at: 0.25, top: '18%', left: '58%', bg: 'var(--blue)', rot: -6 },
               { label: 'Proof before print', at: 0.45, top: '46%', left: '6%', bg: 'var(--pink)', rot: 5 },

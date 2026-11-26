@@ -32,6 +32,9 @@ const commonHeaders = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
+  // Metadata always goes in the <head> (no streaming), so every crawler, AI
+  // answer engines and link previews included, reads titles and descriptions.
+  htmlLimitedBots: /.*/,
   images: {
     // product & category photos uploaded through the admin (Convex file storage)
     remotePatterns: [{ protocol: 'https', hostname: '*.convex.cloud' }],
