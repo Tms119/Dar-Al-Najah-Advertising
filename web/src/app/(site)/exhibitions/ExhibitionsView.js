@@ -7,8 +7,9 @@ import { WhatsAppIcon } from '@/components/icons';
 import { waLink } from '@/data/site';
 import { EXHIBITION, EXHIBITION_GROUPS, EXHIBITION_PHOTOS, EXHIBITION_SERVICES } from '@/data/exhibitions';
 
-/* Exhibitions: same header and chips as the category pages, then a photo
-   gallery of past work (opens full size), what we build, and a WhatsApp CTA. */
+/* Exhibitions: same header and chips as the category pages, then a gallery of
+   example stands and displays (the kinds of jobs the shop takes on; each opens
+   full size), what we make, and a WhatsApp CTA. */
 
 const groupName = (id) => EXHIBITION_GROUPS.find((g) => g.id === id)?.name ?? '';
 
@@ -42,6 +43,9 @@ function Lightbox({ photos, index, onClose, onMove }) {
         <figcaption>
           <strong>{p.title}</strong>
           <span>{groupName(p.group)} · {index + 1} of {photos.length}</span>
+          <a className="btn btn-wa ex-lb-ask" href={waLink(`Hi Dar Al Najah! I'd like a quote for an exhibition display like this: ${p.title}.`)} target="_blank" rel="noopener noreferrer">
+            <WhatsAppIcon size={16} /> Ask for one like this
+          </a>
         </figcaption>
       </figure>
       <button ref={closeRef} className="ex-lb-btn ex-lb-close" onClick={onClose} aria-label="Close">✕</button>
@@ -72,21 +76,21 @@ export default function ExhibitionsView() {
         <header className="cat-head" style={{ '--c': EXHIBITION.color }}>
           <span className="eyebrow">Exhibitions & events</span>
           <h1 className="display xl">Exhibition Stands</h1>
-          <p className="muted">Booths, pop-up backdrops and event signage, designed and printed for trade shows, malls and launches across Dubai.</p>
+          <p className="muted">We take on exhibition booths, pop-up backdrops and event signage for trade shows, malls and launches across Dubai. Here are the kinds of stands and displays we make.</p>
         </header>
 
         <div className="group-chips">
-          <button className={`chip ${group === 'all' ? 'is-active' : ''}`} onClick={() => setGroup('all')}>All work</button>
+          <button className={`chip ${group === 'all' ? 'is-active' : ''}`} onClick={() => setGroup('all')}>All examples</button>
           {EXHIBITION_GROUPS.map((g) => (
             <button key={g.id} className={`chip ${group === g.id ? 'is-active' : ''}`} onClick={() => setGroup(g.id)}>{g.name}</button>
           ))}
         </div>
 
-        <p className="result-count">{shown.length} project{shown.length === 1 ? '' : 's'}</p>
+        <p className="result-count">{shown.length} example{shown.length === 1 ? '' : 's'}. Tap one to see it full size.</p>
 
         <div className="ex-gallery" key={group}>
           {shown.map((p, i) => (
-            <button key={p.src} className="ex-item" data-reveal style={{ '--d': `${(i % 3) * 70}ms` }} onClick={() => setOpen(i)} aria-label={`Open photo: ${p.title}`}>
+            <button key={p.src} className="ex-item" data-reveal style={{ '--d': `${(i % 3) * 70}ms` }} onClick={() => setOpen(i)} aria-label={`Open example: ${p.title}`}>
               <span className="ex-media">
                 <Photo src={p.src} alt={p.title} fill eager={i < 3} sizes="(max-width: 640px) 100vw, (max-width: 1180px) 50vw, 33vw" className="ex-img" />
                 <span className="p-cta">View <b>↗</b></span>
@@ -123,7 +127,7 @@ export default function ExhibitionsView() {
         <section className="ex-cta" data-reveal>
           <div>
             <h2 className="display sm">Planning an exhibition?</h2>
-            <p>Send us the event, the stand size and the date. We reply fast with ideas and a quote.</p>
+            <p>Like one of these? Send us the photo, the event, the stand size and the date. We reply fast with ideas and a quote.</p>
           </div>
           <div className="ex-cta-actions">
             <a className="btn btn-ink btn-wa" href={waLink("Hi Dar Al Najah! I'm planning an exhibition stand.")} target="_blank" rel="noopener noreferrer">
