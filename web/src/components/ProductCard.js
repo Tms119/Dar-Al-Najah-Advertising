@@ -2,10 +2,11 @@ import Photo from './Photo';
 import Link from 'next/link';
 import Mock from './Mock';
 
-/* `eager`: the card is in the first row, on screen when the page opens. */
+/* `eager`: the card is in the first row, on screen when the page opens, so
+   it loads first and skips the scroll-in animation (shows straight away). */
 export default function ProductCard({ p, i = 0, eager = false }) {
   return (
-    <Link href={`/products/${p.id}`} className="p-card" data-reveal style={{ '--d': `${(i % 4) * 70}ms`, '--c': p.color, '--t': p.tint }}>
+    <Link href={`/products/${p.id}`} className="p-card" data-reveal={eager ? undefined : true} style={{ '--d': `${(i % 4) * 70}ms`, '--c': p.color, '--t': p.tint }}>
       <div className={`p-card-media ${p.image ? 'has-photo' : ''}`}>
         {p.badge && <span className="p-badge">{p.badge}</span>}
         {p.image ? (

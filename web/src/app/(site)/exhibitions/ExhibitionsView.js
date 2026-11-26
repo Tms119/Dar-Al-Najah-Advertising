@@ -90,7 +90,7 @@ export default function ExhibitionsView() {
 
         <div className="ex-gallery" key={group}>
           {shown.map((p, i) => (
-            <button key={p.src} className="ex-item" data-reveal style={{ '--d': `${(i % 3) * 70}ms` }} onClick={() => setOpen(i)}>
+            <button key={p.src} className="ex-item" data-reveal={i < 3 ? undefined : true} style={{ '--d': `${(i % 3) * 70}ms` }} onClick={() => setOpen(i)}>
               <span className="ex-media">
                 <Photo src={p.src} alt={p.title} fill eager={i < 3} sizes="(max-width: 640px) 100vw, (max-width: 1180px) 50vw, 33vw" className="ex-img" />
                 <span className="p-cta">View <b>↗</b></span>
