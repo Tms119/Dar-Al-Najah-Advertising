@@ -31,6 +31,7 @@ const RAW = [
   [29, 1000, 700, 'booths', 'Open stand with sponsor wall'],
   [13, 720, 480, 'booths', 'Backlit fabric wall stand'],
   [2, 562, 355, 'booths', 'Modular stand with built-in screen'],
+  [15, 1024, 729, 'booths', 'Island stand with branded header'],
   [11, 1600, 1217, 'popups', 'Pop-up backdrop with counter'],
   [12, 751, 751, 'popups', 'Curved pop-up wall'],
   [7, 554, 554, 'popups', 'Curved pop-up with podium'],
@@ -41,6 +42,7 @@ const RAW = [
   [22, 640, 360, 'signage', 'Roll-up banners'],
   [1, 900, 700, 'signage', 'Feather flags'],
   [25, 576, 321, 'signage', 'Lightbox displays'],
+  [4, 751, 751, 'signage', 'Branded podium counter'],
 ];
 
 export const EXHIBITION_PHOTOS = RAW.map(([n, w, h, group, title]) => ({
