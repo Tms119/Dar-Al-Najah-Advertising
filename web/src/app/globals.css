@@ -325,7 +325,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .marquee { margin: 0 -20px; overflow: hidden; }
 .marquee-ink { background: var(--ink); color: var(--bg); }
 .marquee-blue { background: var(--blue); color: #fff; }
-.marquee-track { display: flex; width: max-content; animation: marquee 32s linear infinite; }
+.marquee-track { display: flex; width: max-content; animation: marquee var(--dur, 32s) linear infinite; }
 .marquee.is-reverse .marquee-track { animation-direction: reverse; }
 .marquee:hover .marquee-track { animation-play-state: paused; }
 .marquee-row { display: flex; flex: none; }
@@ -1051,3 +1051,8 @@ a.c-card:hover .c-sub { color: inherit; opacity: 0.85; }
   .ex-lb-prev { left: calc(50% - 60px); }
   .ex-lb-next { right: calc(50% - 60px); }
 }
+
+/* linked marquee items: pause on hover/focus so they're easy to click */
+.marquee-link { color: inherit; text-decoration: none; transition: opacity 0.2s; }
+.marquee-link:hover { opacity: 0.7; text-decoration: underline; text-underline-offset: 0.12em; text-decoration-thickness: 2px; }
+.marquee:hover .marquee-track, .marquee:focus-within .marquee-track { animation-play-state: paused; }

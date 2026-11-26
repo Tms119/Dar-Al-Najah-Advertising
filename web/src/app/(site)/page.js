@@ -20,6 +20,33 @@ const REVIEWS = [
   { q: 'Corporate welcome kits for 120 new joiners, boxed and delivered. Zero stress on our side.', n: 'James L.', r: 'HR Manager, Logistics', c: '#FFB800' },
 ];
 
+/* The shop's service list (from its flyer), each linked to the matching
+   product or category. Sign boards and LED signs have no product page yet. */
+const SERVICES = [
+  { label: 'Offset Printing', href: '/products?cat=printing' },
+  { label: 'Digital Printing', href: '/products?cat=printing' },
+  { label: 'Screen Printing', href: '/products/t-shirt-printing' },
+  { label: 'Business Cards', href: '/products/business-cards' },
+  { label: 'Invoice Books', href: '/products?cat=printing' },
+  { label: 'T-Shirt, Cap & Pen Printing', href: '/products/t-shirt-printing' },
+  { label: 'Diary & Calendar', href: '/products/calendar' },
+  { label: 'Promotional Gifts', href: '/products?cat=gifts' },
+  { label: 'Letterhead', href: '/products/letterhead' },
+  { label: 'Catalogues', href: '/products/catalog' },
+  { label: 'Flyers & Brochures', href: '/products/flyers' },
+  { label: 'Box Making', href: '/products/box' },
+  { label: 'Shopping Bags', href: '/products/paper-bag' },
+  { label: 'Embroidery Labels', href: '/woven-labels' },
+  { label: 'Stickers & Logos', href: '/products?cat=stickers' },
+  'Sign Boards',
+  'LED & Letter Signs',
+  { label: 'Posters & Stickers', href: '/products/poster' },
+  { label: 'Roll-up Stands', href: '/products/roll-up-stands' },
+  { label: 'Pop-up Stands', href: '/products/pop-up-stands' },
+  { label: 'Exhibition Stands', href: '/exhibitions' },
+  { label: 'Banner, Sticker & Flex', href: '/products/banner' },
+];
+
 const FAQS = [
   { q: 'Do you offer same day printing?', a: 'Yes. Business cards, flyers, stickers and mugs can be ready the same day when artwork is approved before noon. Larger jobs usually take 24 to 72 hours.' },
   { q: 'Can you design my artwork?', a: 'Absolutely. Our own designers can create logos, layouts and print ready files. Just share your brief and brand assets.' },
@@ -37,7 +64,7 @@ export default function Home() {
       <Hero />
 
       <div className="marquee-wrap">
-        <Marquee tilt={-2} items={['Business cards', 'Roll up stands', 'Embroidery', 'Packaging', 'Corporate gifts', 'Stickers', 'Woven labels', 'Signage']} />
+        <Marquee tilt={-2} items={SERVICES} />
       </div>
 
       {/* About */}
