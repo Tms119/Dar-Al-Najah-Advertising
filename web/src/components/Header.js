@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useConvexAuth, useQuery } from 'convex/react';
 import { api } from '@convex/_generated/api';
-import { COMPANY, categoryHref, telHref, waLink } from '@/data/site';
+import { categoryHref, COMPANY, telHref, waAbout, waLink } from '@/data/site';
 import { WhatsAppIcon } from './icons';
 import { useCatalog } from './CatalogProvider';
 import Logo from './Logo';
@@ -97,7 +97,7 @@ export default function Header() {
               <span className="btn-dash-label">Dashboard</span>
             </Link>
           )}
-          <a href={waLink('Hi Dar Al Najah! I have a question about printing.')} target="_blank" rel="noopener noreferrer" className="btn btn-ink btn-sm btn-wa" aria-label="WhatsApp">
+          <a href={pathname !== '/' ? waAbout('Hi Dar Al Najah! I have a question about printing.', pathname) : waLink('Hi Dar Al Najah! I have a question about printing.')} target="_blank" rel="noopener noreferrer" className="btn btn-ink btn-sm btn-wa" aria-label="WhatsApp">
             <WhatsAppIcon size={16} /> <span className="btn-wa-label">WhatsApp</span>
           </a>
           <button className="burger" onClick={() => setOpen(true)} aria-label="Open menu">

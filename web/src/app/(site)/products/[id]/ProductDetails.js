@@ -4,7 +4,7 @@ import Photo from '@/components/Photo';
 import { useState } from 'react';
 import Mock from '@/components/Mock';
 import { WhatsAppIcon } from '@/components/icons';
-import { COMPANY, waLink } from '@/data/site';
+import { COMPANY, waAbout } from '@/data/site';
 
 const PERKS = [
   { title: 'High-quality print', text: 'Bright, durable prints that make your brand stand out.', path: 'M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z' },
@@ -61,7 +61,7 @@ export default function ProductDetails({ p }) {
 
         <div className="pdp-ask">
           <p>Tell us what you need: size, quantity, finish and deadline. We reply fast with options and a quote.</p>
-          <a className="btn btn-ink btn-wa" href={waLink(`Hi Dar Al Najah! I'm interested in ${p.name}.`)} target="_blank" rel="noopener noreferrer">
+          <a className="btn btn-ink btn-wa" href={waAbout(`Hi Dar Al Najah! I'm interested in ${p.name}.`, `/products/${p.id}`)} target="_blank" rel="noopener noreferrer">
             <WhatsAppIcon size={18} /> Ask on WhatsApp
           </a>
         </div>

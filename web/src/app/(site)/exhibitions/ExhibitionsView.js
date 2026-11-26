@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Photo from '@/components/Photo';
 import { WhatsAppIcon } from '@/components/icons';
-import { waLink } from '@/data/site';
+import { waAbout } from '@/data/site';
 import { EXHIBITION, EXHIBITION_GROUPS, EXHIBITION_PHOTOS, EXHIBITION_SERVICES } from '@/data/exhibitions';
 
 /* Exhibitions: same header and chips as the category pages, then a gallery of
@@ -43,7 +43,7 @@ function Lightbox({ photos, index, onClose, onMove }) {
         <figcaption>
           <strong>{p.title}</strong>
           <span>{groupName(p.group)} · {index + 1} of {photos.length}</span>
-          <a className="btn btn-wa ex-lb-ask" href={waLink(`Hi Dar Al Najah! I'd like a quote for an exhibition display like this: ${p.title}.`)} target="_blank" rel="noopener noreferrer">
+          <a className="btn btn-wa ex-lb-ask" href={waAbout(`Hi Dar Al Najah! I'd like a quote for an exhibition display like this: ${p.title}.`, p.src)} target="_blank" rel="noopener noreferrer">
             <WhatsAppIcon size={16} /> Ask for one like this
           </a>
         </figcaption>
@@ -130,7 +130,7 @@ export default function ExhibitionsView() {
             <p>Like one of these? Send us the photo, the event, the stand size and the date. We reply fast with ideas and a quote.</p>
           </div>
           <div className="ex-cta-actions">
-            <a className="btn btn-ink btn-wa" href={waLink("Hi Dar Al Najah! I'm planning an exhibition stand.")} target="_blank" rel="noopener noreferrer">
+            <a className="btn btn-ink btn-wa" href={waAbout("Hi Dar Al Najah! I'm planning an exhibition stand.", '/exhibitions')} target="_blank" rel="noopener noreferrer">
               <WhatsAppIcon size={18} /> Ask on WhatsApp
             </a>
             <Link href="/products?cat=printing" className="btn btn-ghost">Roll-ups & banners <span className="btn-arrow">→</span></Link>

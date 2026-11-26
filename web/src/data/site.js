@@ -29,3 +29,10 @@ export const categoryHref = (slug) => CATEGORY_PAGES[slug] ?? `/products?cat=${s
 /** WhatsApp chat with the shop, with a pre-filled message. */
 export const waLink = (text) =>
   `https://wa.me/${COMPANY.whatsapp}?text=${encodeURIComponent(text)}`;
+
+/** Full link to a page (or file) on this site, e.g. pageLink('/products/flyers'). */
+export const pageLink = (path) => `${SITE_URL}${path}`;
+
+/** WhatsApp message that ends with a link to the page it's about, so staff
+    see exactly which product or photo the customer means. */
+export const waAbout = (text, path) => waLink(`${text}\n${pageLink(path)}`);

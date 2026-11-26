@@ -7,7 +7,7 @@ import { usePreloadedQuery } from 'convex/react';
 import Mock from '@/components/Mock';
 import { useCatalog } from '@/components/CatalogProvider';
 import { WhatsAppIcon } from '@/components/icons';
-import { categoryHref, waLink } from '@/data/site';
+import { categoryHref, waAbout } from '@/data/site';
 
 /* Woven Labels: same layout as the other category pages (header, category
    tabs, search, group chips), with each label shown with its description.
@@ -28,7 +28,7 @@ function LabelCard({ p, i, color, tint, eager = false }) {
       <div className="p-card-body">
         <h3><Link href={`/products/${p.slug}`}>{p.name}</Link></h3>
         <p className="wl-desc">{p.desc}</p>
-        <a className="wl-ask" href={waLink(`Hi Dar Al Najah! I'm interested in ${p.name}.`)} target="_blank" rel="noopener noreferrer">
+        <a className="wl-ask" href={waAbout(`Hi Dar Al Najah! I'm interested in ${p.name}.`, `/products/${p.slug}`)} target="_blank" rel="noopener noreferrer">
           <WhatsAppIcon size={15} /> Ask on WhatsApp
         </a>
       </div>
