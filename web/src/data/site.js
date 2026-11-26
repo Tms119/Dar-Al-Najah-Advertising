@@ -12,7 +12,7 @@ export const COMPANY = {
 export const SOCIALS = [
   { name: 'Instagram', url: 'https://www.instagram.com/daralnajahadvertisinguae/' },
   { name: 'Facebook', url: 'https://www.facebook.com/DarAlNajahAdvertising' },
-  // TikTok: add { name: 'TikTok', url: 'https://www.tiktok.com/@...' } here (icon is ready)
+  { name: 'TikTok', url: 'https://www.tiktok.com/@daralnajahadvertisinguae' },
 ];
 
 /** Google Maps directions to the shop. */
