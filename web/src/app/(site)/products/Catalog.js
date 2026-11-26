@@ -84,6 +84,8 @@ export default function Catalog({ initialCat = 'all' }) {
           </div>
         )}
 
+        {/* heading for the card grid (cards use h3), for screen readers and outline order */}
+        <h2 className="sr-only">Products</h2>
         <p className="result-count">{list.length} product{list.length === 1 ? '' : 's'}</p>
 
         {list.length ? (
