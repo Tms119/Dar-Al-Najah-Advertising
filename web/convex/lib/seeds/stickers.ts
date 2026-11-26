@@ -14,7 +14,7 @@ export const stickers: CategorySeed = {
   },
   shape: "sticker",
   heroPhoto:
-    "a bright modern Dubai retail shop front decorated with colourful abstract window stickers, a frosted glass door band and a round floor graphic of colourful circles at the entrance, no words or letters anywhere, daylight",
+    "a bright overhead flat lay on a light wooden desk of three kinds of custom stickers: on the left a hand holding up a clear transparent transfer sheet of glossy colourful illustrations of coffee cups, doughnuts and hearts; in the centre a white sheet of die cut cartoon stickers of a star, a rocket, a smiling cloud and a skateboard with one sticker being peeled back by fingers; on the right a curved sheet of round teal kiss cut stickers with one half peeled up; a green plant and a pencil pot at the edge, soft daylight, no words, letters, logos or famous characters",
   groups: [
     {
       name: "Custom stickers",
