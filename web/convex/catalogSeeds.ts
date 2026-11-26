@@ -7,6 +7,7 @@ import { runPhotoModel, sniffType } from "./lib/imageModel";
 import { SEEDS } from "./lib/seeds";
 import type { SeedItem } from "./lib/seeds/types";
 import { CATEGORY_PROMPTS, PHOTO_PROMPTS } from "./lib/seeds/photoPrompts";
+import { EXTRA_PRODUCTS } from "./lib/seeds/extraProducts";
 
 /* Category setup from starter content (convex/lib/seeds). After setup,
    everything is edited in the admin like any other category. CLI only:
@@ -404,5 +405,50 @@ export const generateCategoryCovers = internalAction({
       }
     }
     return { made, skipped, failed };
+  },
+});
+
+/* ---------- extra products (lib/seeds/extraProducts.ts) ---------- */
+
+/** Adds the extra products to their categories, creating a group when it
+    doesn't exist yet. Products that already exist are left alone. Then run
+    photosUntilDone (or generateMissingPhotos) for their photos. */
+export const addExtraProducts = internalMutation({
+  args: {},
+  returns: v.object({ added: v.array(v.string()), skipped: v.array(v.string()), groupsCreated: v.array(v.string()) }),
+  handler: async (ctx) => {
+    const added: string[] = [];
+    const skipped: string[] = [];
+    const groupsCreated: string[] = [];
+    for (const item of EXTRA_PRODUCTS) {
+      const cat = await categoryBySlug(ctx, item.category);
+      const slug = slugify(item.name);
+      const existing = await ctx.db.query("products").withIndex("by_slug", (q) => q.eq("slug", slug)).unique();
+      if (!cat || existing) { skipped.push(slug); continue; }
+
+      const groups = await ctx.db.query("groups").withIndex("by_categoryId_and_sortOrder", (q) => q.eq("categoryId", cat._id)).take(100);
+      let group = groups.find((g) => g.name === item.group);
+      if (!group) {
+        const id = await ctx.db.insert("groups", { categoryId: cat._id, name: item.group, sortOrder: groups.reduce((m, g) => Math.max(m, g.sortOrder), -1) + 1 });
+        group = (await ctx.db.get(id))!;
+        groupsCreated.push(`${item.category}/${item.group}`);
+      }
+      const links = await ctx.db.query("productGroups").withIndex("by_groupId_and_sortOrder", (q) => q.eq("groupId", group._id)).take(500);
+      const [lastProduct] = await ctx.db.query("products").order("desc").take(1);
+      const productId = await ctx.db.insert("products", {
+        slug,
+        name: item.name,
+        description: item.desc,
+        badge: null,
+        mockupShape: item.shape,
+        imageIds: [],
+        isFeatured: false,
+        isActive: true,
+        sortOrder: (lastProduct?.sortOrder ?? -1) + 1,
+      });
+      await ctx.db.insert("productGroups", { productId, groupId: group._id, isPrimary: true, sortOrder: links.reduce((m, l) => Math.max(m, l.sortOrder), -1) + 1 });
+      added.push(slug);
+    }
+    return { added, skipped, groupsCreated };
   },
 });

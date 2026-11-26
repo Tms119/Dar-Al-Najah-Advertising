@@ -91,6 +91,18 @@ export const PHOTO_PROMPTS: Record<string, string> = {
   "Mug Printing": "side view of an ordinary white ceramic coffee mug with its single handle on the right side, printed with a colourful hot air balloon illustration, steaming coffee, on a wooden breakfast table",
   "Notebook Printing": "three A5 notebooks with printed covers in different patterns, terrazzo, stripes and waves, stacked on a desk with a plant",
   "Puzzles Printing": "a partly finished jigsaw puzzle of a colourful Dubai Creek dhow scene with loose pieces around it on a table",
+  /* ---------- added from the shop's service list ---------- */
+  "Offset Printing": "large stacks of freshly printed glossy brochures and booklets coming off an offset press delivery tray in a clean print shop, colourful abstract covers, warm industrial light",
+  "Digital Printing": "a modern digital printing machine in a bright print shop with a short stack of colourful printed postcards with abstract shapes in the output tray",
+  "Brochures": "three folded A4 brochures standing on a white office desk, covers printed with modern architecture photos and teal colour blocks, a coffee cup beside them",
+  "Invoice Book": "a carbonless invoice book open on a shop counter showing white, pink and yellow duplicate pages with blank ruled lines and a small logo mark at the top, a pen beside it",
+  "Diary": "a dark green hardcover diary with a small embossed gold logo mark and a ribbon bookmark, lying on a wooden desk next to a brass pen",
+  "Screen Printing": "a screen printing frame and squeegee laying bright orange ink onto a white t shirt on a print table, a stack of printed shirts with a bold abstract sun design beside it",
+  "Pen Printing": "five slim retractable click ballpoint pens with metal clips in blue, red, green, white and black lying in a neat diagonal row on a white desk, each with a tiny white printed logo mark on the barrel, close up",
+  "Sign Board": "a modern shop front with a large blank navy aluminium sign board above the glass entrance showing only a simple white circle logo mark, clean street, daylight",
+  "LED Sign Board": "a glowing illuminated light box sign with a simple abstract logo mark mounted on a shop front at dusk, warm city lights in the background",
+  "3D Letter Signs": "raised brushed gold 3D shapes forming an abstract geometric logo mark mounted on a white reception wall, soft spotlights, modern office lobby, no readable words",
+  "Flex Banner Printing": "a large colourful flex banner with abstract waves and a big circle graphic stretched across a building front with metal eyelets on the edges, blue sky",
 };
 
 /* Section cover photos (home page cards and the menu), keyed by category slug. */

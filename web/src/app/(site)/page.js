@@ -13,38 +13,40 @@ const STEPS = [
   { n: '04', t: 'Print & deliver', d: 'Printed, finished and delivered across the UAE, or collected from our store.', shape: 'box', c: '#FFB800' },
 ];
 
+/* Real reviews from the shop's Google Maps listing (names shortened). */
+const GOOGLE_REVIEWS_URL = 'https://maps.app.goo.gl/ikETVeX5wNrtRhAb9';
 const REVIEWS = [
-  { q: 'Our roll up banners and 2,000 flyers were ready overnight for GITEX. Colours were spot on.', n: 'Sara M.', r: 'Marketing Lead, Tech startup', c: '#2B3BFF' },
-  { q: 'Embroidered caps and polos for the whole team. Stitching quality is honestly better than retail.', n: 'Omar K.', r: 'Operations, F&B group', c: '#FF3D7F' },
-  { q: 'Frosted glass stickers for our whole office were fitted in a day. It looks like real etched glass.', n: 'Hassan R.', r: 'Office Manager, Consulting firm', c: '#00A86B' },
-  { q: 'Corporate welcome kits for 120 new joiners, boxed and delivered. Zero stress on our side.', n: 'James L.', r: 'HR Manager, Logistics', c: '#FFB800' },
+  { q: 'Amazing work on our signage and display materials! Everything looks sharp, durable, and well-crafted. Dar Al Najah Advertising made our brand stand out effortlessly.', n: 'Md A.', c: '#2B3BFF' },
+  { q: "Consistently great service every single time. Whether it's signage, promotional items, or urgent printing, Dar Al Najah Advertising always delivers beyond expectations.", n: 'Mostafa M.', c: '#FF3D7F' },
+  { q: 'Everything from initial inquiry to final handover was effortless. Great quality, honest pricing, and five-star customer service all around!', n: 'Md R.', c: '#00A86B' },
+  { q: 'Exceeded my expectations from start to finish. Clear communication, great attention to detail, and impressive results. I will definitely work with them again.', n: 'Salman S.', c: '#FFB800' },
 ];
 
 /* The shop's service list (from its flyer), each linked to the matching
-   product or category. Sign boards and LED signs have no product page yet. */
+   product or category. */
 const SERVICES = [
-  { label: 'Offset Printing', href: '/products?cat=printing' },
-  { label: 'Digital Printing', href: '/products?cat=printing' },
-  { label: 'Screen Printing', href: '/products/t-shirt-printing' },
+  { label: 'Offset Printing', href: '/products/offset-printing' },
+  { label: 'Digital Printing', href: '/products/digital-printing' },
+  { label: 'Screen Printing', href: '/products/screen-printing' },
   { label: 'Business Cards', href: '/products/business-cards' },
-  { label: 'Invoice Books', href: '/products?cat=printing' },
+  { label: 'Invoice Books', href: '/products/invoice-book' },
   { label: 'T-Shirt, Cap & Pen Printing', href: '/products/t-shirt-printing' },
-  { label: 'Diary & Calendar', href: '/products/calendar' },
+  { label: 'Diary & Calendar', href: '/products/diary' },
   { label: 'Promotional Gifts', href: '/products?cat=gifts' },
   { label: 'Letterhead', href: '/products/letterhead' },
   { label: 'Catalogues', href: '/products/catalog' },
-  { label: 'Flyers & Brochures', href: '/products/flyers' },
+  { label: 'Flyers & Brochures', href: '/products/brochures' },
   { label: 'Box Making', href: '/products/box' },
   { label: 'Shopping Bags', href: '/products/paper-bag' },
   { label: 'Embroidery Labels', href: '/woven-labels' },
   { label: 'Stickers & Logos', href: '/products?cat=stickers' },
-  'Sign Boards',
-  'LED & Letter Signs',
+  { label: 'Sign Boards', href: '/products/sign-board' },
+  { label: 'LED & Letter Signs', href: '/products/led-sign-board' },
   { label: 'Posters & Stickers', href: '/products/poster' },
   { label: 'Roll-up Stands', href: '/products/roll-up-stands' },
   { label: 'Pop-up Stands', href: '/products/pop-up-stands' },
   { label: 'Exhibition Stands', href: '/exhibitions' },
-  { label: 'Banner, Sticker & Flex', href: '/products/banner' },
+  { label: 'Banner, Sticker & Flex', href: '/products/flex-banner-printing' },
 ];
 
 const FAQS = [
@@ -149,10 +151,15 @@ export default function Home() {
                 <blockquote>“{r.q}”</blockquote>
                 <figcaption>
                   <span className="avatar">{r.n[0]}</span>
-                  <span><b>{r.n}</b><small>{r.r}</small></span>
+                  <span><b>{r.n}</b><small>Google review</small></span>
                 </figcaption>
               </figure>
             ))}
+          </div>
+          <div className="reviews-more" data-reveal>
+            <a href={GOOGLE_REVIEWS_URL} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
+              Read all reviews on Google <span className="btn-arrow">↗</span>
+            </a>
           </div>
         </div>
       </section>
