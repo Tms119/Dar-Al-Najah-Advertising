@@ -82,6 +82,7 @@ export default function Header() {
               {c.short}
             </button>
           ))}
+          <Link className={`pill ${pathname.startsWith('/exhibitions') ? 'is-active' : ''}`} href="/exhibitions" aria-current={pathname.startsWith('/exhibitions') ? 'page' : undefined} onMouseEnter={() => { cancelClose(); setMega(null); }}>Exhibitions</Link>
           <Link className="pill" href="/products" onMouseEnter={() => { cancelClose(); setMega(null); }}>All products</Link>
         </nav>
 
@@ -173,8 +174,9 @@ export default function Header() {
             </div>
           ))}
           {isStaff && <Link href="/admin" className="m-link m-dash" style={{ '--i': 0 }}>Dashboard ↗</Link>}
-          <Link href="/products" className="m-link" style={{ '--i': CATALOG.length }}>All products</Link>
-          <Link href="/contact" className="m-link" style={{ '--i': CATALOG.length + 1 }}>Contact</Link>
+          <Link href="/exhibitions" className="m-link" style={{ '--i': CATALOG.length }}>Exhibitions</Link>
+          <Link href="/products" className="m-link" style={{ '--i': CATALOG.length + 1 }}>All products</Link>
+          <Link href="/contact" className="m-link" style={{ '--i': CATALOG.length + 2 }}>Contact</Link>
         </div>
         <div className="mobile-foot">
           <a href={telHref}>{COMPANY.phone}</a>

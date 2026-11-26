@@ -69,6 +69,7 @@ export default function Footer() {
               <ul>
                 <li><Link href="/">Home</Link></li>
                 <li><Link href="/products">All products</Link></li>
+                <li><Link href="/exhibitions">Exhibitions</Link></li>
                 <li><Link href="/contact">Contact</Link></li>
                 <li><a href={waLink('Hi! I have a question.')} target="_blank" rel="noopener noreferrer">WhatsApp support</a></li>
               </ul>
