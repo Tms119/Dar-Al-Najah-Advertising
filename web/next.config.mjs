@@ -40,6 +40,11 @@ const nextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: '*.convex.cloud' }],
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60 * 60 * 24 * 30,
+    // Only the widths the site needs (phones up to 3x, desktop cards, covers,
+    // product page, full-size viewer). Fewer variants per photo means more
+    // requests hit Vercel's cache instead of waiting for a fresh conversion.
+    deviceSizes: [640, 828, 1080, 1440, 1920],
+    imageSizes: [96, 256, 384],
   },
   async headers() {
     return [
