@@ -5,7 +5,7 @@ export const COMPANY = {
   phone: '+971 50 676 2586',
   whatsapp: '971506762586',
   address: 'Shop No. 10, Nakheel Plaza, Deira, Dubai, United Arab Emirates',
-  hours: 'Saturday to Thursday, 9am to 10pm',
+  hours: 'Saturday to Thursday, 7am to 12am',
 };
 
 /** Official social profiles (footer links and structured data). */

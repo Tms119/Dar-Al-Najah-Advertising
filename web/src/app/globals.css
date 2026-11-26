@@ -293,6 +293,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 30px; animation: fadeUp 0.9s var(--ease) calc(var(--intro) + 0.45s) both; }
 .hero-quick { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; max-width: 760px; margin: 30px auto 0; position: relative; z-index: 3; /* narrow enough to sit between the floating hero items */ font-size: 13px; color: var(--muted); animation: fadeUp 0.9s var(--ease) calc(var(--intro) + 0.55s) both; }
 .hero-quick .chip { background: rgba(255, 255, 255, 0.6); font-size: 13px; padding: 6px 12px; }
+.hero-quick .chip:hover, .hero-quick .chip:focus-visible { background: var(--ink); color: #fff; } /* the lighter background above outranked the dark hover */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } }
 
 .floater {

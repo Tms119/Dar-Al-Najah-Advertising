@@ -41,8 +41,8 @@ export function businessSchema(categories = []) {
     openingHoursSpecification: [{
       '@type': 'OpeningHoursSpecification',
       dayOfWeek: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'],
-      opens: '09:00',
-      closes: '22:00',
+      opens: '07:00',
+      closes: '23:59', // midnight
     }],
     contactPoint: [{
       '@type': 'ContactPoint',
