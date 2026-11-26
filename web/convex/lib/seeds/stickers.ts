@@ -28,7 +28,7 @@ export const stickers: CategorySeed = {
         {
           name: "Print & Cut Stickers",
           desc: "Full colour stickers printed and contour cut on sheets or singles, in any shape and size you need, from a short run to bulk.",
-          photo: "a sheet of colourful kiss cut stickers with round, heart and star shapes partly peeled off, on a light table, no words or letters",
+          photo: "close up at a low angle of a curved white sheet of round kiss cut stickers in teal with a thin white border and a simple black line drawing of a coffee cup in the centre, one sticker half peeled up from the sheet, an empty round outline where a sticker was removed, light wooden table, soft daylight, shallow depth of field, no words or letters",
         },
         {
           name: "UV DTF Stickers",
