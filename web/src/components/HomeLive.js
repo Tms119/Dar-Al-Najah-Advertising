@@ -10,48 +10,55 @@ import { EXHIBITION, EXHIBITION_GROUPS, EXHIBITION_PHOTOS } from '@/data/exhibit
 
 /* Home-page sections driven by the live catalogue. */
 
+/* Categories that come after the Exhibitions card in the home stack. */
+const AFTER_EXHIBITIONS = ['fabric'];
+
 export function ServicesStack() {
   const { categories } = useCatalog();
+  const before = categories.filter((c) => !AFTER_EXHIBITIONS.includes(c.id));
+  const after = categories.filter((c) => AFTER_EXHIBITIONS.includes(c.id));
+  const card = (c, i) => {
+    const items = c.groups.flatMap((g) => g.items);
+    const sample = items.slice(0, 7);
+    const shapes = [...new Set(items.map((it) => it.shape))].filter((s) => s !== c.hero);
+    return (
+      <article key={c.id} className="stack-card" style={{ '--c': c.color, '--t': c.tint, '--i': i }}>
+        <div className="stack-text">
+          <div className="stack-top">
+            <span className="stack-num">{String(i + 1).padStart(2, '0')}</span>
+            <span className="pill pill-solid">{c.count} products</span>
+          </div>
+          <h3>{c.name}</h3>
+          <p>{c.tagline}</p>
+          <div className="stack-chips">
+            {sample.map((it) => (
+              <Link key={it.slug} href={`/products/${it.slug}`} className="chip chip-white">{it.name}</Link>
+            ))}
+          </div>
+          <Link href={categoryHref(c.id)} className="btn btn-ink">
+            Explore {c.short.toLowerCase()} <span className="btn-arrow">→</span>
+          </Link>
+        </div>
+        {c.image ? (
+          <div className="stack-art stack-art-photo">
+            <Photo src={c.image} alt={c.name} fill sizes="(max-width: 980px) 100vw, 45vw" />
+          </div>
+        ) : (
+          <div className="stack-art">
+            <div className="stack-circle" />
+            <Mock shape={c.hero} color={c.color} className="stack-mock" />
+            {shapes[0] && <Mock shape={shapes[0]} color={c.color} className="stack-mock-sm a" />}
+            {shapes[1] && <Mock shape={shapes[1]} color={c.color} className="stack-mock-sm b" />}
+          </div>
+        )}
+      </article>
+    );
+  };
   return (
     <div className="stack">
-      {categories.map((c, i) => {
-        const items = c.groups.flatMap((g) => g.items);
-        const sample = items.slice(0, 7);
-        const shapes = [...new Set(items.map((it) => it.shape))].filter((s) => s !== c.hero);
-        return (
-          <article key={c.id} className="stack-card" style={{ '--c': c.color, '--t': c.tint, '--i': i }}>
-            <div className="stack-text">
-              <div className="stack-top">
-                <span className="stack-num">{String(i + 1).padStart(2, '0')}</span>
-                <span className="pill pill-solid">{c.count} products</span>
-              </div>
-              <h3>{c.name}</h3>
-              <p>{c.tagline}</p>
-              <div className="stack-chips">
-                {sample.map((it) => (
-                  <Link key={it.slug} href={`/products/${it.slug}`} className="chip chip-white">{it.name}</Link>
-                ))}
-              </div>
-              <Link href={categoryHref(c.id)} className="btn btn-ink">
-                Explore {c.short.toLowerCase()} <span className="btn-arrow">→</span>
-              </Link>
-            </div>
-            {c.image ? (
-              <div className="stack-art stack-art-photo">
-                <Photo src={c.image} alt={c.name} fill sizes="(max-width: 980px) 100vw, 45vw" />
-              </div>
-            ) : (
-              <div className="stack-art">
-                <div className="stack-circle" />
-                <Mock shape={c.hero} color={c.color} className="stack-mock" />
-                {shapes[0] && <Mock shape={shapes[0]} color={c.color} className="stack-mock-sm a" />}
-                {shapes[1] && <Mock shape={shapes[1]} color={c.color} className="stack-mock-sm b" />}
-              </div>
-            )}
-          </article>
-        );
-      })}
-      <ExhibitionCard i={categories.length} />
+      {before.map((c, i) => card(c, i))}
+      <ExhibitionCard i={before.length} />
+      {after.map((c, i) => card(c, before.length + 1 + i))}
     </div>
   );
 }
