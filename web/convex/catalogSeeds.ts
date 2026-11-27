@@ -452,3 +452,30 @@ export const addExtraProducts = internalMutation({
     return { added, skipped, groupsCreated };
   },
 });
+
+/** Uses a product's photo as a category's cover (menu and home card). The
+    photo is copied, so the two can later change independently:
+      npx convex run --prod catalogSeeds:useProductPhotoAsCover '{"productSlug":"...","categorySlug":"..."}' */
+export const productPhotoUrl = internalQuery({
+  args: { productSlug: v.string(), categorySlug: v.string() },
+  returns: v.union(v.null(), v.object({ url: v.string(), categoryId: v.id("categories") })),
+  handler: async (ctx, { productSlug, categorySlug }) => {
+    const p = await ctx.db.query("products").withIndex("by_slug", (q) => q.eq("slug", productSlug)).unique();
+    const cat = await ctx.db.query("categories").withIndex("by_slug", (q) => q.eq("slug", categorySlug)).unique();
+    const url = p?.imageIds[0] ? await ctx.storage.getUrl(p.imageIds[0]) : null;
+    return url && cat ? { url, categoryId: cat._id } : null;
+  },
+});
+
+export const useProductPhotoAsCover = internalAction({
+  args: { productSlug: v.string(), categorySlug: v.string() },
+  returns: v.boolean(),
+  handler: async (ctx, args): Promise<boolean> => {
+    const found: { url: string; categoryId: Id<"categories"> } | null = await ctx.runQuery(internal.catalogSeeds.productPhotoUrl, args);
+    if (!found) return false;
+    const blob = await (await fetch(found.url)).blob();
+    const storageId = await ctx.storage.store(blob);
+    await ctx.runMutation(internal.catalogSeeds.attachImage, { storageId, productId: null, categoryId: found.categoryId });
+    return true;
+  },
+});
