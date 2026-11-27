@@ -58,7 +58,7 @@ export default function Hero() {
 
       <div className="hero-content">
         <span className="eyebrow hero-eyebrow">
-          <i className="live-dot" /> Dubai&apos;s one stop print solution
+          <i className="live-dot" /> Dubai&apos;s one stop printing solution
         </span>
 
         <h1 className="hero-title">
