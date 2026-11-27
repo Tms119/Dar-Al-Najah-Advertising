@@ -13,7 +13,7 @@ export const wovenLabels: CategorySeed = {
   },
   shape: "tag",
   heroPhoto:
-    "an overhead flat lay of many colourful custom woven clothing labels, damask and satin, scattered on cream linen with thread spools and scissors",
+    "three wide horizontal woven clothing labels lying side by side on light grey linen, close up: a black label with the word NOVA, a cream label with the word LUXE and a navy label with the word ATLAS, each word woven large and centred in crisp white or black thread with a thin woven border, fine woven texture visible, a folded white t shirt collar at the edge, soft daylight",
   groups: [
     {
       name: "Label types",
