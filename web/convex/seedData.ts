@@ -57,7 +57,7 @@ export const CATALOG: SeedCategory[] = [
   },
   {
     id: 'gifts',
-    name: 'Customised Gifts',
+    name: 'Customised Gift Items',
     short: 'Gifts',
     tagline: 'Engraved, printed and wrapped — corporate gifting done right.',
     color: '#F5A400',

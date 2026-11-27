@@ -479,3 +479,16 @@ export const useProductPhotoAsCover = internalAction({
     return true;
   },
 });
+
+/** Renames a category (everything on the site reads the name from here):
+      npx convex run --prod catalogSeeds:renameCategory '{"slug":"gifts","name":"..."}' */
+export const renameCategory = internalMutation({
+  args: { slug: v.string(), name: v.string() },
+  returns: v.boolean(),
+  handler: async (ctx, { slug, name }) => {
+    const cat = await categoryBySlug(ctx, slug);
+    if (!cat) return false;
+    await ctx.db.patch(cat._id, { name });
+    return true;
+  },
+});
