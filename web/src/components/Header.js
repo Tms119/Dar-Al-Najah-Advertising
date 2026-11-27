@@ -11,7 +11,7 @@ import { useCatalog } from './CatalogProvider';
 import Logo from './Logo';
 import Photo from './Photo';
 import Mock from './Mock';
-import { withExhibitions } from '@/data/exhibitions';
+import { EXHIBITION, withExhibitions } from '@/data/exhibitions';
 
 const MEGA_LIMIT = 12;
 
@@ -80,14 +80,14 @@ export default function Header() {
             onClick={() => setMega(mega ? null : 'services')}
             aria-expanded={!!mega}
           >
-            Services <span className="pill-caret" aria-hidden="true">▾</span>
+            <i className="dot" style={{ background: 'var(--brand-orange)' }} />Services <span className="pill-caret" aria-hidden="true">▾</span>
           </button>
           {CATALOG.some((c) => c.id === 'woven-labels') && (
             <Link className={`pill ${pathname.startsWith('/woven-labels') ? 'is-active' : ''}`} href="/woven-labels" aria-current={pathname.startsWith('/woven-labels') ? 'page' : undefined} onMouseEnter={() => { cancelClose(); setMega(null); }}>
               <i className="dot" style={{ background: CATALOG.find((c) => c.id === 'woven-labels').color }} />Woven Labels
             </Link>
           )}
-          <Link className={`pill ${pathname.startsWith('/exhibitions') ? 'is-active' : ''}`} href="/exhibitions" aria-current={pathname.startsWith('/exhibitions') ? 'page' : undefined} onMouseEnter={() => { cancelClose(); setMega(null); }}>Exhibitions</Link>
+          <Link className={`pill ${pathname.startsWith('/exhibitions') ? 'is-active' : ''}`} href="/exhibitions" aria-current={pathname.startsWith('/exhibitions') ? 'page' : undefined} onMouseEnter={() => { cancelClose(); setMega(null); }}><i className="dot" style={{ background: EXHIBITION.color }} />Exhibitions</Link>
           <Link className="pill" href="/products" onMouseEnter={() => { cancelClose(); setMega(null); }}>All products</Link>
         </nav>
 
