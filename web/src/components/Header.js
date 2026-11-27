@@ -82,6 +82,11 @@ export default function Header() {
           >
             Services <span className="pill-caret" aria-hidden="true">▾</span>
           </button>
+          {CATALOG.some((c) => c.id === 'woven-labels') && (
+            <Link className={`pill ${pathname.startsWith('/woven-labels') ? 'is-active' : ''}`} href="/woven-labels" aria-current={pathname.startsWith('/woven-labels') ? 'page' : undefined} onMouseEnter={() => { cancelClose(); setMega(null); }}>
+              <i className="dot" style={{ background: CATALOG.find((c) => c.id === 'woven-labels').color }} />Woven Labels
+            </Link>
+          )}
           <Link className={`pill ${pathname.startsWith('/exhibitions') ? 'is-active' : ''}`} href="/exhibitions" aria-current={pathname.startsWith('/exhibitions') ? 'page' : undefined} onMouseEnter={() => { cancelClose(); setMega(null); }}>Exhibitions</Link>
           <Link className="pill" href="/products" onMouseEnter={() => { cancelClose(); setMega(null); }}>All products</Link>
         </nav>
