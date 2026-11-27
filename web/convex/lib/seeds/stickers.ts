@@ -53,7 +53,7 @@ export const stickers: CategorySeed = {
         {
           name: "White PVC Stickers",
           desc: "Bright white, waterproof vinyl stickers for products, bottles and outdoor use. Colours stay vivid and the vinyl resists tearing.",
-          photo: "white vinyl stickers with simple bold colourful geometric shapes on water bottles and a cardboard box, no words or letters",
+          photo: "premium product photo on a soft grey studio backdrop: crisp glossy white vinyl labels with bold simple icons, a blue water drop on a clear plastic water bottle covered in fresh water droplets, a golden bee on an amber glass honey jar, a green leaf on a white cosmetic tub and an orange sun on a kraft box, two loose round white labels peeling off their backing sheet in front, clean soft light, sharp detail, no words or letters anywhere",
         },
         {
           name: "White Ink Stickers",
