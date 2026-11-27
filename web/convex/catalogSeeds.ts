@@ -547,3 +547,26 @@ export const applyCategoryOrder = internalMutation({
     return sorted.map((c) => c.slug);
   },
 });
+
+/* ---------- replacing a product photo with a supplied image (CLI) ---------- */
+
+/** Upload URL for one file (CLI only). */
+export const photoUploadUrl = internalMutation({
+  args: {},
+  returns: v.string(),
+  handler: async (ctx) => await ctx.storage.generateUploadUrl(),
+});
+
+/** Makes an uploaded file the product's photo (the old photo is deleted):
+      npx convex run --prod catalogSeeds:setProductPhoto '{"slug":"...","storageId":"..."}' */
+export const setProductPhoto = internalMutation({
+  args: { slug: v.string(), storageId: v.id("_storage") },
+  returns: v.boolean(),
+  handler: async (ctx, { slug, storageId }) => {
+    const p = await ctx.db.query("products").withIndex("by_slug", (q) => q.eq("slug", slug)).unique();
+    if (!p) { await ctx.storage.delete(storageId); return false; }
+    await Promise.all(p.imageIds.map((id) => ctx.storage.delete(id)));
+    await ctx.db.patch(p._id, { imageIds: [storageId] });
+    return true;
+  },
+});

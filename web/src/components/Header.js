@@ -80,7 +80,7 @@ export default function Header() {
             onClick={() => setMega(mega ? null : 'services')}
             aria-expanded={!!mega}
           >
-            <i className="dot" style={{ background: 'var(--brand-orange)' }} />Services <span className="pill-caret" aria-hidden="true">▾</span>
+            <i className="dot" style={{ background: 'var(--brand-orange)' }} />Services <svg className="pill-caret" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
           {CATALOG.some((c) => c.id === 'woven-labels') && (
             <Link className={`pill ${pathname.startsWith('/woven-labels') ? 'is-active' : ''}`} href="/woven-labels" aria-current={pathname.startsWith('/woven-labels') ? 'page' : undefined} onMouseEnter={() => { cancelClose(); setMega(null); }}>
