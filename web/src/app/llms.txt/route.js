@@ -13,7 +13,7 @@ export async function GET() {
   const { categories, products } = await fetchQuery(api.catalog.getCatalog, {});
 
   const sections = categories.map((c) => {
-    const items = products.filter((p) => p.category === c.id);
+    const items = products.filter((p) => p.in.some((x) => x.c === c.id));
     return [
       `### ${c.name}`,
       `${SITE_URL}${categoryHref(c.id)}`,

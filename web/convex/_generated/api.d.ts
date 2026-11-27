@@ -19,6 +19,7 @@ import type * as lib_copy from "../lib/copy.js";
 import type * as lib_imageModel from "../lib/imageModel.js";
 import type * as lib_seeds_extraProducts from "../lib/seeds/extraProducts.js";
 import type * as lib_seeds_index from "../lib/seeds/index.js";
+import type * as lib_seeds_linkedCategories from "../lib/seeds/linkedCategories.js";
 import type * as lib_seeds_photoPrompts from "../lib/seeds/photoPrompts.js";
 import type * as lib_seeds_stickers from "../lib/seeds/stickers.js";
 import type * as lib_seeds_types from "../lib/seeds/types.js";
@@ -49,6 +50,7 @@ declare const fullApi: ApiFromModules<{
   "lib/imageModel": typeof lib_imageModel;
   "lib/seeds/extraProducts": typeof lib_seeds_extraProducts;
   "lib/seeds/index": typeof lib_seeds_index;
+  "lib/seeds/linkedCategories": typeof lib_seeds_linkedCategories;
   "lib/seeds/photoPrompts": typeof lib_seeds_photoPrompts;
   "lib/seeds/stickers": typeof lib_seeds_stickers;
   "lib/seeds/types": typeof lib_seeds_types;

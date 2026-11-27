@@ -70,6 +70,8 @@ async function buildCatalog(ctx: QueryCtx) {
   const categories = [];
   const cardSources: { p: Doc<"products">; cat: Doc<"categories">; group: string }[] = [];
   const placed = new Set<Id<"products">>();
+  // every category/group a product is listed in (a product can be in several)
+  const memberships = new Map<Id<"products">, { c: string; g: string }[]>();
   for (const { cat, groups } of tree) {
     const navGroups = [];
     for (const { g, links } of groups) {
@@ -78,6 +80,9 @@ async function buildCatalog(ctx: QueryCtx) {
         const p = products.get(link.productId);
         if (!p?.isActive) continue;
         items.push({ name: p.name, slug: p.slug, shape: p.mockupShape });
+        const m = memberships.get(p._id) ?? [];
+        if (!m.some((x) => x.c === cat.slug && x.g === g.name)) m.push({ c: cat.slug, g: g.name });
+        memberships.set(p._id, m);
         if (!placed.has(p._id) && (link.isPrimary || !livePrimary.has(p._id))) {
           placed.add(p._id);
           cardSources.push({ p, cat, group: g.name });
@@ -102,7 +107,10 @@ async function buildCatalog(ctx: QueryCtx) {
   }
 
   const images = await Promise.all(cardSources.map(({ p }) => firstImage(ctx, p)));
-  return { categories, products: cardSources.map(({ p, cat, group }, i) => toCard(p, cat, group, images[i])) };
+  return {
+    categories,
+    products: cardSources.map(({ p, cat, group }, i) => ({ ...toCard(p, cat, group, images[i]), in: memberships.get(p._id) ?? [] })),
+  };
 }
 
 /** Everything the menu, footer, home page and catalogue need, in one live subscription. */

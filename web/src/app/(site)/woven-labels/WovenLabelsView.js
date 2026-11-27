@@ -61,7 +61,7 @@ export default function WovenLabelsView({ preloaded }) {
 
   if (!page) return null;
   const shown = sections.reduce((a, s) => a + s.items.length, 0);
-  const countByCat = (slug) => products.filter((p) => p.category === slug).length;
+  const countByCat = (slug) => products.filter((p) => p.in.some((x) => x.c === slug)).length;
 
   return (
     <div className="catalog page-pad">

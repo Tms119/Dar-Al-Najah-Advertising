@@ -16,7 +16,8 @@ export default function Catalog({ initialCat = 'all' }) {
   const category = CATALOG.find((c) => c.id === cat);
   const countByCat = useMemo(() => {
     const m = {};
-    for (const p of PRODUCTS) m[p.category] = (m[p.category] ?? 0) + 1;
+    // a product listed in several categories counts in each of them
+    for (const p of PRODUCTS) for (const c of new Set(p.in.map((x) => x.c))) m[c] = (m[c] ?? 0) + 1;
     return m;
   }, [PRODUCTS]);
 
@@ -31,11 +32,14 @@ export default function Catalog({ initialCat = 'all' }) {
   };
 
   const list = useMemo(() => {
-    let l = PRODUCTS.filter((p) =>
-      (cat === 'all' || p.category === cat) &&
-      (group === 'all' || p.group === group) &&
-      (!q || `${p.name} ${p.group} ${p.categoryName}`.toLowerCase().includes(q.toLowerCase()))
-    );
+    let l = PRODUCTS
+      // inside a category, show each product under its group in that category
+      .map((p) => (cat === 'all' ? p : { ...p, group: p.in.find((x) => x.c === cat)?.g ?? p.group }))
+      .filter((p) =>
+        (cat === 'all' || p.in.some((x) => x.c === cat)) &&
+        (group === 'all' || p.group === group) &&
+        (!q || `${p.name} ${p.group} ${p.categoryName}`.toLowerCase().includes(q.toLowerCase()))
+      );
     // filter() already returned a fresh array, so sorting in place is safe
     if (sort === 'featured') l.sort((a, b) => b.featured - a.featured);
     if (sort === 'az') l.sort((a, b) => a.name.localeCompare(b.name));

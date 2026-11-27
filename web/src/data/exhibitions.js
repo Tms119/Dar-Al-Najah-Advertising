@@ -58,3 +58,26 @@ export const EXHIBITION_SERVICES = [
   ['Roll-ups, flags & lightboxes', 'Portable signage that sets up in minutes, for events, launches and lobbies.', 'M6 3v18M6 4h11l-2 4 2 4H6'],
   ['Design & artwork', 'No artwork yet? Our designers lay out the graphics to fit your stand exactly.', 'M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10zM13.5 7.5l3 3'],
 ];
+
+/* Exhibitions as an entry in the services menu and home stack (it's a
+   gallery page, not a product category), placed before these categories. */
+export const EXHIBITIONS_BEFORE = ['fabric'];
+
+export const EXHIBITION_MENU = {
+  id: 'exhibitions',
+  name: 'Exhibition Stands',
+  short: 'Exhibitions',
+  tagline: 'Booths, pop-up backdrops and event signage for trade shows, malls and launches.',
+  color: EXHIBITION.color,
+  tint: EXHIBITION.tint,
+  image: EXHIBITION_PHOTOS[0].src,
+  href: '/exhibitions',
+  groups: [{ name: 'Examples', items: EXHIBITION_GROUPS.map((g) => ({ name: g.name, slug: g.id, href: '/exhibitions' })) }],
+};
+
+/** Categories with Exhibitions slotted in, in the site's service order. */
+export function withExhibitions(categories) {
+  const i = categories.findIndex((c) => EXHIBITIONS_BEFORE.includes(c.id));
+  const at = i === -1 ? categories.length : i;
+  return [...categories.slice(0, at), EXHIBITION_MENU, ...categories.slice(at)];
+}

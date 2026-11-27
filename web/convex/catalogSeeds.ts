@@ -8,6 +8,7 @@ import { SEEDS } from "./lib/seeds";
 import type { SeedItem } from "./lib/seeds/types";
 import { CATEGORY_PROMPTS, PHOTO_PROMPTS } from "./lib/seeds/photoPrompts";
 import { EXTRA_PRODUCTS } from "./lib/seeds/extraProducts";
+import { CATEGORY_ORDER, LINKED_CATEGORIES } from "./lib/seeds/linkedCategories";
 
 /* Category setup from starter content (convex/lib/seeds). After setup,
    everything is edited in the admin like any other category. CLI only:
@@ -490,5 +491,59 @@ export const renameCategory = internalMutation({
     if (!cat) return false;
     await ctx.db.patch(cat._id, { name });
     return true;
+  },
+});
+
+/* ---------- categories that reuse existing products (lib/seeds/linkedCategories.ts) ---------- */
+
+/** Creates the linked categories (if missing) and lists their products there
+    too; each product keeps its own main category. Safe to re-run. */
+export const setupLinkedCategories = internalMutation({
+  args: {},
+  returns: v.object({ created: v.array(v.string()), linked: v.number(), missing: v.array(v.string()) }),
+  handler: async (ctx) => {
+    const created: string[] = [];
+    const missing: string[] = [];
+    let linked = 0;
+    for (const spec of LINKED_CATEGORIES) {
+      let cat = await categoryBySlug(ctx, spec.slug);
+      if (!cat) {
+        const all = await ctx.db.query("categories").take(50);
+        const id = await ctx.db.insert("categories", {
+          slug: spec.slug, name: spec.name, shortName: spec.shortName, tagline: spec.tagline,
+          color: spec.color, tint: spec.tint, heroShape: spec.heroShape,
+          imageId: null, isActive: true, sortOrder: all.reduce((m, c) => Math.max(m, c.sortOrder), -1) + 1,
+        });
+        cat = (await ctx.db.get(id))!;
+        created.push(spec.slug);
+      }
+      const groups = await ctx.db.query("groups").withIndex("by_categoryId_and_sortOrder", (q) => q.eq("categoryId", cat._id)).take(100);
+      for (const [gi, gs] of spec.groups.entries()) {
+        let group = groups.find((g) => g.name === gs.name);
+        if (!group) group = (await ctx.db.get(await ctx.db.insert("groups", { categoryId: cat._id, name: gs.name, sortOrder: gi })))!;
+        const links = await ctx.db.query("productGroups").withIndex("by_groupId_and_sortOrder", (q) => q.eq("groupId", group._id)).take(500);
+        for (const [pi, slug] of gs.products.entries()) {
+          const p = await ctx.db.query("products").withIndex("by_slug", (q) => q.eq("slug", slug)).unique();
+          if (!p) { missing.push(slug); continue; }
+          if (links.some((l) => l.productId === p._id)) continue;
+          await ctx.db.insert("productGroups", { productId: p._id, groupId: group._id, isPrimary: false, sortOrder: pi });
+          linked++;
+        }
+      }
+    }
+    return { created, linked, missing };
+  },
+});
+
+/** Puts categories in CATEGORY_ORDER (others keep their order, after these). */
+export const applyCategoryOrder = internalMutation({
+  args: {},
+  returns: v.array(v.string()),
+  handler: async (ctx) => {
+    const cats = await ctx.db.query("categories").take(50);
+    const rank = (slug: string) => { const i = CATEGORY_ORDER.indexOf(slug); return i === -1 ? CATEGORY_ORDER.length : i; };
+    const sorted = [...cats].sort((a, b) => rank(a.slug) - rank(b.slug) || a.sortOrder - b.sortOrder);
+    for (const [i, c] of sorted.entries()) if (c.sortOrder !== i) await ctx.db.patch(c._id, { sortOrder: i });
+    return sorted.map((c) => c.slug);
   },
 });

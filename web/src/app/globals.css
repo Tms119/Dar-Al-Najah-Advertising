@@ -664,15 +664,6 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
    Responsive
    ========================================================= */
 @media (max-width: 1280px) { .header-hours { display: none; } } /* below this the hours text wraps into 3 cramped lines */
-/* "All products" is also in every category menu, the mobile menu and the footer */
-@media (max-width: 1240px) { .nav-pills .pill:last-child { display: none; } }
-/* narrow laptops: tighter pills, WhatsApp as a round icon (like staff and phones) */
-@media (min-width: 981px) and (max-width: 1080px) {
-  .nav-pills { gap: 4px; }
-  .nav-pills .pill { padding: 0 12px; }
-  .header-right .btn-wa { width: 44px; padding: 0; justify-content: center; }
-  .header-right .btn-wa-label { display: none; }
-}
 @media (max-width: 1180px) {
   .p-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .f-cta { grid-template-columns: 1fr; align-items: start; }
@@ -938,20 +929,10 @@ a.tab { text-decoration: none; color: inherit; }
 .btn-dash { gap: 7px; background: #fff; padding: 0 16px; }
 /* staff don't need the opening hours: the header has no room for both at any width */
 .header-right.has-dash .header-hours { display: none; }
-/* narrower laptops (or zoomed in): Dashboard becomes a round icon, like on phones */
-@media (max-width: 1366px) {
+/* narrow laptops: Dashboard becomes a round icon, like on phones */
+@media (min-width: 981px) and (max-width: 1080px) {
   .header-right.has-dash .btn-dash { width: 44px; padding: 0; justify-content: center; }
   .header-right.has-dash .btn-dash-label { display: none; }
-  .header-bar:has(.has-dash) .nav-pills .pill:last-child { display: none; } /* All products: in the menus */
-}
-/* narrower laptops, staff only: WhatsApp also becomes a round icon */
-@media (min-width: 981px) and (max-width: 1240px) {
-  .header-right.has-dash .btn-wa { width: 44px; padding: 0; justify-content: center; }
-  .header-right.has-dash .btn-wa-label { display: none; }
-}
-@media (min-width: 981px) and (max-width: 1080px) {
-  .header-bar:has(.has-dash) .nav-pills .pill { padding: 0 10px; }
-  .header-right.has-dash { gap: 8px; }
 }
 .btn-dash svg { flex: none; }
 .m-link.m-dash { color: var(--blue); }
@@ -1079,3 +1060,14 @@ a.c-card:hover .c-sub { color: inherit; opacity: 0.85; }
   .hero-quick > span { width: auto; flex: none; }
   .hero-quick .chip { flex: none; white-space: nowrap; }
 }
+
+/* Services menu: list of services on the left, preview of the hovered one beside it */
+.pill-caret { font-size: 10px; margin-left: 2px; opacity: 0.7; }
+.mega-inner.has-list { grid-template-columns: 250px 290px 1fr; }
+.mega-list { list-style: none; margin: 0; padding: 10px 0; display: grid; align-content: start; gap: 2px; }
+.mega-list a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; font-size: 15px; font-weight: 600; transition: background 0.2s, color 0.2s; }
+.mega-list a:hover, .mega-list a.is-active { background: var(--bg-2); }
+.mega-list a.is-active { color: var(--ink); box-shadow: inset 3px 0 0 var(--c); }
+.mega-feature { animation: megaIn 0.35s var(--ease); }
+.m-link-svc span { display: inline-flex; align-items: center; gap: 12px; } /* matches the category rows */
+.m-link-svc .dot { width: 12px; height: 12px; }

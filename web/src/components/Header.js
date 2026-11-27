@@ -11,12 +11,14 @@ import { useCatalog } from './CatalogProvider';
 import Logo from './Logo';
 import Photo from './Photo';
 import Mock from './Mock';
+import { withExhibitions } from '@/data/exhibitions';
 
 const MEGA_LIMIT = 12;
 
 export default function Header() {
   const { categories: CATALOG } = useCatalog();
-  const [mega, setMega] = useState(null);
+  const [mega, setMega] = useState(null); // 'services' when the menu is open
+  const [svc, setSvc] = useState(null); // service previewed in the menu
   const [open, setOpen] = useState(false);
   const [mobileCat, setMobileCat] = useState(null);
   const [scrolled, setScrolled] = useState(false);
@@ -40,7 +42,9 @@ export default function Header() {
   }, []);
   useEffect(() => { document.body.style.overflow = open ? 'hidden' : ''; }, [open]);
 
-  const active = CATALOG.find((c) => c.id === mega);
+  const SERVICES = withExhibitions(CATALOG);
+  const active = mega ? (SERVICES.find((c) => c.id === svc) ?? SERVICES[0]) : null;
+  const hrefOf = (c) => c.href ?? categoryHref(c.id);
 
   // Hover intent: wait a moment before closing, so moving the mouse from a
   // pill down into the dropdown (or a slightly wobbly path) doesn't close it.
@@ -69,19 +73,15 @@ export default function Header() {
         <Logo />
 
         <nav className="nav-pills" aria-label="Main">
-          {CATALOG.map((c) => (
-            <button
-              key={c.id}
-              className={`pill ${mega === c.id ? 'is-active' : ''}`}
-              onMouseEnter={() => openMega(c.id)}
-              onFocus={() => openMega(c.id)}
-              onClick={() => setMega(mega === c.id ? null : c.id)}
-              aria-expanded={mega === c.id}
-            >
-              <i className="dot" style={{ background: c.color }} />
-              {c.short}
-            </button>
-          ))}
+          <button
+            className={`pill ${mega ? 'is-active' : ''}`}
+            onMouseEnter={() => openMega('services')}
+            onFocus={() => openMega('services')}
+            onClick={() => setMega(mega ? null : 'services')}
+            aria-expanded={!!mega}
+          >
+            Services <span className="pill-caret" aria-hidden="true">▾</span>
+          </button>
           <Link className={`pill ${pathname.startsWith('/exhibitions') ? 'is-active' : ''}`} href="/exhibitions" aria-current={pathname.startsWith('/exhibitions') ? 'page' : undefined} onMouseEnter={() => { cancelClose(); setMega(null); }}>Exhibitions</Link>
           <Link className="pill" href="/products" onMouseEnter={() => { cancelClose(); setMega(null); }}>All products</Link>
         </nav>
@@ -111,8 +111,23 @@ export default function Header() {
       <div className={`mega-wrap ${active ? 'is-open' : ''}`} onMouseEnter={cancelClose} onClick={onMenuLinkClick}>
       <div className={`mega ${active ? 'is-open' : ''}`} aria-hidden={!active}>
         {active && (
-          <div className="mega-inner" key={active.id}>
-            <div className="mega-feature" style={{ background: active.tint }}>
+          <div className="mega-inner has-list">
+            <ul className="mega-list" aria-label="Services">
+              {SERVICES.map((c) => (
+                <li key={c.id}>
+                  <Link
+                    href={hrefOf(c)}
+                    className={c.id === active.id ? 'is-active' : ''}
+                    onMouseEnter={() => setSvc(c.id)}
+                    onFocus={() => setSvc(c.id)}
+                    style={{ '--c': c.color }}
+                  >
+                    <i className="dot" style={{ background: c.color }} />{c.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="mega-feature" key={active.id} style={{ background: active.tint }}>
               <span className="eyebrow">{active.name}</span>
               <p>{active.tagline}</p>
               {active.image ? (
@@ -120,20 +135,20 @@ export default function Header() {
               ) : (
                 <Mock shape={active.hero} color={active.color} className="mega-mock" />
               )}
-              <Link href={categoryHref(active.id)} className="btn btn-ink btn-sm">
+              <Link href={hrefOf(active)} className="btn btn-ink btn-sm">
                 View all {active.short.toLowerCase()} <span className="btn-arrow">→</span>
               </Link>
             </div>
-            <div className="mega-cols">
+            <div className="mega-cols" key={`${active.id}-cols`}>
               {active.groups.map((g) => (
                 <div key={g.name} className="mega-col">
                   <p className="mega-h">{g.name}</p>
                   <ul>
                     {g.items.slice(0, MEGA_LIMIT).map((it) => (
-                      <li key={it.slug}><Link href={`/products/${it.slug}`}>{it.name}</Link></li>
+                      <li key={it.slug}><Link href={it.href ?? `/products/${it.slug}`}>{it.name}</Link></li>
                     ))}
                     {g.items.length > MEGA_LIMIT && (
-                      <li><Link href={categoryHref(active.id)} className="mega-more">See all {g.items.length} →</Link></li>
+                      <li><Link href={hrefOf(active)} className="mega-more">See all {g.items.length} →</Link></li>
                     )}
                   </ul>
                 </div>
@@ -151,7 +166,11 @@ export default function Header() {
           <button className="pill" onClick={() => setOpen(false)}>Close ✕</button>
         </div>
         <div className="mobile-list">
-          {CATALOG.map((c, i) => (
+          {SERVICES.map((c, i) => c.href ? (
+            <Link key={c.id} href={c.href} className="m-link m-link-svc" style={{ '--i': i }}>
+              <span><i className="dot" style={{ background: c.color }} />{c.name}</span>
+            </Link>
+          ) : (
             <div key={c.id} className={`m-cat ${mobileCat === c.id ? 'is-open' : ''}`} style={{ '--i': i }}>
               <button className="m-cat-btn" onClick={() => setMobileCat(mobileCat === c.id ? null : c.id)}>
                 <span><i className="dot" style={{ background: c.color }} />{c.name}</span>
@@ -174,9 +193,8 @@ export default function Header() {
             </div>
           ))}
           {isStaff && <Link href="/admin" className="m-link m-dash" style={{ '--i': 0 }}>Dashboard ↗</Link>}
-          <Link href="/exhibitions" className="m-link" style={{ '--i': CATALOG.length }}>Exhibitions</Link>
-          <Link href="/products" className="m-link" style={{ '--i': CATALOG.length + 1 }}>All products</Link>
-          <Link href="/contact" className="m-link" style={{ '--i': CATALOG.length + 2 }}>Contact</Link>
+          <Link href="/products" className="m-link" style={{ '--i': SERVICES.length }}>All products</Link>
+          <Link href="/contact" className="m-link" style={{ '--i': SERVICES.length + 1 }}>Contact</Link>
         </div>
         <div className="mobile-foot">
           <a href={telHref}>{COMPANY.phone}</a>

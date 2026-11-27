@@ -6,17 +6,16 @@ import Mock from './Mock';
 import { categoryHref } from '@/data/site';
 import ProductCard from './ProductCard';
 import { useCatalog } from './CatalogProvider';
-import { EXHIBITION, EXHIBITION_GROUPS, EXHIBITION_PHOTOS } from '@/data/exhibitions';
+import { EXHIBITION, EXHIBITION_GROUPS, EXHIBITION_PHOTOS, EXHIBITIONS_BEFORE } from '@/data/exhibitions';
 
 /* Home-page sections driven by the live catalogue. */
 
-/* Categories that come after the Exhibitions card in the home stack. */
-const AFTER_EXHIBITIONS = ['fabric'];
-
 export function ServicesStack() {
   const { categories } = useCatalog();
-  const before = categories.filter((c) => !AFTER_EXHIBITIONS.includes(c.id));
-  const after = categories.filter((c) => AFTER_EXHIBITIONS.includes(c.id));
+  // same service order as the menu: Exhibitions goes before EXHIBITIONS_BEFORE
+  const cut = categories.findIndex((c) => EXHIBITIONS_BEFORE.includes(c.id));
+  const before = cut === -1 ? categories : categories.slice(0, cut);
+  const after = cut === -1 ? [] : categories.slice(cut);
   const card = (c, i) => {
     const items = c.groups.flatMap((g) => g.items);
     const sample = items.slice(0, 7);
