@@ -184,11 +184,12 @@ input, select, textarea { font: inherit; color: inherit; }
 .mega:not(.is-open) { pointer-events: none; }
 .mega-inner { display: grid; grid-template-columns: 290px 1fr; gap: 28px; padding: 14px; animation: megaIn 0.45s var(--ease); }
 @keyframes megaIn { from { opacity: 0; transform: translateY(8px); } }
-.mega-feature { border-radius: var(--r); padding: 24px; display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden; min-height: 320px; }
+.mega-feature { border-radius: var(--r); padding: 24px; display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden; align-self: start; }
 .mega-feature p { margin: 0; font-size: 15px; font-weight: 500; max-width: 230px; }
 .mega-mock { width: 150px; margin: auto auto 14px; animation: bob 4s ease-in-out infinite; }
 .mega-feature .btn { align-self: flex-start; }
-.mega-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 22px; padding: 16px 12px 16px 0; }
+.mega-cols { columns: 3 170px; column-gap: 22px; padding: 16px 12px 16px 0; align-self: start; } /* groups flow into balanced columns */
+.mega-col { break-inside: avoid; margin-bottom: 22px; }
 .mega-col .mega-h { margin: 0 0 10px; font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 .mega-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
 .mega-col a { display: inline-block; padding: 4px 0; font-size: 14.5px; font-weight: 500; position: relative; transition: color 0.2s, transform 0.3s var(--ease); }
@@ -583,9 +584,19 @@ input, select, textarea { font: inherit; color: inherit; }
 .cat-head .muted { font-size: 18px; max-width: 520px; margin: 18px 0 0; }
 .cat-toolbar {
   /* scrolls with the page: a second sticky bar under the header read as two menus */
-  display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
+  display: flex; justify-content: space-between; align-items: center; gap: 14px;
 }
-.tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+/* one row with the search: when the tabs don't fit they scroll sideways,
+   with a fade on the right edge so it's clear there are more */
+.tabs {
+  display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; flex: 1 1 auto; min-width: 0; padding: 2px;
+  --fl: 40px; --fr: 40px; /* fade width on each side; 0 once that side is fully in view */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--fl), #000 calc(100% - var(--fr)), transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 var(--fl), #000 calc(100% - var(--fr)), transparent);
+}
+.tabs .tab { flex: none; }
+.tabs.is-start { --fl: 0px; }
+.tabs.is-end { --fr: 0px; }
 .tabs::-webkit-scrollbar { display: none; }
 .tab {
   display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border-radius: 999px; background: var(--paper);
@@ -595,7 +606,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .tab:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
 .tab.is-active { background: var(--ink); color: #fff; box-shadow: none; }
 .tab.is-active span { background: rgba(255, 255, 255, 0.18); color: #fff; }
-.cat-tools { display: flex; gap: 8px; }
+.cat-tools { display: flex; gap: 8px; flex: none; }
 .search { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border-radius: 999px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); color: var(--muted); }
 .search:focus-within { box-shadow: inset 0 0 0 1.5px var(--ink); }
 .search input { border: 0; outline: 0; background: transparent; width: 180px; color: var(--ink); }
@@ -789,14 +800,14 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 [data-lite] .floater-inner, [data-lite] .stack-mock-sm, [data-lite] .mega-mock, [data-lite] .live-dot::after { animation: none; }
 [data-lite] .floater { transition: none; }
 [data-lite] .floater-inner svg, [data-lite] .stack-mock, [data-lite] .p-mock, [data-lite] .pdp-mock { filter: none; }
-[data-lite] .site-header .header-bar, [data-lite] .site-header.is-scrolled .header-bar, [data-lite] .cat-toolbar {
+[data-lite] .site-header .header-bar, [data-lite] .site-header.is-scrolled .header-bar {
   backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(255, 255, 255, 0.97);
 }
 [data-lite] .ht-outline { animation: rise 1.1s var(--ease) calc(var(--intro) + 0.16s) both !important; }
 [data-lite] .p-card-media::before { display: none; }
 [data-lite] .marquee-track { animation-duration: 45s; }
 .pdp-stage .pdp-photo { object-fit: contain; }
-.mega-photo { position: relative; width: 100%; aspect-ratio: 4 / 3; margin: auto 0 14px; border-radius: 16px; overflow: hidden; }
+.mega-photo { position: relative; width: 100%; aspect-ratio: 4 / 3; margin: 6px 0 4px; border-radius: 16px; overflow: hidden; }
 .mega-photo img { object-fit: cover; }
 .stack-art-photo { position: relative; border-radius: calc(var(--r-lg) - 10px); overflow: hidden; min-height: 360px; }
 .stack-art-photo img { object-fit: cover; transition: transform 0.9s var(--ease); }
@@ -857,7 +868,7 @@ a.c-card > span { position: absolute; top: 16px; right: 18px; opacity: 1; font-s
 
 /* catalogue toolbar on phones: search gets the space */
 @media (max-width: 760px) {
-  .cat-toolbar { gap: 10px; }
+  .cat-toolbar { gap: 10px; flex-wrap: wrap; }
   .cat-tools { width: 100%; display: grid; grid-template-columns: 1fr 118px; gap: 8px; }
   .cat-tools select { width: 100%; padding: 0 10px; font-size: 14px; }
   .search { flex: 1; min-width: 0; }
@@ -1071,3 +1082,11 @@ a.c-card:hover .c-sub { color: inherit; opacity: 0.85; }
 .mega-feature { animation: megaIn 0.35s var(--ease); }
 .m-link-svc span { display: inline-flex; align-items: center; gap: 12px; } /* matches the category rows */
 .m-link-svc .dot { width: 12px; height: 12px; }
+
+/* the open menu never runs past the bottom of the screen */
+.mega-inner.has-list { max-height: calc(100vh - 120px); overflow-y: auto; overscroll-behavior: contain; }
+/* smaller laptops: slimmer list and preview so the products get two columns */
+@media (max-width: 1180px) {
+  .mega-inner.has-list { grid-template-columns: 210px 230px 1fr; gap: 20px; }
+  .mega-list a { padding: 9px 12px; font-size: 14px; }
+}

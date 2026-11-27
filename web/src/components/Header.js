@@ -13,7 +13,7 @@ import Photo from './Photo';
 import Mock from './Mock';
 import { EXHIBITION, withExhibitions } from '@/data/exhibitions';
 
-const MEGA_LIMIT = 12;
+const MEGA_LIMIT = 8; // per group; the rest are behind "See all"
 
 export default function Header() {
   const { categories: CATALOG } = useCatalog();

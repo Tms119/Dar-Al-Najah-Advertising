@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { categoryHref } from '@/data/site';
 import ProductCard from '@/components/ProductCard';
 import { useCatalog } from '@/components/CatalogProvider';
+import { useTabsRow } from '@/lib/useTabsRow';
 
 export default function Catalog({ initialCat = 'all' }) {
   const { categories: CATALOG, products: PRODUCTS } = useCatalog();
@@ -12,6 +13,7 @@ export default function Catalog({ initialCat = 'all' }) {
   const [group, setGroup] = useState('all');
   const [q, setQ] = useState('');
   const [sort, setSort] = useState('featured');
+  const tabsRef = useTabsRow();
 
   const category = CATALOG.find((c) => c.id === cat);
   const countByCat = useMemo(() => {
@@ -56,7 +58,7 @@ export default function Catalog({ initialCat = 'all' }) {
         </header>
 
         <div className="cat-toolbar">
-          <div className="tabs" role="tablist">
+          <div className="tabs" role="tablist" ref={tabsRef}>
             <button role="tab" aria-selected={cat === 'all'} className={`tab ${cat === 'all' ? 'is-active' : ''}`} onClick={() => setCat('all')}>
               All <span>{PRODUCTS.length}</span>
             </button>

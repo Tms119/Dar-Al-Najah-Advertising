@@ -2,12 +2,13 @@
 
 import Photo from '@/components/Photo';
 import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { usePreloadedQuery } from 'convex/react';
 import Mock from '@/components/Mock';
 import { useCatalog } from '@/components/CatalogProvider';
 import { WhatsAppIcon } from '@/components/icons';
 import { categoryHref, waAbout } from '@/data/site';
+import { useTabsRow } from '@/lib/useTabsRow';
 
 /* Woven Labels: same layout as the other category pages (header, category
    tabs, search, group chips), with each label shown with its description.
@@ -41,14 +42,7 @@ export default function WovenLabelsView({ preloaded }) {
   const { categories, products } = useCatalog();
   const [group, setGroup] = useState('all');
   const [q, setQ] = useState('');
-  const tabsRef = useRef(null);
-
-  // on phones the tab row scrolls sideways: bring the active tab into view
-  useEffect(() => {
-    const row = tabsRef.current;
-    const active = row?.querySelector('.is-active');
-    if (row && active) row.scrollLeft = active.offsetLeft - (row.clientWidth - active.offsetWidth) / 2;
-  }, []);
+  const tabsRef = useTabsRow();
 
   const sections = useMemo(() => {
     if (!page) return [];
