@@ -1093,3 +1093,14 @@ a.c-card:hover .c-sub { color: inherit; opacity: 0.85; }
   .mega-inner.has-list { grid-template-columns: 210px 230px 1fr; gap: 20px; }
   .mega-list a { padding: 9px 12px; font-size: 14px; }
 }
+/* narrow laptops (5 header pills): tighter pills, WhatsApp as a round icon */
+@media (min-width: 981px) and (max-width: 1150px) {
+  .nav-pills { gap: 4px; }
+  .nav-pills .pill { padding: 0 11px; }
+  .header-right .btn-wa { width: 44px; padding: 0; justify-content: center; }
+  .header-right .btn-wa-label { display: none; }
+}
+/* staff also have Dashboard: All products steps aside (it's in the footer and phone menu) */
+@media (min-width: 981px) and (max-width: 1080px) {
+  .header-bar:has(.has-dash) .nav-pills .pill:last-child { display: none; }
+}

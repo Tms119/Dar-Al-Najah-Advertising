@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useConvexAuth, useQuery } from 'convex/react';
 import { api } from '@convex/_generated/api';
@@ -13,6 +13,9 @@ import Photo from './Photo';
 import Mock from './Mock';
 import { EXHIBITION, withExhibitions } from '@/data/exhibitions';
 
+/* Categories that also get their own pill next to Services, in this order. */
+const PINNED = ['digital-offset-printing', 'woven-labels'];
+
 const MEGA_LIMIT = 8; // per group; the rest are behind "See all"
 
 export default function Header() {
@@ -23,6 +26,7 @@ export default function Header() {
   const [mobileCat, setMobileCat] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const currentCat = useSearchParams().get('cat');
 
   // Signed-in staff get a Dashboard button. Visitors who aren't signed in
   // never trigger the check, so this costs customers nothing.
@@ -82,11 +86,15 @@ export default function Header() {
           >
             <i className="dot" style={{ background: 'var(--brand-orange)' }} />Services <svg className="pill-caret" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
-          {CATALOG.some((c) => c.id === 'woven-labels') && (
-            <Link className={`pill ${pathname.startsWith('/woven-labels') ? 'is-active' : ''}`} href="/woven-labels" aria-current={pathname.startsWith('/woven-labels') ? 'page' : undefined} onMouseEnter={() => { cancelClose(); setMega(null); }}>
-              <i className="dot" style={{ background: CATALOG.find((c) => c.id === 'woven-labels').color }} />Woven Labels
-            </Link>
-          )}
+          {PINNED.map((id) => CATALOG.find((c) => c.id === id)).filter(Boolean).map((c) => {
+            const href = categoryHref(c.id);
+            const here = href.startsWith('/products?') ? pathname === '/products' && currentCat === c.id : pathname.startsWith(href);
+            return (
+              <Link key={c.id} className={`pill ${here ? 'is-active' : ''}`} href={href} aria-current={here ? 'page' : undefined} onMouseEnter={() => { cancelClose(); setMega(null); }}>
+                <i className="dot" style={{ background: c.color }} />{c.short}
+              </Link>
+            );
+          })}
           <Link className={`pill ${pathname.startsWith('/exhibitions') ? 'is-active' : ''}`} href="/exhibitions" aria-current={pathname.startsWith('/exhibitions') ? 'page' : undefined} onMouseEnter={() => { cancelClose(); setMega(null); }}><i className="dot" style={{ background: EXHIBITION.color }} />Exhibitions</Link>
           <Link className="pill" href="/products" onMouseEnter={() => { cancelClose(); setMega(null); }}>All products</Link>
         </nav>
